@@ -1,0 +1,30 @@
+# comparable.nuzo — 可比较类型工具模块
+# 提供比较和排序相关的工具函数
+
+# 取两个值中的较小值
+fn min(a, b) {
+    if (a < b) { a } else { b }
+}
+
+# 取两个值中的较大值
+fn max(a, b) {
+    if (a > b) { a } else { b }
+}
+
+# 将值限制在 [lo, hi] 范围内
+fn clamp(val, lo, hi) {
+    if (val < lo) {
+        lo
+    } else {
+        if (val > hi) {
+            hi
+        } else {
+            val
+        }
+    }
+}
+
+# 交换（返回元组式的双元素数组）
+fn swap(a, b) {
+    [b, a]
+}

@@ -1,0 +1,60 @@
+# === Match 表达式测试 ===
+# 测试: match/匹配 表达式的字面量、变量绑定、通配符和范围模式
+
+# --- 基本字面量匹配 ---
+n = 2
+r1 = match (n) {
+    0 => "zero",
+    1 => "one",
+    2 => "two",
+    _ => "many"
+}
+# r1 预期: "two"
+
+# --- 通配符匹配 ---
+r2 = match (100) {
+    0 => "zero",
+    _ => "other"
+}
+# r2 预期: "other"
+
+# --- 变量绑定模式 ---
+status = 404
+r3 = match (status) {
+    200 => "OK",
+    404 => "Not Found",
+    code => "Unknown"
+}
+# r3 预期: "Not Found"
+
+# --- 变量绑定使用绑定值 ---
+r4 = match (42) {
+    0 => "zero",
+    val => val
+}
+# r4 预期: 42
+
+# --- 中文关键字 匹配 ---
+r5 = 匹配 (1) {
+    0 => "零",
+    1 => "一",
+    _ => "多"
+}
+# r5 预期: "一"
+
+# --- 布尔值匹配 ---
+flag = true
+r6 = match (flag) {
+    true => "yes",
+    false => "no"
+}
+# r6 预期: "yes"
+
+# --- match 作为语句（不绑定返回值）---
+match (3) {
+    0 => print("zero"),
+    _ => print("non-zero")
+}
+
+# --- 汇总 ---
+result = r1 + r2 + r3 + r4

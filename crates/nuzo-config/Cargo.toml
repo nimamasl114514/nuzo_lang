@@ -1,0 +1,14 @@
+[package]
+name = "nuzo_config"
+version.workspace = true
+edition.workspace = true
+description = "Unified configuration management for Nuzo Lang — zero-dependency layered config with TOML support"
+
+[dependencies]
+# 零外部依赖 — 自实现轻量 TOML 解析
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+# 用于配置加载时的类型不匹配告警（apply_* 函数中类型不匹配时输出 warn）
+log.workspace = true
+
+[dev-dependencies]

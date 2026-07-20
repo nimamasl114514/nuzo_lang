@@ -1,0 +1,12 @@
+[package]
+name = "nuzo_signal"
+version.workspace = true
+edition.workspace = true
+description = "Type-safe signal-slot system for Nuzo"
+
+[dependencies]
+nuzo_core.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+once_cell.workspace = true
+web-time.workspace = true

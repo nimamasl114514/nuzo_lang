@@ -1,0 +1,133 @@
+{
+  "name": "nuzo-vscode",
+  "displayName": "Nuzo Lang",
+  "description": "Nuzo language support for VS Code",
+  "version": "0.1.0",
+  "publisher": "nuzo",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Language Packs"
+  ],
+  "activationEvents": [
+    "onLanguage:nuzo",
+    "onCommand:nuzo.runFile",
+    "onCommand:nuzo.compileFile",
+    "onCommand:nuzo.showDisassembly"
+  ],
+  "main": "./out/src/extension.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.11"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.0.0",
+    "@types/mocha": "^10.0.0",
+    "typescript": "^5.3.0",
+    "mocha": "^10.2.0",
+    "glob": "^10.3.0",
+    "@vscode/test-electron": "^2.3.0",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "nuzo",
+        "aliases": [
+          "Nuzo",
+          "nuzo"
+        ],
+        "extensions": [
+          ".nuzo",
+          ".nz"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "nuzo",
+        "scopeName": "source.nuzo",
+        "path": "./syntaxes/nuzo.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "nuzo",
+        "path": "./snippets/nuzo.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "nuzo.runFile",
+        "title": "Nuzo: Run File",
+        "category": "Nuzo"
+      },
+      {
+        "command": "nuzo.compileFile",
+        "title": "Nuzo: Compile File",
+        "category": "Nuzo"
+      },
+      {
+        "command": "nuzo.showDisassembly",
+        "title": "Nuzo: Show Disassembly",
+        "category": "Nuzo"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "nuzo.runFile",
+          "when": "resourceLangId == nuzo",
+          "group": "nuzo@1"
+        },
+        {
+          "command": "nuzo.compileFile",
+          "when": "resourceLangId == nuzo",
+          "group": "nuzo@2"
+        },
+        {
+          "command": "nuzo.showDisassembly",
+          "when": "resourceLangId == nuzo",
+          "group": "nuzo@3"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "nuzo.runFile",
+        "key": "f5",
+        "when": "editorTextFocus && resourceLangId == nuzo"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "Nuzo",
+        "properties": {
+          "nuzo.executablePath": {
+            "type": "string",
+            "default": "",
+            "description": "Path to nuzo_run executable. If empty, will search PATH."
+          },
+          "nuzo.enableLanguageServer": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable the Nuzo language server"
+          }
+        }
+      }
+    ]
+  }
+}

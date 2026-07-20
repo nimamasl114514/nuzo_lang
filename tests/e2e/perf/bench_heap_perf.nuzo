@@ -1,0 +1,37 @@
+# === heap.rs 性能基准测试 v2 ===
+
+# --- Test 1: 密集数组索引读取 ---
+arr = []
+i = 0
+当 i < 10000 {
+    arr[i] = i * 2
+    i = i + 1
+}
+sum = 0
+j = 0
+当 j < 10000 {
+    sum = sum + arr[j]
+    j = j + 1
+}
+print(sum)
+
+# --- Test 2: 稀疏数组写入 (COW resize) ---
+sparse = []
+sparse[9999] = 42
+print(sparse[9999])
+print(len(sparse))
+
+# --- Test 3: 字典操作 ---
+d = {}
+d["name"] = "Alice"
+d["age"] = 30
+print(d["name"])
+print(len(d))
+
+# --- 汇总 ---
+# 注意: sparse[9999] 在稀疏数组中可能返回非标量值，用中间变量确保类型安全
+sparse_val = sparse[9999]
+sparse_len = len(sparse)
+d_len = len(d)
+result = sum + sparse_val + sparse_len + d_len
+print(result)

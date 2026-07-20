@@ -1,0 +1,76 @@
+# === 09 递归 ===
+# 测试: 递归/尾调用/中文递归
+
+# --- 阶乘 ---
+fn factorial(n) {
+    if n <= 1 {
+        1
+    } else {
+        n * factorial(n - 1)
+    }
+}
+# factorial(5) 预期: 120
+
+# --- 斐波那契 ---
+fn fib(n) {
+    if n <= 1 {
+        n
+    } else {
+        fib(n - 1) + fib(n - 2)
+    }
+}
+# fib(10) 预期: 55
+
+# --- 尾递归阶乘 ---
+fn fact_tail(n, acc) {
+    if n <= 1 {
+        acc
+    } else {
+        fact_tail(n - 1, acc * n)
+    }
+}
+# fact_tail(10, 1) 预期: 3628800
+
+# --- 尾递归累加 ---
+fn sum_to(n, acc) {
+    if n <= 0 {
+        acc
+    } else {
+        sum_to(n - 1, acc + n)
+    }
+}
+# sum_to(100, 0) 预期: 5050
+
+# --- 深度尾递归 (验证TCO) ---
+fn deep_tail(n) {
+    if n <= 0 {
+        42
+    } else {
+        deep_tail(n - 1)
+    }
+}
+# deep_tail(500) 预期: 42
+
+# --- 中文关键字递归 ---
+fn 阶乘(n) {
+    如果 n <= 1 {
+        1
+    } 否则 {
+        n * 阶乘(n - 1)
+    }
+}
+# 阶乘(6) 预期: 720
+
+# --- 分治递归 ---
+fn split_work(n) {
+    if n <= 1 {
+        1
+    } else {
+        half = n / 2
+        split_work(half) + split_work(n - half)
+    }
+}
+# split_work(10) 预期: 10
+
+# --- 汇总 ---
+result = factorial(5) + fib(10) + fact_tail(10, 1) + sum_to(100, 0) + deep_tail(500) + 阶乘(6) + split_work(10)

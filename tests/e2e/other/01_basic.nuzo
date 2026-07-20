@@ -1,0 +1,15 @@
+# 01 基础语法 - 变量、算术运算
+# 测试: 数字、变量赋值、四则运算
+
+a = 10
+b = 20
+
+sum = a + b
+diff = a - b
+product = a * b
+quotient = b / a
+
+# 复杂表达式
+complex = (a + b) * (b - a) / 2
+
+result = sum + diff + product + quotient + complex

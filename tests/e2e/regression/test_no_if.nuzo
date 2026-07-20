@@ -1,0 +1,14 @@
+# 测试不使用 如果 语句的方法
+
+fn add_two(n) {
+    n + 2
+}
+
+fn abs_val(n) {
+    如果 n < 0 { 返回 0 - n }
+    n
+}
+
+println("测试函数:")
+result = add_two(5)
+println("结果: " + result)

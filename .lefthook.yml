@@ -1,0 +1,136 @@
+# lefthook.yml — Nuzo Lang Git Hooks 配置
+#
+# 安装: lefthook install
+# 跳过所有 hook: git commit --no-verify
+# 跳过特定命令: LEFTHOOK_EXCLUDE="rust-fmt,clippy-autofix" git commit
+#
+# pre-commit: 门禁检查 → 自动修复 → 同步检查 → 信息提示（顺序执行）
+# pre-push:   全量检查 + CALL_GRAPH 同步验证（顺序执行）
+# commit-msg: Conventional Commits 格式检查（允许中文描述）
+
+remote: origin
+branch: main
+
+pre-commit:
+  piped: true  # 顺序执行，确保自动修复链正确工作
+  commands:
+    # ================================================================
+    # 门禁检查（阻止不合规文件提交）
+    # ================================================================
+
+    # 0. 禁止提交敏感文件 (.env / *.pem / *.key / *.p12 / *.pfx)
+    # 防呆设计：与 .gitignore 互补。.gitignore 阻止追踪，此 hook 阻止 git add -f 强制添加
+    # 触发条件：检测到 .env, credentials.json, *.pem, *.key 等敏感文件
+    # 注意：字符串用单引号，避免 Windows 命令行解析器消费双引号导致 sh -c 解析失败
+    check-sensitive-files:
+      glob: "*.{env,pem,key,p12,pfx}"
+      run: |
+        echo 'ERROR: Detected sensitive file (.env/.pem/.key/.p12/.pfx) in commit. Refusing to commit.'
+        echo 'If this is intentional, use --no-verify (not recommended).'
+        exit 1
+
+    # 0b. 兜底：基于文件名 grep 检测敏感文件
+    # 捕获 glob 可能遗漏的 dotfile（如 .env）和特定文件名（credentials.json / secrets/）
+    check-sensitive-names:
+      run: |
+        if git diff --cached --name-only --diff-filter=ACMR | grep -E '(^|/)(\.env|credentials\.(json|ya?ml)|secrets/)'; then
+          echo 'ERROR: Refusing to commit sensitive file (matched by name).'
+          echo 'If this is intentional, use --no-verify (not recommended).'
+          exit 1
+        fi
+
+    # 1. 禁止提交调试残留文件 (debug_*.rs / debug_*.md)
+    no-debug-files:
+      glob: "debug_*.*"
+      run: 'echo "ERROR: debug_*.rs/debug_*.md not allowed" && exit 1'
+      error: true
+
+    # 2. 禁止 vendor/ 目录
+    no-vendor-dir:
+      glob: "vendor/**"
+      run: 'echo "ERROR: vendor/ 不应在仓库中（运行 just clean-vendor 清理）" && exit 1'
+      error: true
+
+    # 3. 禁止 console/ 目录
+    no-console-dir:
+      glob: "console/**"
+      run: 'echo "ERROR: console/ 不应在仓库中（运行 just clean-vendor 清理）" && exit 1'
+      error: true
+
+    # ================================================================
+    # 自动修复（修改代码并重新暂存）
+    # ================================================================
+
+    # 4. Rust 格式自动修复（全量格式化，重新暂存修改的文件）
+    rust-fmt:
+      glob: "**/*.rs"
+      run: |
+        set -e
+        cargo fmt --all
+        for f in {staged_files}; do git add "$f"; done
+
+    # 5. Clippy 自动修复（仅 workspace lib，避免修改测试/示例代码）
+    clippy-autofix:
+      glob: "**/*.rs"
+      run: |
+        set -e
+        cargo clippy --fix --allow-dirty --allow-no-vcs --workspace --lib
+        for f in {staged_files}; do git add "$f"; done
+
+    # ================================================================
+    # 同步检查
+    # ================================================================
+
+    # 6. Cargo.lock 同步检查（当 Cargo.toml 变更时）
+    cargo-lock-sync:
+      glob: "**/Cargo.toml"
+      run: "cargo metadata --locked --format-version 1 > /dev/null 2>&1 || (echo 'Cargo.lock out of sync. Run cargo generate-lockfile' && exit 1)"
+
+    # 7. CALL_GRAPH.md 自动生成（当 .rs 文件变更时）
+    #    项目规则强制要求：任何代码修改后必须重新生成 CALL_GRAPH.md
+    callgraph-gen:
+      glob: "**/*.rs"
+      run: |
+        set -e
+        echo "正在重新生成 CALL_GRAPH.md ..."
+        cargo run --manifest-path ../nuzo_callgraph/Cargo.toml -- --project . --output CALL_GRAPH.md --format markdown --visibility pub-super --workspace --name "Nuzo Lang"
+        git add CALL_GRAPH.md
+        echo "OK: CALL_GRAPH.md 已重新生成并暂存"
+
+    # ================================================================
+    # 信息提示（不阻止提交）
+    # ================================================================
+
+    # 8. 大文件警告 (>100KB) — 仅提示，不阻止提交
+    large-file-warning:
+      glob: "*.rs"
+      run: 'true'
+
+pre-push:
+  piped: true  # 顺序执行，避免 cargo build lock 竞争
+  commands:
+    # 1. 全量编译检查
+    check:
+      glob: "**/*.rs"
+      run: cargo check --workspace --lib
+
+    # 2. 全量测试
+    test:
+      glob: "**/*.rs"
+      run: cargo test --workspace --lib -- --quiet
+
+    # 3. CALL_GRAPH 同步检查（确保 CALL_GRAPH.md 与代码一致）
+    callgraph-sync:
+      glob: "**/*.rs"
+      run: bash scripts/check_callgraph.sh
+
+    # 4. Clippy 严格检查（警告视为错误）
+    clippy-check:
+      glob: "**/*.rs"
+      run: cargo clippy --workspace --lib -- -D warnings
+
+# 提交信息格式检查（Conventional Commits 规范）
+commit-msg:
+  commands:
+    conventional-commit:
+      run: bash scripts/check_commit_msg.sh {1}

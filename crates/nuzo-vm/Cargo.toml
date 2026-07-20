@@ -1,0 +1,30 @@
+[package]
+name = "nuzo_vm"
+version.workspace = true
+edition.workspace = true
+description = "Virtual machine, GC, and runtime for Nuzo"
+
+[features]
+default = []
+# Disable VEH-based ElasticRegisterFile for debugging (uses Vec backend instead)
+no-veh = []
+# Superinstruction Fusion: 热路径融合执行优化
+# 启用后 VM 主循环会在 Hot IP 处检查 FusedLoopEntry，尝试走融合执行路径
+superinstruction = []
+# Declared for check-cfg compliance (define_opcodes! macro generates cfg_attr(feature = "serde"))
+serde = []
+
+[dependencies]
+nuzo_bytecode.workspace = true
+nuzo_values.workspace = true
+nuzo_signal.workspace = true
+nuzo_error.workspace = true
+nuzo_helpers.workspace = true
+nuzo_core.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+nuzo_config.workspace = true
+web-time.workspace = true
+
+[dev-dependencies]
+nuzo_compiler.workspace = true

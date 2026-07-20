@@ -1,0 +1,4 @@
+arr = [10, 20, 30]
+for item in arr {
+    item
+}

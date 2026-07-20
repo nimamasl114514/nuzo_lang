@@ -1,0 +1,58 @@
+{
+  "version": "0.5.0",
+  "commit_hash": "a413da2",
+  "timestamp": "1784049725Z",
+  "environment": {
+    "os": "windows",
+    "arch": "x86_64",
+    "cpu_count": 24,
+    "nuzo_version": "0.5.0",
+    "rust_version": ""
+  },
+  "benchmarks": {
+    "B001": {
+      "name": "B001",
+      "unit": "ns",
+      "iterations": 30000,
+      "mean": 20.0,
+      "std_dev": 40.0,
+      "median": 0.0,
+      "p95": 100.0,
+      "p99": 100.0,
+      "sample_size": 30
+    },
+    "B002": {
+      "name": "B002",
+      "unit": "ns",
+      "iterations": 30000,
+      "mean": 4212536.666666667,
+      "std_dev": 188451.42872604838,
+      "median": 4189800.0,
+      "p95": 4545565.0,
+      "p99": 4642984.0,
+      "sample_size": 30
+    },
+    "B003": {
+      "name": "B003",
+      "unit": "ns",
+      "iterations": 30000,
+      "mean": 6796.666666666667,
+      "std_dev": 31.446603773522018,
+      "median": 6800.0,
+      "p95": 6800.0,
+      "p99": 6871.0,
+      "sample_size": 30
+    },
+    "B004": {
+      "name": "B004",
+      "unit": "ns",
+      "iterations": 30000,
+      "mean": 172820.0,
+      "std_dev": 47996.141511584035,
+      "median": 155350.0,
+      "p95": 290669.9999999998,
+      "p99": 338460.0,
+      "sample_size": 30
+    }
+  }
+}

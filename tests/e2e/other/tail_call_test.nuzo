@@ -1,0 +1,72 @@
+# 尾递归测试 - 验证 TCO
+# 预期: 所有测试通过，栈深度保持 O(1)
+
+# 1. 尾递归阶乘
+fn fact(n, acc) {
+    if n <= 1 {
+        return acc
+    } else {
+        return fact(n - 1, acc * n)
+    }
+}
+
+result_fact = fact(10, 1)
+print("fact(10) = ")
+println(result_fact)
+
+# 2. 尾递归累加
+fn sum_to(n, acc) {
+    if n <= 0 {
+        return acc
+    } else {
+        return sum_to(n - 1, acc + n)
+    }
+}
+
+result_sum = sum_to(100, 0)
+print("sum_to(100) = ")
+println(result_sum)
+
+# 3. 普通递归斐波那契（非尾递归，走普通调用）
+fn fib(n) {
+    if n <= 1 {
+        return n
+    } else {
+        return fib(n - 1) + fib(n - 2)
+    }
+}
+
+result_fib = fib(10)
+print("fib(10) = ")
+println(result_fib)
+
+# 4. 深度尾递归（验证不会栈溢出）
+fn deep_tail(n) {
+    if n <= 0 {
+        return 42
+    } else {
+        return deep_tail(n - 1)
+    }
+}
+
+result_deep = deep_tail(500)
+print("deep_tail(500) = ")
+println(result_deep)
+
+# 5. 嵌套函数调用
+fn add(a, b) {
+    a + b
+}
+
+fn double(x) {
+    x * 2
+}
+
+result_nested = add(double(3), 5)
+print("add(double(3), 5) = ")
+println(result_nested)
+
+# 汇总
+final = result_fact + result_sum + result_fib + result_deep + result_nested
+print("final = ")
+println(final)

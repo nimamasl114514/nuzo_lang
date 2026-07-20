@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nuzo Playground</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Nuzo Playground</h1>
+      <span class="version">v0.1.0</span>
+    </header>
+    <main>
+      <section class="editor-section">
+        <!-- T9 会在这里插入 CodeMirror 编辑器 -->
+        <div id="editor"></div>
+      </section>
+      <section class="output-section">
+        <div class="output-tabs">
+          <button class="tab-btn active" data-tab="stdout">输出</button>
+          <button class="tab-btn" data-tab="stderr">错误</button>
+        </div>
+        <pre id="output" class="output-content"></pre>
+      </section>
+    </main>
+    <footer>
+      <button id="run-btn" disabled>运行 (Ctrl+Enter)</button>
+      <button id="clear-btn">清空</button>
+    </footer>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

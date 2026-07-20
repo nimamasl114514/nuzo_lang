@@ -1,0 +1,185 @@
+# ============================================================
+#  closure_arg_repro.nuzo — 闭包参数传递最小复现测试
+# ============================================================
+
+println("=== Closure Argument Reproduction Test ===")
+
+pass_count = 0
+fail_count = 0
+
+# ---- 测试1: 基础高阶函数（命名函数作为参数）----
+println("[Test1] Basic HOF (named fn as arg)")
+
+fn apply(f, x) {
+    f(x)
+}
+
+fn double(x) {
+    x * 2
+}
+
+r1 = apply(double, 5)
+print("  apply(double, 5) = ")
+print(r1)
+if r1 == 10 {
+    println(" PASS")
+    pass_count = pass_count + 1
+} else {
+    println(" FAIL")
+    fail_count = fail_count + 1
+}
+
+# ---- 测试2: 闭包捕获 + 作为参数传递 ----
+println("[Test2] Closure capture + pass as arg")
+
+fn make_adder(n) {
+    fn(x) { x + n }
+}
+
+add5 = make_adder(5)
+
+r2 = apply(add5, 10)
+print("  apply(make_adder(5), 10) = ")
+print(r2)
+if r2 == 15 {
+    println(" PASS")
+    pass_count = pass_count + 1
+} else {
+    println(" FAIL")
+    fail_count = fail_count + 1
+}
+
+# ---- 测试3: compose 模式（两个参数都是函数）----
+println("[Test3] Compose pattern")
+
+fn compose(f, g) {
+    fn(x) { f(g(x)) }
+}
+
+fn inc(x) { x + 1 }
+
+double_then_inc = compose(inc, double)
+r3 = double_then_inc(5)
+print("  compose(inc, double)(5) = ")
+print(r3)
+if r3 == 11 {
+    println(" PASS")
+    pass_count = pass_count + 1
+} else {
+    println(" FAIL")
+    fail_count = fail_count + 1
+}
+
+# ---- 测试4: 嵌套闭包捕获（三层）----
+println("[Test4] Nested closure capture (3 levels)")
+
+fn make_composer(f) {
+    fn(g) {
+        fn(x) { f(g(x)) }
+    }
+}
+
+double_inc = make_composer(double)
+r4 = double_inc(inc)(3)
+print("  make_composer(double)(inc)(3) = ")
+print(r4)
+if r4 == 8 {
+    println(" PASS")
+    pass_count = pass_count + 1
+} else {
+    println(" FAIL (got " + r4 + ")")
+    fail_count = fail_count + 1
+}
+
+# ---- 测试5: 可变捕获（ByBox）+ 参数传递 ----
+println("[Test5] Mutable capture (ByBox) + arg passing")
+
+fn make_counter(start) {
+    count = start
+    fn() {
+        count = count + 1
+        count
+    }
+}
+
+counter = make_counter(0)
+fn call_three_times(fn_) {
+    a = fn_()
+    b = fn_()
+    c = fn_
+    result = [0, 0, 0]
+    result[0] = a
+    result[1] = b
+    result[2] = c()
+    result
+}
+
+counts = call_three_times(counter)
+print("  call_three_times(counter) = [")
+print(counts[0])
+print(", ")
+print(counts[1])
+print(", ")
+print(counts[2])
+println("]")
+if counts[0] == 1 && counts[1] == 2 && counts[2] == 3 {
+    println(" PASS")
+    pass_count = pass_count + 1
+} else {
+    println(" FAIL")
+    fail_count = fail_count + 1
+}
+
+# ---- 测试6: 闭包作为返回值 + 立即调用 ----
+println("[Test6] Return closure + immediate call")
+
+r6 = make_adder(100)(1)
+print("  make_adder(100)(1) = ")
+print(r6)
+if r6 == 101 {
+    println(" PASS")
+    pass_count = pass_count + 1
+} else {
+    println(" FAIL (got " + r6 + ")")
+    fail_count = fail_count + 1
+}
+
+# ---- 测试7: 高阶函数接收带捕获的闭包（integrate模式）----
+println("[Test7] HOF with captured closure (integrate pattern)")
+
+fn integrate(fn_, a, b, n) {
+    h = (b - a) / n
+    sum = (fn_(a) + fn_(b)) / 2
+    i = 1
+    while i < n {
+        sum = sum + fn_(a + i * h)
+        i = i + 1
+    }
+    sum * h
+}
+
+fn square(x) { x * x }
+
+r7 = integrate(square, 0, 1, 100)
+print("  integrate(square, 0, 1, 100) ≈ ")
+print(r7)
+if r7 > 0.30 && r7 < 0.35 {
+    println(" PASS")
+    pass_count = pass_count + 1
+} else {
+    println(" FAIL (got " + r7 + ")")
+    fail_count = fail_count + 1
+}
+
+# ---- 最终汇总 ----
+println("")
+print("PASS: ")
+println(pass_count)
+print(", FAIL: ")
+println(fail_count)
+println("")
+if fail_count == 0 {
+    println("=== ALL TESTS PASSED ===")
+} else {
+    println("=== SOME TESTS FAILED ===")
+}

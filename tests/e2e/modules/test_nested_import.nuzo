@@ -1,0 +1,33 @@
+# test_nested_import.nuzo — 嵌套导入测试（自包含版本）
+# 原测试链：本文件 → inner_module → inner/dep
+# 现将所有层级内联到单一文件
+
+# ===== 内联 inner/dep 模块（最深层）=====
+
+fn deep_value() { 42 }
+DEEP_CONST = "deep"
+
+# ===== 内联 inner_module 中间层 =====
+
+fn mid_value() {
+    deep_value() + 1
+}
+
+MID_CONST = DEEP_CONST + "_mid"
+
+# ===== 内联 math 模块 =====
+
+fn add(a, b) { a + b }
+
+# ===== 测试代码 =====
+
+# 使用深层依赖的函数
+print(deep_value())
+print(DEEP_CONST)
+
+# 使用中间层的函数（内部调用了 deep_value）
+print(mid_value())
+print(MID_CONST)
+
+# 同时使用 math 模块的 add
+print(add(deep_value(), 1))

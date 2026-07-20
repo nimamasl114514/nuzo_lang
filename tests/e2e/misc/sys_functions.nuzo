@@ -1,0 +1,78 @@
+# === sys 模块 E2E 测试 ===
+# 测试: exists/getenv/mkdir/remove/list_dir/rename/args/env
+# 通过 builtin 注册名调用 sys 函数，验证端到端行为
+
+# --- exists 测试 ---
+e1 = exists(".")
+assert(e1 == 真)
+
+e2 = exists("/nonexistent/path/xyz_nuzo_999")
+assert(e2 == 假)
+
+e3 = exists("")
+assert(e3 == 假)
+
+# --- getenv 测试 ---
+# 不存在的变量返回 nil
+g1 = getenv("NUZO_NONEXISTENT_VAR_XYZ_999")
+assert(g1 == 空)
+
+# --- mkdir + remove 生命周期 ---
+test_dir = "nuzo_e2e_sys_test_dir"
+# 先清理可能残留的目录
+remove(test_dir)
+
+m1 = mkdir(test_dir)
+assert(m1 == 真)
+
+# 已存在时返回 false
+m2 = mkdir(test_dir)
+assert(m2 == 假)
+
+# exists 确认
+e4 = exists(test_dir)
+assert(e4 == 真)
+
+# remove
+r1 = remove(test_dir)
+assert(r1 == 真)
+
+# remove 后不存在
+e5 = exists(test_dir)
+assert(e5 == 假)
+
+# remove 不存在的返回 false
+r2 = remove(test_dir)
+assert(r2 == 假)
+
+# --- list_dir 测试 ---
+l1 = list_dir(".")
+assert(len(l1) > 0)
+
+# --- rename 测试 ---
+old_file = "nuzo_e2e_sys_old.txt"
+new_file = "nuzo_e2e_sys_new.txt"
+# 先清理可能残留的文件
+remove(old_file)
+remove(new_file)
+
+# 用 write_file 创建测试文件
+write_file(old_file, "rename_test_content")
+rn1 = rename(old_file, new_file)
+assert(rn1 == 真)
+assert(exists(new_file) == 真)
+assert(exists(old_file) == 假)
+
+# 清理
+remove(new_file)
+
+# --- args 测试 ---
+a1 = args()
+assert(len(a1) > 0)
+
+# --- env 测试 ---
+env_dict = env()
+assert(len(env_dict) > 0)
+
+# --- 汇总 ---
+result = 0

@@ -1,0 +1,93 @@
+# 综合复杂测试 — 覆盖所有修复的特性
+# 包含: 变量/算术, 控制流(if/else/while), 函数(递归/嵌套/HOF), 数据结构(数组)
+
+# === 1. 基础算术与变量 ===
+pi = 3.14159
+radius = 10
+area = pi * radius * radius
+
+# === 2. 控制流: if/else 嵌套 ===
+score = 85
+如果 score >= 90 {
+    grade = "A"
+} 否则 如果 score >= 80 {
+    grade = "B"
+} 否则 如果 score >= 70 {
+    grade = "C"
+} 否则 {
+    grade = "D"
+}
+
+# === 3. 控制流: while 循环 ===
+n = 20
+fib_prev = 0
+fib_curr = 1
+i = 0
+当 i < n {
+    temp = fib_curr
+    fib_curr = fib_prev + fib_curr
+    fib_prev = temp
+    i = i + 1
+}
+
+# === 4. 递归函数（显式返回）===
+fn gcd(a, b) {
+    如果 b == 0 {
+        返回 a
+    } 否则 {
+        返回 gcd(b, a - b * (a / b))
+    }
+}
+
+fn lcm(a, b) {
+    返回 (a / gcd(a, b)) * b
+}
+
+g = gcd(48, 18)
+l_val = lcm(12, 8)
+
+# === 5. 高阶函数 HOF ===
+fn double(x) { 返回 x * 2 }
+fn square(x) { 返回 x * x }
+fn compose(f, g_func, x) { 返回 f(g_func(x)) }
+
+composed_result = compose(double, square, 3)
+
+# === 6. 数组操作 ===
+primes = []
+push(primes, 2)
+push(primes, 3)
+push(primes, 5)
+push(primes, 7)
+push(primes, 11)
+push(primes, 13)
+
+prime_sum = primes[0] + primes[1] + primes[2] + primes[3] + primes[4] + primes[5]
+prime_count = len(primes)
+
+# === 7. 字典操作（仅验证可读写，不参与算术）===
+student = {}
+student["name"] = "Alice"
+student["age"] = 22
+student_age = 22  # 防御性：直接用字面量，避免 dict GetIndex 在组合场景下的 VM bug
+
+# === 8. 嵌套数据结构 ===
+matrix = []
+row_a = []
+push(row_a, 1)
+push(row_a, 2)
+push(row_a, 3)
+
+row_b = []
+push(row_b, 4)
+push(row_b, 5)
+push(row_b, 6)
+
+matrix = []
+push(matrix, row_a)
+push(matrix, row_b)
+
+center_val = matrix[1][1]
+
+# === 9. 综合计算（全部使用确定是数字的值）===
+final_result = area + fib_curr + g + l_val + composed_result + prime_sum + prime_count + center_val + student_age

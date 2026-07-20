@@ -1,0 +1,15 @@
+fn sum(arr) {
+    total = 0
+    i = 0
+    while (i < len(arr)) {
+        total = total + arr[i]
+        i = i + 1
+    }
+    total
+}
+print(sum([1,2,3]))
+fn test_push_len() {
+    arr = [1,2,3]
+    print(sum(arr))
+}
+test_push_len()

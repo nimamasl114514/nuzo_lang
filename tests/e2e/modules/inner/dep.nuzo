@@ -1,0 +1,8 @@
+# dep.nuzo — 深层依赖模块
+# 被 inner_module.nuzo 导入，间接被测试使用
+
+fn deep_value() {
+    999
+}
+
+DEEP_CONST = "deep"

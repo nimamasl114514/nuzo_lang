@@ -1,0 +1,76 @@
+# === Bug2 复现: 字典 GetIndex 返回 nil ===
+# 已知问题: dict["key"] 读取返回 nil
+
+# --- 场景1: 基本字典读写 ---
+d = {}
+d["age"] = 22
+val = d["age"]
+
+print("场景1 - 基本读写:")
+print("  设置 d['age'] = 22")
+print("  读取 d['age'] = ")
+print(val)
+println("  预期: 22, 实际如上")
+
+if val == 22 {
+    println("  ✅ PASS: 字典读取正常")
+} 否则 {
+    println("  ❌ FAIL: 字典读取返回错误值 (Bug 存在)")
+}
+
+# --- 场景2: 多次写入 ---
+d2 = {}
+d2["a"] = 10
+d2["b"] = 20
+d2["c"] = 30
+
+val_a = d2["a"]
+val_b = d2["b"]
+val_c = d2["c"]
+
+println("")
+println("场景2 - 多次写入:")
+print("  d2['a'] = ")
+print(val_a)
+print(", d2['b'] = ")
+print(val_b)
+print(", d2['c'] = ")
+println(val_c)
+
+# --- 场景3: 写入后覆盖 ---
+d3 = {}
+d3["x"] = 100
+d3["x"] = 200  # 覆盖
+
+val_x = d3["x"]
+
+println("")
+println("场景3 - 覆盖写入:")
+print("  d3['x'] = ")
+print(val_x)
+println("  预期: 200")
+
+# --- 场景4: GC 压力测试 ---
+d4 = {}
+
+# 先进行一些堆操作制造 GC 压力
+arr = []
+i = 0
+当 i < 50 {
+    arr[i] = i * 10
+    i = i + 1
+}
+
+# 现在操作字典
+d4["after_gc"] = 999
+val_gc = d4["after_gc"]
+
+println("")
+println("场景4 - GC 压力后:")
+print("  d4['after_gc'] = ")
+print(val_gc)
+println("  预期: 999")
+
+# --- 汇总 ---
+println("")
+println("=== Bug2 复现完成 ===")

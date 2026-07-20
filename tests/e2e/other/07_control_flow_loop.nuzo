@@ -1,0 +1,62 @@
+# === 07 控制流 - 循环 ===
+# 测试: while/loop/break/continue/for
+
+# --- while 循环 ---
+i = 0
+sum_while = 0
+当 i < 10 {
+    sum_while = sum_while + i
+    i = i + 1
+}
+# sum_while 预期: 45
+
+# --- loop + break ---
+count = 0
+loop {
+    count = count + 1
+    如果 count >= 5 {
+        跳出
+    }
+}
+# count 预期: 5
+
+# --- continue (跳过偶数) ---
+j = 0
+sum_odd = 0
+当 j < 10 {
+    j = j + 1
+    如果 j % 2 == 0 {
+        继续
+    }
+    sum_odd = sum_odd + j
+}
+# sum_odd 预期: 1+3+5+7+9 = 25
+
+# --- for 循环 (范围) ---
+sum_for = 0
+for k in 0..5 {
+    sum_for = sum_for + k
+}
+# sum_for 预期: 0+1+2+3+4 = 10
+
+# --- for 循环 (数组) ---
+arr = [10, 20, 30]
+sum_arr = 0
+for item in arr {
+    sum_arr = sum_arr + item
+}
+# sum_arr 预期: 60
+
+# --- 嵌套循环 ---
+n = 0
+当 n < 3 {
+    m = 0
+    当 m < 3 {
+        m = m + 1
+    }
+    n = n + 1
+}
+# n 预期: 3, m 预期: 3
+
+# --- 汇总 ---
+result = sum_while + count + sum_odd + sum_for + sum_arr + n

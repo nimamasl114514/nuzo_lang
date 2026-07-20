@@ -1,0 +1,12 @@
+[package]
+name = "nuzo_frontend"
+version.workspace = true
+edition.workspace = true
+description = "Lexer, parser, and AST for Nuzo"
+
+[dependencies]
+nuzo_values.workspace = true
+nuzo_core.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+web-time.workspace = true

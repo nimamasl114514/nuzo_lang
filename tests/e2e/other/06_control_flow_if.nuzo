@@ -1,0 +1,56 @@
+# === 06 控制流 - 条件分支 ===
+# 测试: if/else if/else/嵌套if
+
+# --- 简单 if ---
+x = 42
+如果 x > 50 {
+    big = 1
+} 否则 {
+    big = 0
+}
+# big 预期: 0
+
+# --- if/else if/else ---
+如果 x > 50 {
+    level = 3
+} 否则 如果 x > 30 {
+    level = 2
+} 否则 {
+    level = 1
+}
+# level 预期: 2
+
+# --- 嵌套 if ---
+score = 85
+如果 score >= 60 {
+    如果 score >= 90 {
+        grade = 4
+    } 否则 如果 score >= 80 {
+        grade = 3
+    } 否则 {
+        grade = 2
+    }
+} 否则 {
+    grade = 1
+}
+# grade 预期: 3
+
+# --- if 无 else ---
+flag = 真
+如果 flag {
+    triggered = 1
+}
+# triggered 预期: 1
+
+# --- 条件表达式 ---
+a = 10
+b = 20
+如果 a < b {
+    min_val = a
+} 否则 {
+    min_val = b
+}
+# min_val 预期: 10
+
+# --- 汇总 ---
+result = big + level + grade + triggered + min_val

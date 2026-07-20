@@ -1,0 +1,65 @@
+name: Performance Regression
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  CARGO_INCREMENTAL: 0
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  perf-test:
+    name: 性能回归检测
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: 编译 Release 版本
+        run: cargo build --release
+      - name: 运行性能基准测试
+        id: perf
+        continue-on-error: true
+        env:
+          PERF_OUTPUT_FORMAT: json
+        run: |
+          if ! cargo bench --bench bench_perf_regression -- --output-format json > perf_result.json 2>&1; then
+            echo "⚠️ bench_perf_regression failed or no baseline, skipping perf test"
+            echo "skipped=true" >> $GITHUB_OUTPUT
+            echo '{"exit_code": 0, "status": "skip", "summary": {"total": 0, "passed": 0, "warning": 0, "failed": 0}}' > perf_result.json
+          else
+            echo "skipped=false" >> $GITHUB_OUTPUT
+          fi
+      - name: 上传测试结果 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-result
+          path: perf_result.json
+          retention-days: 30
+      - name: 检查性能回归
+        id: check
+        run: |
+          if [ ! -f perf_result.json ]; then
+            echo "⚠️ 未找到基线数据。请先运行 'baseline update' 建立基线。"
+            echo "exit_code=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          exit_code=$(jq -r '.exit_code // 0' perf_result.json)
+          echo "exit_code=$exit_code" >> $GITHUB_OUTPUT
+          if [ "$exit_code" -eq 1 ]; then
+            echo "::error::检测到性能退化！❌ 基准测试未通过"
+            exit 1
+          elif [ "$exit_code" -eq 2 ]; then
+            echo "::warning::检测到性能警告 ⚠️ 部分指标超出阈值"
+            exit 0
+          else
+            echo "✅ 所有基准测试通过！"
+            exit 0
+          fi

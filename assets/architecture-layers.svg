@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <linearGradient id="layerGrad0" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#312e81"/><stop offset="100%" stop-color="#4338ca"/>
+    </linearGradient>
+    <linearGradient id="layerGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3730a3"/><stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="layerGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1e40af"/><stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="layerGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0e7490"/><stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="layerGrad4" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#15803d"/><stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="layerGrad5" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a16207"/><stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+    <linearGradient id="layerGrad6" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c2410c"/><stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="layerGrad7" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9f1239"/><stop offset="100%" stop-color="#e11d48"/>
+    </linearGradient>
+
+    <marker id="arrowDown" viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="40" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-size="28" font-weight="700" fill="#0f172a" text-anchor="middle">
+    Nuzo Lang — Layered Architecture (L0 → L7)
+  </text>
+  <text x="600" y="68" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-size="16" font-weight="400" fill="#64748b" text-anchor="middle">
+    Strict unidirectional dependency: lower layers cannot depend on higher
+  </text>
+
+  <!-- L0 -->
+  <g>
+    <rect x="100" y="100" width="1000" height="60" rx="8" fill="url(#layerGrad0)"/>
+    <text x="120" y="138" font-family="ui-monospace, monospace" font-size="18" font-weight="700" fill="#ffffff">L0</text>
+    <text x="160" y="138" font-family="ui-monospace, monospace" font-size="16" fill="#ffffff">Foundation</text>
+    <text x="380" y="138" font-family="ui-monospace, monospace" font-size="15" fill="#f1f5f9">nuzo_proc_core · nuzo_config · nuzo_class_macros</text>
+  </g>
+  <line x1="600" y1="160" x2="600" y2="190" stroke="#64748b" stroke-width="2" marker-end="url(#arrowDown)"/>
+
+  <!-- L1 -->
+  <g>
+    <rect x="100" y="190" width="1000" height="60" rx="8" fill="url(#layerGrad1)"/>
+    <text x="120" y="228" font-family="ui-monospace, monospace" font-size="18" font-weight="700" fill="#ffffff">L1</text>
+    <text x="160" y="228" font-family="ui-monospace, monospace" font-size="16" fill="#ffffff">Core</text>
+    <text x="380" y="228" font-family="ui-monospace, monospace" font-size="15" fill="#f1f5f9">nuzo_core · nuzo_proc · nuzo_class</text>
+  </g>
+  <line x1="600" y1="250" x2="600" y2="280" stroke="#64748b" stroke-width="2" marker-end="url(#arrowDown)"/>
+
+  <!-- L2 -->
+  <g>
+    <rect x="100" y="280" width="1000" height="60" rx="8" fill="url(#layerGrad2)"/>
+    <text x="120" y="318" font-family="ui-monospace, monospace" font-size="18" font-weight="700" fill="#ffffff">L2</text>
+    <text x="160" y="318" font-family="ui-monospace, monospace" font-size="16" fill="#ffffff">Runtime Primitives</text>
+    <text x="380" y="318" font-family="ui-monospace, monospace" font-size="15" fill="#f1f5f9">nuzo_values (NaN-tagged) · nuzo_opcode · nuzo_signal</text>
+  </g>
+  <line x1="600" y1="340" x2="600" y2="370" stroke="#64748b" stroke-width="2" marker-end="url(#arrowDown)"/>
+
+  <!-- L3 -->
+  <g>
+    <rect x="100" y="370" width="1000" height="60" rx="8" fill="url(#layerGrad3)"/>
+    <text x="120" y="408" font-family="ui-monospace, monospace" font-size="18" font-weight="700" fill="#ffffff">L3</text>
+    <text x="160" y="408" font-family="ui-monospace, monospace" font-size="16" fill="#ffffff">Language</text>
+    <text x="380" y="408" font-family="ui-monospace, monospace" font-size="15" fill="#f1f5f9">nuzo_bytecode · nuzo_frontend (Lexer/Parser/AST) · nuzo_helpers</text>
+  </g>
+  <line x1="600" y1="430" x2="600" y2="460" stroke="#64748b" stroke-width="2" marker-end="url(#arrowDown)"/>
+
+  <!-- L4 -->
+  <g>
+    <rect x="100" y="460" width="1000" height="60" rx="8" fill="url(#layerGrad4)"/>
+    <text x="120" y="498" font-family="ui-monospace, monospace" font-size="18" font-weight="700" fill="#ffffff">L4</text>
+    <text x="160" y="498" font-family="ui-monospace, monospace" font-size="16" fill="#ffffff">Intermediate</text>
+    <text x="380" y="498" font-family="ui-monospace, monospace" font-size="15" fill="#f1f5f9">nuzo_ir · nuzo_error</text>
+  </g>
+  <line x1="600" y1="520" x2="600" y2="550" stroke="#64748b" stroke-width="2" marker-end="url(#arrowDown)"/>
+
+  <!-- L5 -->
+  <g>
+    <rect x="100" y="550" width="1000" height="60" rx="8" fill="url(#layerGrad5)"/>
+    <text x="120" y="588" font-family="ui-monospace, monospace" font-size="18" font-weight="700" fill="#ffffff">L5</text>
+    <text x="160" y="588" font-family="ui-monospace, monospace" font-size="16" fill="#ffffff">Compile + Execute</text>
+    <text x="380" y="588" font-family="ui-monospace, monospace" font-size="15" fill="#f1f5f9">nuzo_compiler (AST→Bytecode) · nuzo_vm (Register VM + GC + JIT + MLIC)</text>
+  </g>
+  <line x1="600" y1="610" x2="600" y2="640" stroke="#64748b" stroke-width="2" marker-end="url(#arrowDown)"/>
+
+  <!-- L6 -->
+  <g>
+    <rect x="100" y="640" width="1000" height="60" rx="8" fill="url(#layerGrad6)"/>
+    <text x="120" y="678" font-family="ui-monospace, monospace" font-size="18" font-weight="700" fill="#ffffff">L6</text>
+    <text x="160" y="678" font-family="ui-monospace, monospace" font-size="16" fill="#ffffff">Facade</text>
+    <text x="380" y="678" font-family="ui-monospace, monospace" font-size="15" fill="#f1f5f9">nuzo_api</text>
+  </g>
+  <line x1="600" y1="700" x2="600" y2="730" stroke="#64748b" stroke-width="2" marker-end="url(#arrowDown)"/>
+
+  <!-- L7 -->
+  <g>
+    <rect x="100" y="730" width="1000" height="60" rx="8" fill="url(#layerGrad7)"/>
+    <text x="120" y="768" font-family="ui-monospace, monospace" font-size="18" font-weight="700" fill="#ffffff">L7</text>
+    <text x="160" y="768" font-family="ui-monospace, monospace" font-size="16" fill="#ffffff">CLI</text>
+    <text x="380" y="768" font-family="ui-monospace, monospace" font-size="15" fill="#f1f5f9">nuzo_run (run · debug · repl · auto · bench · test)</text>
+  </g>
+
+  <!-- Side legend -->
+  <text x="40" y="420" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-size="13" font-weight="500" fill="#64748b" text-anchor="middle"
+        transform="rotate(-90 40 420)">
+    foundation → application
+  </text>
+</svg>

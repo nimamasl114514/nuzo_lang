@@ -1,0 +1,194 @@
+# =========================================================================
+# Nuzo Lang .gitignore — 项目规范模板
+#
+# 规则：
+#   1. 具体优于通例（优先列出具体文件/目录）
+#   2. 不使用 *.txt / *.py 等宽泛排除（用白名单）
+#   3. 注释说明每条规则的"为什么"
+#   4. 分区清晰：Build / Tool / Debug / Generated
+#
+# 修改后运行: just audit 验证
+# =========================================================================
+
+# --- Build artifacts ---
+/target/
+*.pdb
+/*.exe
+/*.dll
+/*.so
+/*.dylib
+
+# --- Rust specific ---
+Cargo.lock          # 工作区项目不提交 lock（CI 统一生成）
+**/*.rs.bk           # IDE 备份文件
+
+# --- Vendor dependencies (managed by `just clean-vendor`) ---
+/vendor/
+/console/
+
+# --- Debug / Diagnostic (never commit) ---
+.dbg/
+*.dbg
+debug_*.md
+debug_*.rs.bak
+runtime-diag.log
+compile-diag.log
+register-oob-nil-bug.env
+
+# --- Regression testing cache ---
+.regression_cache/
+failed.json
+
+# --- Generated documentation ---
+# CALL_GRAPH.md 由 lefthook pre-commit 自动生成并暂存，需要提交到 git
+# 以便 CI 检查同步状态
+
+# --- Generated test stubs (dead code, harness removed) ---
+# sync_tests.py 生成的测试桩"待办清单"，harness generated_stubs.rs 已移除，
+# 提交此文件只会制造 358KB 噪声。需要查看未覆盖 pub fn 时用 `just sync-tests`。
+tests/generated/auto_sync_tests.inc
+
+# --- Test runner transient output (0-byte leftovers) ---
+test_summary.txt
+
+# --- Sandbox (temp test files) ---
+sandbox/
+
+# --- OS generated files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+nul                  # Windows reserved name; some toolchains recreate it
+*.swp
+*.swo
+*~
+
+# --- IDE / Editor ---
+.idea/
+.vscode/*.user.json  # 保留共享 settings.json，忽略用户特定配置
+*.code-workspace
+
+# --- AI Agent / AI Coding Tools ---
+# Trae IDE
+.trae/
+.trae-cn/
+# Cursor IDE
+.cursor/
+.cursorrules
+*.mdc
+# Windsurf
+.windsurf/
+# GitHub Copilot
+.copilot/
+.github/copilot-instructions.md
+# Claude / Anthropic
+.claude/
+CLAUDE.md
+# Aider
+.aider*
+# Roo Code
+.roo/
+.roomodes
+# CodeBuddy
+.codebuddy/
+# Augment Code
+.augment/
+# WorkBuddy
+.workbuddy/
+# MCP config
+mcp.json
+.mcp.json
+# Agent instructions / memory
+AGENTS.md
+.aicontext/
+.ai/
+
+# --- Python (only temp scripts, NOT all .py) ---
+__pycache__/
+*.pyc
+.cached_*
+
+# --- Hardcoded test data (internal use) ---
+# hardcode/ 已迁移到 crates/nuzo_proc_core/src/hardcode/，不再需要忽略
+
+# --- Benchmark results (machine-specific) ---
+benchmarks/results/
+
+# --- VS Code extension build artifacts ---
+editors/vscode/node_modules/
+editors/vscode/out/
+editors/vscode/.vscode-test/
+editors/vscode/*.vsix
+# --- CI / build output logs ---
+ci_log_*.txt
+clippy_output.txt
+
+# =========================================================================
+# Sensitive files — NEVER COMMIT
+# 防呆设计：检测到敏感文件时 .gitignore 阻止追踪，.lefthook.yml 阻止提交
+# 例外：.env.example 是模板文件，允许提交
+# =========================================================================
+.env
+.env.*
+!.env.example
+credentials.json
+credentials.*
+*.pem
+*.key
+secrets/
+**/secrets/
+*.p12
+*.pfx
+
+# =========================================================================
+# AI-related files — DO NOT COMMIT
+# 仅作用于 nuzo_lang 项目，不影响根目录或其他模块
+# =========================================================================
+
+# --- AI Model files ---
+*.onnx
+*.pt
+*.pth
+*.safetensors
+*.gguf
+*.ggml
+*.h5
+*.pb
+*.tflite
+*.engine
+
+# --- AI Training / Fine-tuning data ---
+*.tfrecord
+*.idx
+*.vec
+*.emb
+
+# --- AI Model configs ---
+*.aiconfig
+ai_config.json
+ai_config.yaml
+
+# --- AI-generated intermediate products ---
+*.ai.gen.*
+*.llm_gen.*
+*.copilot_gen.*
+
+# --- AI cache directories ---
+.ai_cache/
+.llm_cache/
+.embedding_cache/
+.rag_cache/
+
+# --- Vector databases ---
+chroma_db/
+vectordb/
+faiss_index/
+.qdrant/
+
+# --- Prompt templates ---
+ai_prompt*
+llm_prompt*
+
+# --- AI Agent traces / logs ---
+*.agent_trace.log
+*.llm_trace.log

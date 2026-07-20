@@ -1,0 +1,14 @@
+# GC + Frame Paging combined stress test
+# Deep recursion (triggers spill/restore) + closure creation per level (GC pressure)
+
+fn make_pair(n) {
+    if n == 0 {
+        return (0, 1)
+    }
+    prev = make_pair(n - 1)
+    return (prev[0] + n, prev[1] * n)
+}
+
+result = make_pair(250)
+print(result[0])
+print(result[1])

@@ -1,0 +1,151 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // ===== 基础编译任务 =====
+        {
+            "label": "cargo build",
+            "type": "shell",
+            "command": "cargo",
+            "args": ["build"],
+            "group": { "kind": "build", "isDefault": true },
+            "presentation": { "reveal": "silent", "focus": false, "panel": "shared" }
+        },
+        {
+            "label": "cargo check",
+            "type": "shell",
+            "command": "cargo",
+            "args": ["check"],
+            "group": "build",
+            "presentation": { "reveal": "silent", "focus": false }
+        },
+        {
+            "label": "cargo test",
+            "type": "shell",
+            "command": "cargo",
+            "args": ["test"],
+            "group": { "kind": "test", "isDefault": true }
+        },
+        {
+            "label": "cargo clippy",
+            "type": "shell",
+            "command": "cargo",
+            "args": ["clippy", "--", "-W", "clippy::all"],
+            "group": "none"
+        },
+        {
+            "label": "cargo nextest (parallel)",
+            "type": "shell",
+            "command": "cargo",
+            "args": ["nextest", "run", "--all-features"],
+            "group": "test"
+        },
+
+        // ===== 自动化同步任务（改动一处，自动同步）=====
+        {
+            "label": "sync: 一键同步（callgraph + fmt）",
+            "type": "shell",
+            "command": "just",
+            "args": ["sync"],
+            "problemMatcher": ["$rustc"],
+            "presentation": { "reveal": "always", "focus": false, "panel": "shared" }
+        },
+        {
+            "label": "callgraph: 重新生成 CALL_GRAPH.md",
+            "type": "shell",
+            "command": "just",
+            "args": ["callgraph"],
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": false, "panel": "shared" }
+        },
+        {
+            "label": "check-all: 全量检查（check + test + lint + fmt）",
+            "type": "shell",
+            "command": "just",
+            "args": ["check-all"],
+            "problemMatcher": ["$rustc"],
+            "presentation": { "reveal": "always", "focus": false, "panel": "shared" }
+        },
+        {
+            "label": "audit: 安全审计",
+            "type": "shell",
+            "command": "just",
+            "args": ["audit"],
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": false, "panel": "shared" }
+        },
+
+        // ===== Watch 模式（文件变化自动检查）=====
+        {
+            "label": "watch: 文件变化自动 check（cargo-watch）",
+            "type": "shell",
+            "command": "cargo",
+            "args": ["watch", "-x", "check --workspace"],
+            "isBackground": true,
+            "problemMatcher": ["$rustc-watch"],
+            "presentation": { "reveal": "always", "focus": false, "panel": "dedicated" }
+        },
+        {
+            "label": "watch: 文件变化自动 check + test",
+            "type": "shell",
+            "command": "cargo",
+            "args": ["watch", "-x", "check --workspace", "-x", "test --workspace --lib"],
+            "isBackground": true,
+            "problemMatcher": ["$rustc-watch"],
+            "presentation": { "reveal": "always", "focus": false, "panel": "dedicated" }
+        },
+        {
+            "label": "watch: 文件变化自动 clippy",
+            "type": "shell",
+            "command": "cargo",
+            "args": ["watch", "-x", "clippy --workspace -- -D warnings"],
+            "isBackground": true,
+            "problemMatcher": ["$rustc-watch"],
+            "presentation": { "reveal": "always", "focus": false, "panel": "dedicated" }
+        },
+        {
+            "label": "watch: PowerShell 脚本（check + test + callgraph）",
+            "type": "shell",
+            "command": "powershell",
+            "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/watch.ps1"],
+            "isBackground": true,
+            "problemMatcher": ["$rustc"],
+            "presentation": { "reveal": "always", "focus": false, "panel": "dedicated" }
+        },
+
+        // ===== 文档与覆盖率 =====
+        {
+            "label": "doc: 生成 Rust 文档",
+            "type": "shell",
+            "command": "just",
+            "args": ["doc"],
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": false, "panel": "shared" }
+        },
+        {
+            "label": "coverage: 生成测试覆盖率",
+            "type": "shell",
+            "command": "just",
+            "args": ["coverage"],
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": false, "panel": "shared" }
+        },
+
+        // ===== Git Hooks 管理 =====
+        {
+            "label": "lefthook: 安装 Git Hooks",
+            "type": "shell",
+            "command": "lefthook",
+            "args": ["install"],
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "focus": false, "panel": "shared" }
+        },
+        {
+            "label": "lefthook: 运行 pre-commit（手动触发）",
+            "type": "shell",
+            "command": "lefthook",
+            "args": ["run", "pre-commit"],
+            "problemMatcher": ["$rustc"],
+            "presentation": { "reveal": "always", "focus": false, "panel": "shared" }
+        }
+    ]
+}

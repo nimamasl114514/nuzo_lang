@@ -1,0 +1,23 @@
+# 测试简单幂函数
+
+# 简单迭代版本
+fn simple_pow(base, exp) {
+    result = 1
+    i = 0
+    当 i < exp {
+        result = result * base
+        i = i + 1
+    }
+    返回 result
+}
+
+println("测试简单幂函数:")
+r1 = simple_pow(2, 10)
+print("  simple_pow(2, 10) = ")
+print(r1)
+println(" (预期: 1024)")
+
+r2 = simple_pow(3, 5)
+print("  simple_pow(3, 5) = ")
+print(r2)
+println(" (预期: 243)")

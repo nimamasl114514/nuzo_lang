@@ -1,0 +1,55 @@
+# 诊断测试: 纯数值版本
+
+# 函数定义 (10个)
+fn d1() { 0 }
+fn d2() { 0 }
+fn d3() { 0 }
+fn d4() { 0 }
+fn d5() { 0 }
+
+# 数组创建+复制100次
+arr = []
+i = 0
+while i < 50 {
+    push(arr, i)
+    i = i + 1
+}
+
+copies = 0
+j = 0
+while j < 50 {
+    new_arr = []
+    k = 0
+    while k < arr.length {
+        push(new_arr, arr[k])
+        k = k + 1
+    }
+    copies = copies + 1
+    j = j + 1
+}
+
+# 嵌套循环: 50*50*10 = 25,000次操作
+nested = 0
+x = 0
+while x < 50 {
+    y = 0
+    while y < 50 {
+        z = 0
+        while z < 10 {
+            nested = nested + 1
+            z = z + 1
+        }
+        y = y + 1
+    }
+    x = x + 1
+}
+
+# 递归深度100
+fn rec(n) {
+    if n <= 0 { return 0 }
+    rec(n - 1) + 1
+}
+depth = rec(100)
+
+# 汇总: copies(50) + nested(25000) + depth(100) = 25150
+copies + nested + depth

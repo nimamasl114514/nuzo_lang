@@ -1,0 +1,33 @@
+# === 字符串属性访问修复验证 ===
+
+# --- Test: string.length / string.len ---
+s = "Hello, World!"
+l1 = s.length
+print(l1)
+
+l2 = s.len
+print(l2)
+
+# --- Test: 中文字符串 ---
+cn = "你好世界 Nuzo"
+l3 = cn.length
+print(l3)
+
+l4 = cn.len
+print(l4)
+
+# --- Test: 空字符串 ---
+empty = ""
+l5 = empty.len
+print(l5)
+
+# --- Test: 与 len() 函数对比 ---
+s2 = "Test"
+prop_len = s2.length
+func_len = len(s2)
+print(prop_len)
+print(func_len)
+
+# 汇总
+result = l1 + l2 + l3 + l4 + l5 + prop_len + func_len
+print(result)

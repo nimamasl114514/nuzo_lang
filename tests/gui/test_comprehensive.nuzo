@@ -1,0 +1,24 @@
+# Comprehensive GUI test
+count = 0
+name = ""
+
+fn render() {
+    heading("Nuzo GUI Test")
+
+    separator()
+
+    label("Counter:")
+    if button("+1") { count = count + 1 }
+    label(str(count))
+
+    separator()
+
+    label("Input:")
+    name = input(name)
+
+    separator()
+
+    progress(0.5)
+
+    if button("Quit") { quit() }
+}

@@ -1,0 +1,51 @@
+# === 13 字符串 ===
+# 测试: 拼接/长度/转义序列
+
+# --- 字符串字面量 ---
+s1 = "Hello"
+s2 = "World"
+
+# --- 字符串拼接 ---
+greeting = s1 + " " + s2  # 预期: "Hello World"
+
+# --- 字符串长度 ---
+len_hello = len("Hello")   # 预期: 5
+len_empty = len("")        # 预期: 0
+
+# --- 转义序列: 换行 ---
+newline_str = "a\nb"       # 预期: "a\nb" (3字符: a, LF, b)
+len_newline = len(newline_str)  # 预期: 3
+
+# --- 转义序列: 制表符 ---
+tab_str = "x\ty"           # 预期: "x\ty" (3字符)
+len_tab = len(tab_str)     # 预期: 3
+
+# --- 转义序列: 反斜杠 ---
+backslash = "a\\b"         # 预期: "a\b" (3字符)
+len_bs = len(backslash)    # 预期: 3
+
+# --- 转义序列: 双引号 ---
+quote_str = "say \"hi\""   # 预期: 'say "hi"' (8字符)
+len_quote = len(quote_str) # 预期: 8
+
+# --- 转义序列: 空字符 ---
+null_str = "a\0b"          # 预期: 3字符
+len_null = len(null_str)   # 预期: 3
+
+# --- 转义序列: Unicode ---
+unicode_str = "\u{41}"     # 预期: "A" (1字符)
+len_unicode = len(unicode_str)  # 预期: 1
+
+# --- 字符串递归拼接 ---
+fn repeat_str(s, n) {
+    if n <= 0 {
+        ""
+    } else {
+        s + repeat_str(s, n - 1)
+    }
+}
+abc3 = repeat_str("abc", 3)  # 预期: "abcabcabc"
+len_abc3 = len(abc3)         # 预期: 9
+
+# --- 汇总 ---
+result = len_hello + len_empty + len_newline + len_tab + len_bs + len_quote + len_null + len_unicode + len_abc3

@@ -1,0 +1,65 @@
+# math_adv.nuzo — 高级数学模块
+# 依赖基础 math 模块（但这里我们自包含以避免循环）
+
+# 绝对值
+fn abs(x) {
+    if (x < 0) { -x } else { x }
+}
+
+# 幂运算（整数指数，非负）
+fn pow(base, exp) {
+    result = 1
+    i = 0
+    while (i < exp) {
+        result = result * base
+        i = i + 1
+    }
+    result
+}
+
+# 判断是否为偶数
+fn is_even(n) { n % 2 == 0 }
+
+# 判断是否为奇数
+fn is_odd(n) { n % 2 != 0 }
+
+# 求和（可变参数模拟：接受数组）
+fn sum(arr) {
+    total = 0
+    i = 0
+    while (i < arr.len()) {
+        total = total + arr[i]
+        i = i + 1
+    }
+    total
+}
+
+# 求平均值
+fn average(arr) {
+    if (arr.len() == 0) { return 0 }
+    sum(arr) / arr.len()
+}
+
+# 最大值
+fn max_arr(arr) {
+    if (arr.len() == 0) { return 0 }
+    m = arr[0]
+    i = 1
+    while (i < arr.len()) {
+        if (arr[i] > m) { m = arr[i] }
+        i = i + 1
+    }
+    m
+}
+
+# 最小值
+fn min_arr(arr) {
+    if (arr.len() == 0) { return 0 }
+    m = arr[0]
+    i = 1
+    while (i < arr.len()) {
+        if (arr[i] < m) { m = arr[i] }
+        i = i + 1
+    }
+    m
+}

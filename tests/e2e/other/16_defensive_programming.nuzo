@@ -1,0 +1,53 @@
+# === 16 防御性编程 ===
+# 测试: 安全除法/类型检查/越界保护/错误恢复
+
+# --- 安全除法 (避免除零) ---
+fn safe_div(a, b) {
+    如果 b == 0 {
+        返回 0
+    } 否则 {
+        返回 a / b
+    }
+}
+safe1 = safe_div(10, 2)   # 预期: 5
+safe2 = safe_div(10, 0)   # 预期: 0
+
+# --- 类型安全检查 ---
+fn safe_add(a, b) {
+    如果 type_of(a) == 1 and type_of(b) == 1 {
+        返回 a + b
+    } 否则 {
+        返回 0
+    }
+}
+safe3 = safe_add(3, 4)         # 预期: 7
+safe4 = safe_add("x", 4)       # 预期: 0
+
+# --- 越界安全检查 ---
+fn safe_index(arr, idx) {
+    如果 idx >= 0 and idx < len(arr) {
+        返回 arr[idx]
+    } 否则 {
+        返回 0
+    }
+}
+test_arr = [10, 20, 30]
+safe5 = safe_index(test_arr, 1)   # 预期: 20
+safe6 = safe_index(test_arr, 99)  # 预期: 0
+
+# --- 错误恢复模式 ---
+fn robust_compute(x) {
+    如果 x == 0 {
+        返回 0
+    }
+    如果 type_of(x) != 1 {
+        返回 0
+    }
+    返回 100 / x
+}
+safe7 = robust_compute(5)    # 预期: 20
+safe8 = robust_compute(0)    # 预期: 0
+safe9 = robust_compute("x")  # 预期: 0
+
+# --- 汇总 ---
+result = safe1 + safe2 + safe3 + safe4 + safe5 + safe7 + safe8 + safe9

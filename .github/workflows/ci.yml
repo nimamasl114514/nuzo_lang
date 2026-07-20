@@ -1,0 +1,167 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  CARGO_INCREMENTAL: 0
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+  RUST_MIN_STACK: 8388608
+
+jobs:
+  fmt:
+    name: Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - run: just fmt-check
+
+  clippy:
+    name: Clippy (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --all-targets --workspace -- -D warnings
+
+  test:
+    name: Test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: just test
+
+  e2e:
+    name: E2E (.nuzo scripts)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build nuzo_run CLI
+        run: cargo build --release -p nuzo_run
+      - name: Run e2e .nuzo scripts
+        run: |
+          set -e
+          EXE=target/release/nuzo_run
+          SCRIPTS=(
+            tests/e2e/other/01_basic.nuzo
+            tests/e2e/other/02_arithmetic.nuzo
+            tests/e2e/other/06_control_flow_if.nuzo
+            tests/e2e/other/08_functions.nuzo
+            tests/e2e/other/13_strings.nuzo
+            tests/e2e/other/15_chinese_keywords.nuzo
+          )
+          for s in "${SCRIPTS[@]}"; do
+            echo "::group::Running $s"
+            "$EXE" "$s"
+            echo "::endgroup::"
+          done
+
+  msrv:
+    name: MSRV Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Check MSRV
+        run: |
+          MSRV=$(python3 -c "import tomllib; print(tomllib.load(open('Cargo.toml','rb'))['workspace']['package'].get('rust-version','1.88'))" 2>/dev/null || grep -oP 'rust-version\s*=\s*"\K[^"]+' Cargo.toml || echo "1.88")
+          echo "MSRV: $MSRV"
+          rustup install $MSRV
+          rustup default $MSRV
+          just check-lib
+
+  callgraph-sync:
+    name: CALL_GRAPH sync check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout nuzo_callgraph tool
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/nuzo_callgraph
+          path: nuzo_callgraph
+      - uses: taiki-e/install-action@just
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Generate CALL_GRAPH.md
+        # 直接用 cargo run 调用 nuzo_callgraph，不依赖 justfile（justfile 查找 ../nuzo_callgraph，
+        # 但 actions/checkout@v4 不允许 checkout 到工作目录之外，所以 checkout 到子目录）。
+        # 版本号提取逻辑与 justfile callgraph 命令保持一致。
+        # 追加空 [workspace] 表到 nuzo_callgraph/Cargo.toml，避免 cargo 把它误认为
+        # nuzo_lang workspace 的成员（"current package believes it's in a workspace when it's not"）。
+        run: |
+          printf '\n[workspace]\n' >> nuzo_callgraph/Cargo.toml
+          ver=$(grep '^version = "' Cargo.toml | head -n1 | sed -E 's/^version = "([^"]+)".*/\1/')
+          if [ -z "$ver" ]; then ver="0.0.0"; fi
+          cargo run --manifest-path nuzo_callgraph/Cargo.toml -- \
+            --project . \
+            --output CALL_GRAPH.md \
+            --format markdown --visibility pub-super --workspace \
+            --name "Nuzo Lang" --version "$ver"
+      - name: Check no diff
+        run: |
+          if [[ -n "$(git diff --stat CALL_GRAPH.md)" ]]; then
+            echo "CALL_GRAPH.md is out of sync. Run 'just callgraph' locally and commit."
+            git diff CALL_GRAPH.md
+            exit 1
+          fi
+
+  bench:
+    name: Benchmarks (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]  # 只在 Linux 跑 benches 节省资源
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true  # 性能基准不阻断 PR
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: just test-bench
+
+  test-shard:
+    name: Test Shard ${{ matrix.shard }}/${{ matrix.total }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        shard: [0, 1, 2, 3]
+        total: [4]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: just test-shard ${{ matrix.shard }} ${{ matrix.total }}

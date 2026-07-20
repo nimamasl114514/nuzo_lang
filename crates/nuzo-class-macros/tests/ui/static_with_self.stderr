@@ -1,0 +1,7 @@
+error: #[static_method] must not take `self`
+ --> tests/ui/static_with_self.rs:6:5
+  |
+6 |     #[static_method]
+  |     ^^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `static_method` (in Nightly builds, run with -Z macro-backtrace for more info)

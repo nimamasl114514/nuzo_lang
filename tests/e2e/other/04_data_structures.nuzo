@@ -1,0 +1,42 @@
+# 04 数据结构 - 数组与字典
+# 测试: 数组创建/访问/修改、字典操作
+
+# 数组基本操作 (用 push 追加)
+arr = []
+push(arr, 100)
+push(arr, 200)
+push(arr, 300)
+push(arr, 400)
+push(arr, 500)
+
+arr_sum = arr[0] + arr[1] + arr[2] + arr[3] + arr[4]
+arr_len = len(arr)
+
+# 字典基本操作
+dict = {}
+dict["name"] = "Nuzo"
+dict["version"] = 1.0
+dict["year"] = 2026
+
+name_val = dict["name"]
+version_val = dict["version"]
+
+# 嵌套数据结构
+matrix = []
+row1 = []
+push(row1, 1)
+push(row1, 2)
+push(row1, 3)
+
+row2 = []
+push(row2, 4)
+push(row2, 5)
+push(row2, 6)
+
+matrix = []
+push(matrix, row1)
+push(matrix, row2)
+
+center = matrix[1][1]
+
+result = arr_sum + arr_len + center

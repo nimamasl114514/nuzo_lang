@@ -1,0 +1,20 @@
+# 测试非递归函数
+
+fn add(a, b) {
+    返回 a + b
+}
+
+fn simple_conditional(n) {
+    result = 0
+    如果 n > 0 {
+        result = n
+    }
+    返回 result
+}
+
+println("测试非递归函数:")
+r1 = add(3, 4)
+println("add(3, 4) = " + r1 + " (预期: 7)")
+
+r2 = simple_conditional(5)
+println("simple_conditional(5) = " + r2 + " (预期: 5)")

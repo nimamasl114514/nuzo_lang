@@ -1,0 +1,40 @@
+# release.toml — cargo-release 配置
+# 文档: https://github.com/crate-ci/cargo-release
+#
+# 用法:
+#   cargo release patch --dry-run  # 预览
+#   cargo release patch --execute  # 执行
+#
+# 适用于 Nuzo Lang workspace（所有 crate 共享 workspace.package.version）。
+# 兼容性策略遵循项目规则：L0-L3 等级，SemVer MAJOR.MINOR.PATCH。
+
+# 不发布到 crates.io（私有项目）
+publish = false
+
+# 发布前检查
+pre-release-replacements = [
+    # 更新 CHANGELOG.md 中的 [Unreleased] 为新版本
+    { file = "CHANGELOG.md", search = "## \\[Unreleased\\]", replace = "## [{{version}}] - {{date}}" },
+    # 在 [Unreleased] 下方插入新的空段落
+    { file = "CHANGELOG.md", search = "## \\[{{version}}\\] - {{date}}", replace = "## [Unreleased]\n\n## [{{version}}] - {{date}}" },
+]
+
+# 发布前运行检查
+pre-release-commit-message = "release: v{{version}}"
+
+# 发布后打 tag
+tag-prefix = "v"
+tag-name = "v{{version}}"
+tag-message = "Release v{{version}}"
+
+# 发布后提交
+post-release-commit-message = "bump: 开始下一个开发周期"
+
+# 允许在 workspace 根目录运行
+enable-features = []
+
+# 不推送到远程（手动推送）
+push = false
+
+# 不创建 GitHub Release（手动创建）
+# 如需自动创建，安装 cargo-release 的 github 特性

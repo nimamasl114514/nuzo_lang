@@ -1,0 +1,9 @@
+result = 1 + 2 * 3
+x = 42
+y = x + 8
+a = 100 - 25
+b = a * 3
+c = b / 5
+complex = c + 10
+result = complex + y
+print(result)

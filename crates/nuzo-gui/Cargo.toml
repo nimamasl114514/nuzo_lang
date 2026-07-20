@@ -1,0 +1,25 @@
+[package]
+name = "nuzo_gui"
+version.workspace = true
+edition.workspace = true
+description = "Nuzo Lang - egui-based GUI standard library"
+
+[[bin]]
+name = "nuzo_gui"
+path = "src/bin/nuzo_gui.rs"
+
+[dependencies]
+nuzo_core.workspace = true
+nuzo_values.workspace = true
+nuzo_helpers.workspace = true
+nuzo_vm.workspace = true
+nuzo_compiler.workspace = true
+nuzo_bytecode.workspace = true
+nuzo_error.workspace = true
+nuzo_signal.workspace = true
+nuzo_frontend.workspace = true
+nuzo_ir.workspace = true
+nuzo_config.workspace = true
+nuzo_run.workspace = true
+egui = "0.29"
+eframe = "0.29"

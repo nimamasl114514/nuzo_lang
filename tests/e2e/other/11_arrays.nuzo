@@ -1,0 +1,50 @@
+# === 11 数组 ===
+# 测试: 创建/索引/赋值/length/push/扩容/Range
+
+# --- 数组字面量 ---
+arr = [10, 20, 30, 40, 50]
+first = arr[0]         # 预期: 10
+second = arr[1]        # 预期: 20
+
+# --- 数组长度 ---
+arr_len = len(arr)     # 预期: 5
+
+# --- 数组索引赋值 ---
+arr[0] = 99
+updated = arr[0]       # 预期: 99
+
+# --- 表达式索引 ---
+i = 2
+val = arr[i]           # 预期: 30
+
+# --- 空数组 + push ---
+empty = []
+push(empty, 100)
+push(empty, 200)
+push(empty, 300)
+push_sum = empty[0] + empty[1] + empty[2]  # 预期: 600
+
+# --- 索引赋值（预分配空间）---
+expand = [1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0]
+expand[10] = 999
+expand_val = expand[10]  # 预期: 999
+expand_orig = expand[0] + expand[1] + expand[2]  # 预期: 6
+
+# --- 嵌套数组 ---
+matrix = [[1, 2, 3], [4, 5, 6]]
+center = matrix[1][1]  # 预期: 5
+
+# --- 数组间运算 ---
+src = [100, 200, 300]
+dst = [0, 0, 0]
+dst[0] = src[0] * 2
+dst[1] = src[2] / 10
+dst[2] = src[1] - src[0]
+dst_sum = dst[0] + dst[1] + dst[2]  # 预期: 200+30+100 = 330
+
+# --- Range ---
+rng = 0..5
+rng_len = len(rng)     # 预期: 5
+
+# --- 汇总 ---
+result = first + second + arr_len + updated + val + push_sum + expand_val + expand_orig + center + dst_sum + rng_len

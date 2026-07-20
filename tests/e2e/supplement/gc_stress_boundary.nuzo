@@ -1,0 +1,80 @@
+# === GC 边界压力测试 ===
+# 测试: 对象创建/释放/闭包/深层调用/字符串拼接 后 VM 存活性
+
+# --- 阶段1: 数组批量创建与丢弃 ---
+gc_rounds = 0
+i = 0
+当 i < 10 {
+    big = []
+    j = 0
+    当 j < 5 {
+        push(big, i * 10 + j)
+        j = j + 1
+    }
+    big = 空
+    gc_rounds = gc_rounds + 1
+    i = i + 1
+}
+# gc_rounds 预期: 10
+
+# --- 阶段2: 深层嵌套函数调用 ---
+fn deep_call(depth) {
+    如果 depth <= 0 {
+        返回 42
+    }
+    deep_call(depth - 1) + 1
+}
+stack_result = deep_call(30)
+# stack_result 预期: 42 + 30 = 72
+
+# --- 阶段3: 闭包创建与释放 ---
+fn make_closure(val) {
+    fn () { val * 2 }
+}
+
+closure_sum = 0
+c = 0
+当 c < 10 {
+    f = make_closure(c)
+    closure_sum = closure_sum + f()
+    f = 空
+    c = c + 1
+}
+# closure_sum = sum(c*2 for c in 0..9) = 90
+
+# --- 阶段4: 字符串拼接后释放 ---
+str_stress = ""
+s = 0
+当 s < 10 {
+    str_stress = str_stress + "x"
+    s = s + 1
+}
+str_len = len(str_stress)
+str_stress = 空
+
+# --- 阶段5: 存活数据池（扁平数字数组，避免嵌套数组GC问题）---
+pool = []
+p = 0
+当 p < 10 {
+    push(pool, p * p)
+    p = p + 1
+}
+
+first_val = pool[0]             # 预期: 0
+mid_val = pool[5]               # 预期: 25
+last_val = pool[9]              # 预期: 81
+
+# --- 阶段6: 高频数组操作 ---
+ops_arr = []
+o = 0
+当 o < 30 {
+    push(ops_arr, o)
+    如果 o % 3 == 0 and len(ops_arr) > 0 {
+        ops_arr[0] = ops_arr[0] + o
+    }
+    o = o + 1
+}
+ops_head = ops_arr[0]
+
+# --- 汇总验证 ---
+result = gc_rounds + stack_result + closure_sum + str_len + first_val + mid_val + last_val + ops_head

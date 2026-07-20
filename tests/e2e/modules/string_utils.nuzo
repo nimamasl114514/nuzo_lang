@@ -1,0 +1,21 @@
+# string_utils.nuzo — 字符串工具模块
+# 被 main 文件通过 import 导入
+
+fn greet(name) {
+    "Hello, " + name + "!"
+}
+
+fn repeat(s, n) {
+    result = ""
+    i = 0
+    while (i < n) {
+        result = result + s
+        i = i + 1
+    }
+    result
+}
+
+fn capitalize(s) {
+    if (s.len() == 0) { return "" }
+    s[0].to_upper() + s.slice(1)
+}

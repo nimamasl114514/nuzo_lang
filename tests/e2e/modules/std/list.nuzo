@@ -1,0 +1,57 @@
+# list.nuzo — 列表（数组）工具模块
+# 提供常用的数组操作函数
+
+# 过滤：保留满足条件的元素
+fn filter(arr, fn_pred) {
+    result = []
+    i = 0
+    while (i < arr.len()) {
+        if (fn_pred(arr[i])) {
+            result.push(arr[i])
+        }
+        i = i + 1
+    }
+    result
+}
+
+# 映射：对每个元素应用函数
+fn map(arr, fn_map) {
+    result = []
+    i = 0
+    while (i < arr.len()) {
+        result.push(fn_map(arr[i]))
+        i = i + 1
+    }
+    result
+}
+
+# 折叠：将数组归约为单个值
+fn fold(arr, init, fn_fold) {
+    acc = init
+    i = 0
+    while (i < arr.len()) {
+        acc = fn_fold(acc, arr[i])
+        i = i + 1
+    }
+    acc
+}
+
+# 查找：返回第一个满足条件的元素索引，未找到返回 -1
+fn find_index(arr, fn_pred) {
+    i = 0
+    while (i < arr.len()) {
+        if (fn_pred(arr[i])) { return i }
+        i = i + 1
+    }
+    -1
+}
+
+# 判断：是否所有元素都满足条件
+fn all(arr, fn_pred) {
+    i = 0
+    while (i < arr.len()) {
+        if (!fn_pred(arr[i])) { return false }
+        i = i + 1
+    }
+    true
+}

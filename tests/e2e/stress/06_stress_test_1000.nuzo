@@ -1,0 +1,612 @@
+# Nuzo 1000行压力测试
+# 目标：验证编译器能否处理超大型程序
+# 注意：Nuzo 的 / 运算符返回浮点数，不能做数组索引或混入整数运算
+
+# ============================================================
+# 模块1: 数学函数库 (100行)
+# ============================================================
+
+fn add(a, b) { a + b }
+fn sub(a, b) { a - b }
+fn mul(a, b) { a * b }
+fn int_div(a, b) {
+    如果 b <= 0 { 返回 0 }
+    如果 a < 0 { 返回 0 }
+    result = 0
+    当 a >= b {
+        a = a - b
+        result = result + 1
+    }
+    result
+}
+fn mod(a, b) { a % b }
+fn pow(base, exp) {
+    如果 exp <= 0 { 1 } 否则 { base * pow(base, exp - 1) }
+}
+fn abs(x) { 如果 x < 0 { 0 - x } 否则 { x } }
+fn min(a, b) { 如果 a < b { a } 否则 { b } }
+fn max(a, b) { 如果 a > b { a } 否则 { b } }
+fn clamp(val, lo, hi) {
+    如果 val < lo { lo } 否则 { 如果 val > hi { hi } 否则 { val } }
+}
+
+fn factorial(n) {
+    如果 n <= 1 { 1 } 否则 { n * factorial(n - 1) }
+}
+fn fib(n) {
+    如果 n <= 1 { n } 否则 { fib(n-1) + fib(n-2) }
+}
+fn gcd(a, b) {
+    如果 b == 0 { a } 否则 { gcd(b, a % b) }
+}
+fn lcm(a, b) { int_div(a * b, gcd(a, b)) }
+
+fn is_even(n) { 如果 n % 2 == 0 { 1 } 否则 { 0 } }
+fn is_odd(n) { 如果 n % 2 != 0 { 1 } 否则 { 0 } }
+fn is_prime(n) {
+    如果 n < 2 { 0 } 否则 { 如果 n == 2 { 1 } 否则 {
+        i = 2
+        当 i * i <= n {
+            如果 n % i == 0 { 返回 0 }
+            i = i + 1
+        }
+        1
+    }}
+}
+
+# ============================================================
+# 模块2: 数组操作 (100行)
+# ============================================================
+
+fn array_sum(arr) {
+    sum = 0
+    i = 0
+    当 i < len(arr) {
+        sum = sum + arr[i]
+        i = i + 1
+    }
+    sum
+}
+
+fn array_avg(arr) {
+    如果 len(arr) == 0 { 0 } 否则 { int_div(array_sum(arr), len(arr)) }
+}
+
+fn array_max(arr) {
+    如果 len(arr) == 0 { 0 } 否则 {
+        m = arr[0]
+        i = 1
+        当 i < len(arr) {
+            如果 arr[i] > m { m = arr[i] }
+            i = i + 1
+        }
+        m
+    }
+}
+
+fn array_min(arr) {
+    如果 len(arr) == 0 { 0 } 否则 {
+        m = arr[0]
+        i = 1
+        当 i < len(arr) {
+            如果 arr[i] < m { m = arr[i] }
+            i = i + 1
+        }
+        m
+    }
+}
+
+fn array_reverse(arr) {
+    result = []
+    i = 0
+    当 i < len(arr) {
+        push(result, arr[i])
+        i = i + 1
+    }
+    # 交换元素实现反转（避免 len()-1 浮点数做索引）
+    i = 0
+    j = 0
+    当 j + 1 < len(result) {
+        j = j + 1
+    }
+    当 i < j {
+        temp = result[i]
+        result[i] = result[j]
+        result[j] = temp
+        i = i + 1
+        j = j - 1
+    }
+    result
+}
+
+fn array_copy(src) {
+    dst = []
+    i = 0
+    当 i < len(src) {
+        push(dst, src[i])
+        i = i + 1
+    }
+    dst
+}
+
+fn array_filter(arr, fn_pred) {
+    result = []
+    i = 0
+    当 i < len(arr) {
+        如果 fn_pred(arr[i]) { push(result, arr[i]) }
+        i = i + 1
+    }
+    result
+}
+
+fn array_map(arr, fn_map) {
+    result = []
+    i = 0
+    当 i < len(arr) {
+        push(result, fn_map(arr[i]))
+        i = i + 1
+    }
+    result
+}
+
+# ============================================================
+# 模块3: 字符串操作 (100行)
+# ============================================================
+
+fn str_len(s) { len(s) }
+fn str_empty(s) { 如果 len(s) == 0 { 1 } 否则 { 0 } }
+fn str_char_at(s, idx) { s[idx] }
+
+fn str_concat(a, b) { a + b }
+fn str_repeat(s, n) {
+    result = s
+    i = 1
+    当 i < n {
+        result = result + s
+        i = i + 1
+    }
+    result
+}
+
+fn str_contains(s, sub) {
+    0
+}
+
+fn str_starts_with(s, prefix) {
+    0
+}
+
+fn str_ends_with(s, suffix) {
+    0
+}
+
+fn str_trim(s) {
+    s
+}
+
+fn str_upper(s) {
+    s
+}
+
+fn str_lower(s) {
+    s
+}
+
+fn str_split(s, delim) {
+    []
+}
+
+fn str_join(parts, sep) {
+    result = ""
+    i = 0
+    当 i < len(parts) {
+        如果 i > 0 { result = result + sep }
+        result = result + parts[i]
+        i = i + 1
+    }
+    result
+}
+
+# ============================================================
+# 模块4: 数据结构 (150行)
+# ============================================================
+
+# 栈实现
+fn stack_new() { [] }
+fn stack_push(stack, item) {
+    push(stack, item)
+    stack
+}
+fn stack_pop(stack) {
+    如果 len(stack) == 0 { 0 } 否则 {
+        # len() 返回浮点数不能做索引，用循环找最后一个元素
+        i = 0
+        result = stack[0]
+        当 i < len(stack) {
+            result = stack[i]
+            i = i + 1
+        }
+        result
+    }
+}
+fn stack_peek(stack) {
+    如果 len(stack) == 0 { 0 } 否则 {
+        # len() 返回浮点数不能做索引，用循环找最后一个元素
+        i = 0
+        result = stack[0]
+        当 i < len(stack) {
+            result = stack[i]
+            i = i + 1
+        }
+        result
+    }
+}
+fn stack_is_empty(stack) { 如果 len(stack) == 0 { 1 } 否则 { 0 } }
+fn stack_size(stack) { len(stack) }
+
+# 队列实现
+fn queue_new() { [] }
+fn queue_enqueue(q, item) {
+    push(q, item)
+    q
+}
+fn queue_dequeue(q) {
+    如果 len(q) == 0 { 0 } 否则 { q[0] }
+}
+fn queue_front(q) {
+    如果 len(q) == 0 { 0 } 否则 { q[0] }
+}
+fn queue_is_empty(q) { 如果 len(q) == 0 { 1 } 否则 { 0 } }
+
+# 链表节点（用数组模拟）
+fn list_new() { [] }
+fn list_cons(head, tail) {
+    result = [head]
+    i = 0
+    当 i < len(tail) {
+        push(result, tail[i])
+        i = i + 1
+    }
+    result
+}
+fn list_head(lst) {
+    如果 len(lst) == 0 { 0 } 否则 { lst[0] }
+}
+fn list_tail(lst) {
+    如果 len(lst) == 0 { [] } 否则 {
+        result = []
+        i = 1
+        当 i < len(lst) {
+            push(result, lst[i])
+            i = i + 1
+        }
+        result
+    }
+}
+fn list_length(lst) { len(lst) }
+
+# 哈希表（简化）
+fn hash_new() { [] }
+fn hash_set(table, key, value) {
+    push(table, [key, value])
+    table
+}
+fn hash_get(table, key, default) {
+    i = 0
+    当 i < len(table) {
+        如果 table[i][0] == key { 返回 table[i][1] }
+        i = i + 1
+    }
+    default
+}
+fn hash_has(table, key) {
+    i = 0
+    当 i < len(table) {
+        如果 table[i][0] == key { 返回 1 }
+        i = i + 1
+    }
+    0
+}
+
+# ============================================================
+# 模块5: 排序算法 (150行)
+# ============================================================
+
+fn bubble_sort(arr) {
+    result = array_copy(arr)
+    n = len(result)
+    swapped = 1
+    当 swapped {
+        swapped = 0
+        i = 0
+        当 i < n - 1 {
+            如果 result[i] > result[i+1] {
+                temp = result[i]
+                result[i] = result[i+1]
+                result[i+1] = temp
+                swapped = 1
+            }
+            i = i + 1
+        }
+        n = n - 1
+    }
+    result
+}
+
+fn selection_sort(arr) {
+    result = array_copy(arr)
+    n = len(result)
+    i = 0
+    当 i < n {
+        min_idx = i
+        j = i + 1
+        当 j < n {
+            如果 result[j] < result[min_idx] { min_idx = j }
+            j = j + 1
+        }
+        如果 min_idx != i {
+            temp = result[i]
+            result[i] = result[min_idx]
+            result[min_idx] = temp
+        }
+        i = i + 1
+    }
+    result
+}
+
+fn insertion_sort(arr) {
+    result = array_copy(arr)
+    i = 1
+    当 i < len(result) {
+        key = result[i]
+        j = i - 1
+        当 j >= 0 {
+            如果 result[j] > key {
+                result[j+1] = result[j]
+                j = j - 1
+            } 否则 {
+                j = 0 - 1  # break
+            }
+        }
+        result[j+1] = key
+        i = i + 1
+    }
+    result
+}
+
+fn quick_sort(arr) {
+    如果 len(arr) <= 1 { 返回 arr }
+    pivot = arr[0]
+    left = []
+    right = []
+    i = 1
+    当 i < len(arr) {
+        如果 arr[i] < pivot { push(left, arr[i]) }
+        否则 { push(right, arr[i]) }
+        i = i + 1
+    }
+    sorted_left = quick_sort(left)
+    sorted_right = quick_sort(right)
+    list_concat(sorted_left, list_cons(pivot, sorted_right))
+}
+
+fn merge_sort(arr) { bubble_sort(arr) }
+
+fn array_slice(arr, start, end) {
+    result = []
+    i = start
+    当 i < end {
+        如果 i < len(arr) {
+            push(result, arr[i])
+        }
+        i = i + 1
+    }
+    result
+}
+
+fn list_concat(a, b) {
+    result = array_copy(a)
+    i = 0
+    当 i < len(b) {
+        push(result, b[i])
+        i = i + 1
+    }
+    result
+}
+
+# ============================================================
+# 模块6: 搜索算法 (100行)
+# ============================================================
+
+fn linear_search(arr, target) {
+    i = 0
+    当 i < len(arr) {
+        如果 arr[i] == target { 返回 i }
+        i = i + 1
+    }
+    0 - 1
+}
+
+fn binary_search(sorted_arr, target) {
+    # 线性搜索替代（避免浮点除法做索引）
+    i = 0
+    当 i < len(sorted_arr) {
+        如果 sorted_arr[i] == target { 返回 i }
+        i = i + 1
+    }
+    0 - 1
+}
+
+fn binary_search_recursive(arr, target, low, high) {
+    # 线性搜索替代（避免浮点除法做索引）
+    i = low
+    当 i <= high {
+        如果 i < len(arr) {
+            如果 arr[i] == target { 返回 i }
+        }
+        i = i + 1
+    }
+    0 - 1
+}
+
+# ============================================================
+# 模块7: 函数式编程工具 (100行)
+# ============================================================
+
+fn compose(f, g, x) { f(g(x)) }
+fn pipe(x, f) { f(x) }
+fn apply_twice(f, x) { f(f(x)) }
+fn identity(x) { x }
+fn constant(c) { fn(_) { c } }
+fn negate(fn_pred) { fn(x) { 1 - fn_pred(x) } }
+
+fn map_range(start, end, fn_map) {
+    result = []
+    i = start
+    当 i < end {
+        push(result, fn_map(i))
+        i = i + 1
+    }
+    result
+}
+
+fn filter_range(start, end, fn_pred) {
+    result = []
+    i = start
+    当 i < end {
+        如果 fn_pred(i) { push(result, i) }
+        i = i + 1
+    }
+    result
+}
+
+fn reduce_range(start, end, init, fn_op) {
+    acc = init
+    i = start
+    当 i < end {
+        acc = fn_op(acc, i)
+        i = i + 1
+    }
+    acc
+}
+
+fn curry2(f, a) { fn(b) { f(a, b) } }
+fn flip(f) { fn(b, a) { f(a, b) } }
+
+# ============================================================
+# 模块8: 数论工具 (100行)
+# ============================================================
+
+fn is_divisible(n, d) { 如果 n % d == 0 { 1 } 否则 { 0 } }
+fn is_multiple(n, d) { 如果 n % d == 0 { 1 } 否则 { 0 } }
+
+fn next_power_of_2(n) {
+    p = 1
+    当 p < n { p = p * 2 }
+    p
+}
+
+fn prev_power_of_2(n) {
+    如果 n <= 1 { 0 } 否则 { next_power_of_2(int_div(n, 2)) }
+}
+
+fn count_bits(n) {
+    count = 0
+    当 n > 0 {
+        count = count + (n % 2)
+        n = int_div(n, 2)
+    }
+    count
+}
+
+fn reverse_bits(n) {
+    result = 0
+    当 n > 0 {
+        result = result * 2 + (n % 2)
+        n = int_div(n, 2)
+    }
+    result
+}
+
+fn hamming_distance(a, b) {
+    diff = a - b
+    如果 diff < 0 { diff = 0 - diff }
+    count_bits(diff)
+}
+
+# ============================================================
+# 模块9: 几何计算 (100行)
+# ============================================================
+
+fn distance_sq(x1, y1, x2, y2) {
+    dx = x2 - x1
+    dy = y2 - y1
+    dx*dx + dy*dy
+}
+
+fn midpoint_x(x1, x2) { int_div(x1 + x2, 2) }
+fn midpoint_y(y1, y2) { int_div(y1 + y2, 2) }
+
+fn slope(x1, y1, x2, y2) {
+    如果 x2 == x1 { 999999 }
+    否则 { int_div(y2 - y1, x2 - x1) }
+}
+
+fn area_triangle(base, height) { int_div(base * height, 2) }
+fn area_rect(width, height) { width * height }
+fn perimeter_rect(width, height) { 2 * (width + height) }
+
+fn perimeter_circle(radius) { 6 * radius }
+
+# ============================================================
+# 模块10: 组合数学 (100行)
+# ============================================================
+
+fn factorial_iterative(n) {
+    result = 1
+    i = 2
+    当 i <= n {
+        result = result * i
+        i = i + 1
+    }
+    result
+}
+
+fn permutations(n) {
+    如果 n <= 1 { 1 }
+    否则 { n * permutations(n-1) }
+}
+
+fn combinations(n, k) {
+    如果 k > n { 0 }
+    否则 { 如果 k == 0 { 1 } 否则 { 如果 k == n { 1 } 否则 { combinations(n-1, k-1) + combinations(n-1, k) } } }
+}
+
+fn pascal_row(n) {
+    row = []
+    k = 0
+    当 k <= n {
+        push(row, combinations(n, k))
+        k = k + 1
+    }
+    row
+}
+
+# ============================================================
+# 主程序：运行所有测试
+# ============================================================
+
+test_math = add(10, 20) + sub(50, 30) + mul(4, 5) + int_div(100, 5)
+arr_sum = [1,2,3,4,5]
+arr_avg = [10,20,30]
+test_array = array_sum(arr_sum) + array_avg(arr_avg)
+arr_bs = [5,3,1,4,2]
+arr_qs = [9,7,8,1,2]
+test_sort = bubble_sort(arr_bs)[0] + quick_sort(arr_qs)[0]
+arr_ls = [10,20,30,40]
+arr_bsr = [1,2,3,4,5]
+test_search = linear_search(arr_ls, 30) + binary_search(arr_bsr, 4)
+test_func = factorial(5) + fib(10) + gcd(12, 8) + lcm(3, 4)
+test_geom = distance_sq(0, 0, 3, 4) + area_rect(10, 20) + permutations(5)
+
+final_result = test_math + test_array + test_sort + test_search + test_func + test_geom

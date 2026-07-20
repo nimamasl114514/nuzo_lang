@@ -1,0 +1,31 @@
+# 02 控制流 - if/while/loop/break
+# 测试: 条件分支、循环、跳出
+
+# if-else 条件分支
+x = 42
+如果 x > 50 {
+    big = 真
+} 否则 如果 x > 30 {
+    medium = 真
+} 否则 {
+    small = 真
+}
+
+# while 循环
+i = 0
+sum_loop = 0
+当 i < 100 {
+    sum_loop = sum_loop + i
+    i = i + 1
+}
+
+# loop + break
+count = 0
+loop {
+    count = count + 1
+    如果 count >= 10 {
+        跳出
+    }
+}
+
+result = sum_loop + count

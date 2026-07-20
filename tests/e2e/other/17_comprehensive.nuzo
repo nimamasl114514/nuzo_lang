@@ -1,0 +1,85 @@
+# === 17 综合测试 ===
+# 测试: 算法+数据结构+函数式综合运用
+
+# --- 冒泡排序 ---
+fn bubble_sort(arr) {
+    n = len(arr)
+    i = 0
+    当 i < n {
+        j = 0
+        当 j < n - i - 1 {
+            如果 arr[j] > arr[j + 1] {
+                temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    返回 arr
+}
+
+sort_input = [5, 3, 8, 1, 9, 2, 7, 4, 6]
+sorted = bubble_sort(sort_input)
+sort_ok = sorted[0] + sorted[8]  # 预期: 1+9 = 10
+
+# --- 素数判断 ---
+fn is_prime(n) {
+    如果 n < 2 {
+        返回 假
+    }
+    i = 2
+    当 i * i <= n {
+        如果 n % i == 0 {
+            返回 假
+        }
+        i = i + 1
+    }
+    返回 真
+}
+
+prime_count = 0
+k = 2
+当 k < 50 {
+    如果 is_prime(k) {
+        prime_count = prime_count + 1
+    }
+    k = k + 1
+}
+# prime_count 预期: 15 (2,3,5,7,11,13,17,19,23,29,31,37,41,43,47)
+
+# --- 斐波那契求和 ---
+fn fib(n) {
+    如果 n <= 1 {
+        返回 n
+    }
+    a = 0
+    b = 1
+    i = 2
+    当 i <= n {
+        c = a + b
+        a = b
+        b = c
+        i = i + 1
+    }
+    返回 b
+}
+fib10 = fib(10)  # 预期: 55
+
+# --- 字符串构建 ---
+fn build_label(name, score) {
+    返回 name + ": " + score
+}
+label = build_label("Alice", 95)  # 预期: "Alice: 95"
+
+# --- 阶乘+累加 ---
+fn factorial(n) {
+    如果 n <= 1 { 返回 1 }
+    返回 n * factorial(n - 1)
+}
+fact_sum = factorial(1) + factorial(2) + factorial(3) + factorial(4) + factorial(5)
+# 预期: 1+2+6+24+120 = 153
+
+# --- 汇总 ---
+result = sort_ok + prime_count + fib10 + fact_sum

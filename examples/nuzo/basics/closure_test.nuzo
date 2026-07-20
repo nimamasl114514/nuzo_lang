@@ -1,0 +1,91 @@
+# FlatEnv+Capture 闭包捕获测试
+# 验证不可变值捕获、可变 Box 捕获、多闭包共享、嵌套闭包
+
+print("=== FlatEnv+Capture Closure Tests ===")
+
+# Test 1: 不可变值捕获 (ByValue)
+print("\n--- Test 1: Immutable Value Capture ---")
+name = "Alice"
+greet = fn() {
+    print("Hello, " + name + "!")
+}
+greet()
+# Expected: Hello, Alice!
+
+# Test 2: 可变 Box 捕获 (ByBox) - Counter 模式
+print("\n--- Test 2: Mutable Box Capture (Counter) ---")
+make_counter = fn() {
+    count = 0
+    return fn() {
+        count = count + 1
+        return count
+    }
+}
+counter = make_counter()
+print(counter())  # Expected: 1
+print(counter())  # Expected: 2
+print(counter())  # Expected: 3
+
+# Test 3: 多闭包共享同一变量
+print("\n--- Test 3: Multiple Closures Sharing State ---")
+make_shared_state = fn() {
+    x = 10
+    increment = fn() { x = x + 1 }
+    get_value = fn() { return x }
+    # 通过对象返回多个闭包 (Nuzo不支持多返回值)
+    return { inc: increment, get: get_value }
+}
+shared = make_shared_state()
+shared["inc"]()
+shared["inc"]()
+shared["inc"]()
+print(shared["get"]())  # Expected: 13 (10 + 3)
+
+# Test 4: 嵌套闭包
+print("\n--- Test 4: Nested Closures ---")
+outer = fn() {
+    x = 100
+    middle = fn() {
+        y = x + 1  # y = 101
+        inner = fn() {
+            return x + y  # 100 + 101 = 201
+        }
+        return inner
+    }
+    return middle
+}
+nested_fn = outer()()
+print(nested_fn())  # Expected: 201
+
+# Test 5: 混合模式（部分可变 + 部分不可变）
+print("\n--- Test 5: Mixed Capture Modes ---")
+config = "production"
+make_logger = fn() {
+    log_count = 0
+    log = fn(msg) {
+        log_count = log_count + 1
+        print("[" + config + "] #" + log_count + ": " + msg)
+    }
+    get_count = fn() { return log_count }
+    # 通过对象返回 (Nuzo不支持多返回值)
+    return { log: log, count: get_count }
+}
+logger_obj = make_logger()
+logger_obj["log"]("System started")
+logger_obj["log"]("User login")
+logger_obj["log"]("Data processed")
+print("Total logs: " + logger_obj["count"]())  # Expected: Total logs: 3
+
+# Test 6: 高阶函数（柯里化示例）
+print("\n--- Test 6: Higher-Order Functions (Currying) ---")
+make_adder = fn(x) {
+    return fn(y) {
+        return x + y
+    }
+}
+add5 = make_adder(5)
+add10 = make_adder(10)
+print(add5(3))   # Expected: 8 (5+3)
+print(add10(3))  # Expected: 13 (10+3)
+
+print("\n=== All Tests Completed ===")

@@ -1,0 +1,45 @@
+# === 03 比较运算 ===
+# 测试: == != < > <= >=
+
+# --- 等于 ---
+eq_same = 5 == 5       # 预期: 真
+eq_diff = 5 == 3       # 预期: 假
+
+# --- 不等于 ---
+neq_diff = 5 != 3      # 预期: 真
+neq_same = 5 != 5      # 预期: 假
+
+# --- 小于 ---
+lt_true = 3 < 5        # 预期: 真
+lt_false = 5 < 3       # 预期: 假
+
+# --- 大于 ---
+gt_true = 5 > 3        # 预期: 真
+gt_false = 3 > 5       # 预期: 假
+
+# --- 小于等于 ---
+le_true = 5 <= 5       # 预期: 真
+le_false = 6 <= 5      # 预期: 假
+
+# --- 大于等于 ---
+ge_true = 5 >= 5       # 预期: 真
+ge_false = 4 >= 5      # 预期: 假
+
+# --- 字符串比较 ---
+str_eq = "abc" == "abc"  # 预期: 真
+str_neq = "abc" != "def" # 预期: 真
+
+# --- 汇总 (真=1, 假=0) ---
+num_eq_same = 0
+如果 eq_same { num_eq_same = 1 }
+num_neq_diff = 0
+如果 neq_diff { num_neq_diff = 1 }
+num_lt_true = 0
+如果 lt_true { num_lt_true = 1 }
+num_gt_true = 0
+如果 gt_true { num_gt_true = 1 }
+num_le_true = 0
+如果 le_true { num_le_true = 1 }
+num_ge_true = 0
+如果 ge_true { num_ge_true = 1 }
+result = num_eq_same + num_neq_diff + num_lt_true + num_gt_true + num_le_true + num_ge_true

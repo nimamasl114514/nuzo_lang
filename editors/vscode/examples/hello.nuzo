@@ -1,0 +1,58 @@
+// Hello World 示例
+// 测试语法高亮和 LSP 功能
+
+fn main() {
+    let name = "Nuzo";
+    let version = 0.1;
+    let count = 42;
+    let hex = 0xFF;
+    let binary = 0b1010;
+    let octal = 0o77;
+    
+    // 字符串测试
+    let msg = "Hello, World!";
+    let escaped = "Line1\nLine2\tTabbed";
+    
+    /* 多行注释
+       测试块注释高亮 */
+    print(msg);
+    
+    if count > 10 {
+        print("Big number");
+    } else {
+        print("Small number");
+    }
+    
+    // 测试补全：输入 f 然后按 Ctrl+Space
+    for i in range(count) {
+        print(i);
+    }
+    
+    match name {
+        "Nuzo" => print("Matched!"),
+        _ => print("Unknown"),
+    }
+}
+
+struct Point {
+    x: f64,
+    y: f64,
+}
+
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
+
+impl Point {
+    fn new(x: f64, y: f64) -> Point {
+        Point { x, y }
+    }
+    
+    fn distance(self, other: Point) -> f64 {
+        let dx = self.x - other.x;
+        let dy = self.y - other.y;
+        sqrt(dx * dx + dy * dy)
+    }
+}

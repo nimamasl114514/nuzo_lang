@@ -1,0 +1,19 @@
+[package]
+name = "nuzo_opcode"
+version.workspace = true
+edition.workspace = true
+description = "Declarative opcode definition framework for VM instruction sets"
+authors = ["Nuzo Team"]
+
+[dependencies]
+serde = { workspace = true, optional = true }
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+
+[dev-dependencies]
+serde_json.workspace = true
+serde.workspace = true
+
+[features]
+default = ["serde"]
+serde = ["dep:serde"]

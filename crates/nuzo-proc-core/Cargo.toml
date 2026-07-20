@@ -1,0 +1,30 @@
+[package]
+name = "nuzo_proc_core"
+version.workspace = true
+edition.workspace = true
+description = "Core utilities for Nuzo procedural macro development (includes hardcode constant management)"
+publish = false
+
+[features]
+# 默认开启过程宏支持（让旧有依赖方无感迁移）
+default = ["proc_macro", "env-override", "json-export"]
+# 过程宏支持（依赖 syn/proc-macro2/quote）
+proc_macro = ["dep:syn", "dep:proc-macro2", "dep:quote"]
+# Python 测试支持（依赖 rustpython-parser）
+py-test = ["dep:rustpython-parser"]
+# hardcode 常量管理：环境变量覆盖
+env-override = []
+# hardcode 常量管理：JSON 导出
+json-export = []
+# 测试工具（暴露 registry::clear() / validate::clear_rules() 等函数）
+test-utils = []
+
+[dependencies]
+# 过程宏依赖（可选，仅在 proc_macro feature 启用时加载）
+syn = { workspace = true, optional = true }
+proc-macro2 = { workspace = true, optional = true }
+quote = { workspace = true, optional = true }
+rustpython-parser = { version = "0.4", optional = true }
+# 自动注册依赖：define_constants! 宏使用 #[ctor::ctor] 在程序启动时自动注册常量
+# 轻量级 crate（无重依赖），始终启用以提供无感自动注册体验
+ctor = "0.2"

@@ -1,0 +1,7 @@
+# Basic widget test
+fn render() {
+    heading("Nuzo GUI Test")
+    separator()
+    label("Hello from Nuzo!")
+    button("Click me")
+}

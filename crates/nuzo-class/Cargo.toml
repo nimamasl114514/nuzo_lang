@@ -1,0 +1,20 @@
+[package]
+name = "nuzo_class"
+version.workspace = true
+edition.workspace = true
+description = "Rust-side class syntax sugar for Nuzo Lang"
+authors.workspace = true
+
+[dependencies]
+nuzo_class_macros = { workspace = true }
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+serde = { workspace = true, optional = true }
+
+[dev-dependencies]
+serde = { workspace = true }
+serde_json.workspace = true
+
+[features]
+default = []
+serde = ["dep:serde"]

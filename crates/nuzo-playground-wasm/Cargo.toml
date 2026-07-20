@@ -1,0 +1,37 @@
+[package]
+name = "nuzo-playground-wasm"
+version.workspace = true
+edition.workspace = true
+description = "WebAssembly binding for Nuzo Lang Playground"
+publish = false
+
+# 禁用 wasm-opt：Rust wasm32 默认输出 bulk memory 操作，老版 wasm-opt 不支持
+# 触发 "Bulk memory operations require bulk memory [--enable-bulk-memory]" 验证失败
+# Cargo 已做基础优化，wasm-opt 主要用于额外 size 优化，Playground 场景可省略
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# 直接 path 引用而非 workspace 继承：
+# workspace.dependencies.nuzo_run 未显式设置 default-features，
+# Cargo 视为 default-features = true 且禁止成员覆盖为 false。
+# 这里需要关闭 std-fs 默认 feature 并开启 wasm feature，故直接指定 path。
+nuzo_run = { path = "../nuzo-run", default-features = false, features = ["wasm"] }
+# 直接引用 nuzo_core：T7 需要访问 NuzoError 的 kind/source_location/code 字段
+# 以及 SourceLocation/ErrorCode/InternalError 等类型用于 Diagnostic 转换。
+nuzo_core = { path = "../nuzo-core" }
+wasm-bindgen = "0.2"
+# 捕获 Rust panic 并输出到浏览器 console，便于定位 wasm32 下的 panic 根因
+# （默认 wasm32 panic 会触发 `unreachable` 指令，丢失 panic 消息）
+console_error_panic_hook = { version = "0.1", optional = true }
+# 浏览器 console API：用于在 run() 各步骤打印 [nuzo-debug] 调试日志，
+# 精确定位 wasm32 panic 发生在哪个调用点（console_error_panic_hook 不够用时启用）
+web-sys = { version = "0.3", features = ["console"] }
+
+[features]
+# 默认启用 panic hook，确保浏览器中能看到 panic 详细信息
+default = ["panic-hook"]
+panic-hook = ["dep:console_error_panic_hook"]

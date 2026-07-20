@@ -1,0 +1,17 @@
+# 测试基本数组操作
+
+# 测试1: 数组创建和length
+arr = [5, 3, 8, 1]
+arr_len = len(arr)
+
+# 测试2: 数组索引
+first = arr[0]
+
+# 测试3: push
+arr2 = []
+push(arr2, 10)
+push(arr2, 20)
+arr2_len = len(arr2)
+
+result = arr_len + first + arr2_len
+result

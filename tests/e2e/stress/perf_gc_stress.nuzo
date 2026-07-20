@@ -1,0 +1,51 @@
+# === GC 极限性能测试 ===
+# 目标: 测量大规模对象分配/回收时 GC 的实际开销
+
+# --- 阶段1: 大量临时对象 (触发多次GC) ---
+gc_test = 0
+i = 0
+当 i < 1000 {
+    temp = []
+    j = 0
+    当 j < 10 {
+        temp[len(temp)] = i * j
+        j = j + 1
+    }
+    temp = 0  # 立即丢弃，变成垃圾
+    i = i + 1
+}
+
+# --- 阶段2: 长期存活对象 ---
+persistent = []
+k = 0
+当 k < 100 {
+    arr = []
+    m = 0
+    当 m < 50 {
+        arr[len(arr)] = k * 1000 + m
+        m = m + 1
+    }
+    persistent[len(persistent)] = arr
+    k = k + 1
+}
+
+# --- 阶段3: 混合分配 (存活+死亡交替) ---
+mixed_result = 0
+n = 0
+当 n < 500 {
+    if n % 2 == 0 {
+        keep = [n, n*n, n*n*n]
+        mixed_result = mixed_result + keep[1]
+    } else {
+        discard = [n, n+1, n+2]
+        discard = 0
+    }
+    n = n + 1
+}
+
+# --- 阶段4: 验证存活数据完整性 ---
+first_persist = persistent[0]
+last_persist = persistent[99]
+
+total_objects = len(persistent) + mixed_result + first_persist[0] + last_persist[49]
+total_objects

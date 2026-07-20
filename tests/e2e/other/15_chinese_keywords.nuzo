@@ -1,0 +1,73 @@
+# === 15 中文关键字 ===
+# 测试: 中文关键字完整覆盖/大小写敏感
+
+# --- 中文关键字: 如果/否则 ---
+x = 42
+如果 x > 30 {
+    cn_result1 = 1
+} 否则 {
+    cn_result1 = 0
+}
+# cn_result1 预期: 1
+
+# --- 中文关键字: 当 (while) ---
+i = 0
+cn_sum = 0
+当 i < 5 {
+    cn_sum = cn_sum + i
+    i = i + 1
+}
+# cn_sum 预期: 10
+
+# --- 中文关键字: 跳出 (break) ---
+cn_count = 0
+loop {
+    cn_count = cn_count + 1
+    如果 cn_count >= 3 {
+        跳出
+    }
+}
+# cn_count 预期: 3
+
+# --- 中文关键字: 真/假 ---
+cn_bool1 = 真     # 预期: 真
+cn_bool2 = 假     # 预期: 假
+
+# --- 中文关键字: 空 ---
+cn_nil = 空        # 预期: 空
+
+# --- 中文关键字: 函数/返回 ---
+fn 阶乘(n) {
+    如果 n <= 1 {
+        返回 1
+    } 否则 {
+        返回 n * 阶乘(n - 1)
+    }
+}
+cn_fact = 阶乘(5)  # 预期: 120
+
+# --- 中文关键字: 继续 (continue) ---
+j = 0
+cn_odd_sum = 0
+当 j < 10 {
+    j = j + 1
+    如果 j % 2 == 0 {
+        继续
+    }
+    cn_odd_sum = cn_odd_sum + j
+}
+# cn_odd_sum 预期: 25
+
+# --- 大小写敏感: 英文关键字必须小写 ---
+# if/while/fn 等关键字正确使用
+if_ok = 1
+if 真 {
+    if_ok = if_ok + 1
+}
+# if_ok 预期: 2
+
+# 注意: If/IF/WHILE 等大写形式会报错（由编译器校验）
+# 此处仅测试正确小写形式
+
+# --- 汇总 ---
+result = cn_result1 + cn_sum + cn_count + cn_fact + cn_odd_sum + if_ok

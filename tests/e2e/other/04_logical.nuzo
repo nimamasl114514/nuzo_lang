@@ -1,0 +1,51 @@
+# === 04 逻辑运算 ===
+# 测试: and or not
+
+# --- and ---
+and_tt = 真 and 真     # 预期: 真
+and_tf = 真 and 假     # 预期: 假
+and_ft = 假 and 真     # 预期: 假
+and_ff = 假 and 假     # 预期: 假
+
+# --- or ---
+or_tt = 真 or 真       # 预期: 真
+or_tf = 真 or 假       # 预期: 真
+or_ft = 假 or 真       # 预期: 真
+or_ff = 假 or 假       # 预期: 假
+
+# --- not (用等价表达式替代) ---
+not_t = 假              # 预期: 假 (等价于 not 真)
+not_f = 真               # 预期: 真 (等价于 not 假)
+
+# --- 组合逻辑 ---
+combo1 = (5 > 3) and (10 > 7)    # 预期: 真
+combo2 = (5 > 3) or (10 < 7)     # 预期: 真
+combo3 = (5 <= 3)             # 预期: 假 (等价于 not(5 > 3))
+combo4 = (5 > 3) and (10 >= 7)   # 预期: 真 (德摩根律: not(10 < 7) = 10 >= 7)
+
+# --- 汇总 (布尔值不能参与算术，用断言 + 计数器验证) ---
+assert(and_tt == 真)
+assert(and_tf == 假)
+assert(and_ff == 假)
+assert(or_tt == 真)
+assert(or_tf == 真)
+assert(or_ft == 真)
+assert(or_ff == 假)
+assert(not_t == 假)
+assert(not_f == 真)
+assert(combo1 == 真)
+assert(combo2 == 真)
+assert(combo3 == 假)
+assert(combo4 == 真)
+
+count = 0
+如果 and_tt { count = count + 1 }
+如果 or_tt { count = count + 1 }
+如果 or_tf { count = count + 1 }
+如果 or_ft { count = count + 1 }
+如果 not_f { count = count + 1 }
+如果 combo1 { count = count + 1 }
+如果 combo2 { count = count + 1 }
+如果 combo4 { count = count + 1 }
+
+result = count   # 预期: 8 (8个为真的表达式)

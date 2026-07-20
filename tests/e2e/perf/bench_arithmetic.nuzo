@@ -1,0 +1,14 @@
+# 算术密集循环基准测试
+# 验证 Phase 1-4 优化后算术运算 + 循环 + 常量折叠的综合性能
+# 规模: 1,000,000 次加法循环 (release 模式)
+
+i = 0
+sum = 0
+while i < 1000000 {
+    sum = sum + 1
+    i = i + 1
+}
+
+print("arithmetic_loop_result = ")
+println(sum)
+sum

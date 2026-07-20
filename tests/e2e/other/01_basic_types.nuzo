@@ -1,0 +1,29 @@
+# === 01 基础类型 ===
+# 测试: 数字(整数/浮点/负数)、字符串、布尔、nil
+
+# --- 整数 ---
+int_pos = 42           # 预期: 42
+int_neg = -7           # 预期: -7
+int_zero = 0           # 预期: 0
+
+# --- 浮点数 ---
+float_pi = 3.14        # 预期: 3.14
+float_neg = -0.5       # 预期: -0.5
+
+# --- 字符串 ---
+str_hello = "Hello"    # 预期: "Hello"
+str_empty = ""         # 预期: ""
+
+# --- 布尔 ---
+bool_true = 真         # 预期: 真
+bool_false = 假        # 预期: 假
+
+# --- nil ---
+nil_val = 空           # 预期: 空
+
+# --- 类型混合赋值 ---
+x = 10
+x = 20                 # 重新赋值 预期: 20
+
+# --- 汇总 ---
+result = int_pos + int_neg + int_zero

@@ -1,0 +1,52 @@
+# =========================================================================
+# AI-related files — DO NOT COMMIT
+# 仅作用于当前 crate (nuzo-class-macros)，不影响其他模块
+# =========================================================================
+
+# --- AI Model files ---
+*.onnx
+*.pt
+*.pth
+*.safetensors
+*.gguf
+*.ggml
+*.h5
+*.pb
+*.tflite
+*.engine
+
+# --- AI Training / Fine-tuning data ---
+*.tfrecord
+*.idx
+*.vec
+*.emb
+
+# --- AI Model configs ---
+*.aiconfig
+ai_config.json
+ai_config.yaml
+
+# --- AI-generated intermediate products ---
+*.ai.gen.*
+*.llm_gen.*
+*.copilot_gen.*
+
+# --- AI cache directories ---
+.ai_cache/
+.llm_cache/
+.embedding_cache/
+.rag_cache/
+
+# --- Vector databases ---
+chroma_db/
+vectordb/
+faiss_index/
+.qdrant/
+
+# --- Prompt templates ---
+ai_prompt*
+llm_prompt*
+
+# --- AI Agent traces / logs ---
+*.agent_trace.log
+*.llm_trace.log

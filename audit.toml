@@ -1,0 +1,30 @@
+# cargo-audit 配置
+# 配置文件位置: 项目根目录 audit.toml (cargo-audit 默认查找路径)
+# 参考: https://github.com/rustsec/rustsec/blob/main/cargo-audit/audit.toml.example
+
+[advisories]
+# 以下漏洞因间接依赖无法升级而暂时忽略：
+# quick-xml 0.39.4 通过 wayland-scanner 0.31.10 引入，
+# wayland-scanner 最新版仍要求 quick-xml ^0.39，无法升级到修复版 >=0.41.0
+# 待 wayland-scanner 发布支持 quick-xml >=0.41 的新版本后移除忽略
+#
+# RUSTSEC-2026-0194: Quadratic run time when checking a start tag for duplicate attribute names (high 7.5)
+# RUSTSEC-2026-0195: Unbounded namespace-declaration allocation in NsReader enables memory-exhaustion DoS (high 7.5)
+ignore = ["RUSTSEC-2026-0194", "RUSTSEC-2026-0195"]
+informational_warnings = ["unmaintained"]
+severity_threshold = "low"
+
+[database]
+url = "https://github.com/RustSec/advisory-db.git"
+fetch = true
+stale = false
+
+[output]
+deny = []
+format = "terminal"
+quiet = false
+show_tree = true
+
+[yanked]
+enabled = true
+update_index = true

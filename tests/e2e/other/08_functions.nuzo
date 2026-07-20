@@ -1,0 +1,69 @@
+# === 08 函数 ===
+# 测试: 定义/调用/返回/参数/嵌套调用
+
+# --- 基础函数 ---
+fn add(a, b) {
+    a + b
+}
+# add(3, 4) 预期: 7
+
+fn double(x) {
+    x * 2
+}
+# double(5) 预期: 10
+
+fn square(x) {
+    x * x
+}
+# square(6) 预期: 36
+
+# --- 多参数函数 ---
+fn sum3(a, b, c) {
+    a + b + c
+}
+# sum3(1, 2, 3) 预期: 6
+
+# --- 无参数函数 ---
+fn constant() {
+    42
+}
+# constant() 预期: 42
+
+# --- 恒等函数 ---
+fn identity(x) {
+    x
+}
+# identity(99) 预期: 99
+
+# --- 嵌套调用 ---
+result_nested = double(add(1, 2))   # 预期: double(3) = 6
+
+# --- 链式调用 ---
+result_chain = add(add(1, 2), add(3, 4))  # 预期: add(3, 7) = 10
+
+# --- 复杂嵌套 ---
+result_complex = square(double(add(1, 2)))  # 预期: square(6) = 36
+
+# --- return 语句 ---
+fn early_return(x) {
+    如果 x > 0 {
+        return x
+    }
+    return 0 - x
+}
+# early_return(5) 预期: 5, early_return(-3) 预期: 3
+
+# --- 负数运算 ---
+fn negate(x) {
+    0 - x
+}
+# negate(5) 预期: -5
+
+# --- 大数运算 ---
+fn big_add(a, b) {
+    a + b
+}
+# big_add(10000, 20000) 预期: 30000
+
+# --- 汇总 ---
+result = add(3, 4) + double(5) + square(6) + sum3(1, 2, 3) + constant() + identity(99) + result_nested + result_chain + result_complex + early_return(5) + early_return(-3) + negate(5) + big_add(10000, 20000)

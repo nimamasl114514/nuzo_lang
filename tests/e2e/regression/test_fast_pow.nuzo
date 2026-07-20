@@ -1,0 +1,21 @@
+# 简单测试 fast_pow 函数
+
+fn fast_pow(base, exp) {
+    如果 exp == 0 {
+        返回 1
+    } 否则 如果 exp == 1 {
+        返回 base
+    } 否则 {
+        half = fast_pow(base, exp / 2)
+        result = half * half
+        如果 exp % 2 != 0 {
+            result = result * base
+        }
+        返回 result
+    }
+}
+
+println("测试 fast_pow(2, 10):")
+result = fast_pow(2, 10)
+println("结果: " + result + " (预期: 1024)")
+

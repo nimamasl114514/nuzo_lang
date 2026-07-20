@@ -1,0 +1,21 @@
+[package]
+name = "nuzo_bytecode"
+version.workspace = true
+edition.workspace = true
+description = "Bytecode format and instruction set for Nuzo"
+
+[features]
+default = ["serde"]
+serde = ["dep:serde"]
+
+[build-dependencies]
+syn = { workspace = true }
+proc-macro2 = { workspace = true }
+
+[dependencies]
+nuzo_opcode.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+nuzo_values.workspace = true
+nuzo_core.workspace = true
+serde = { workspace = true, optional = true }

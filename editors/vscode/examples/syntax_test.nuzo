@@ -1,0 +1,21 @@
+/// 文档注释测试
+// 关键字
+fn let const struct enum trait impl if else while for match return break continue true false nil
+
+// 数字
+123 0xFF 0o77 0b1010 3.14 1e10 1.5e-3 0
+
+// 字符串
+"double quote" 'a' "escape: \n \t \\ \" "
+
+// 模板字符串
+`template ${variable} string`
+
+// 运算符
++ - * / % == != < > <= >= && || ! = += -= *= /= %= -> =>
+
+// 标点
+. , ; : ( ) [ ] { }
+
+// 标识符
+foo _bar baz123 变量名

@@ -1,0 +1,17 @@
+[package]
+name = "nuzo_error"
+version.workspace = true
+edition.workspace = true
+description = "Error collection and diagnostics for Nuzo"
+
+[dependencies]
+nuzo_values.workspace = true
+nuzo_bytecode.workspace = true
+nuzo_core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+nuzo_signal.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+log.workspace = true
+crossbeam-queue.workspace = true

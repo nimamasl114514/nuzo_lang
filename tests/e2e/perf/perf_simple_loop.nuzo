@@ -1,0 +1,12 @@
+# Simple Arithmetic Performance Test
+# This should be very fast
+
+sum = 0
+i = 0
+while i < 10000 {
+    sum = sum + i * 2 - i / 2
+    i = i + 1
+}
+
+print(sum)
+sum

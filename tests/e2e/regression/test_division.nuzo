@@ -1,0 +1,50 @@
+# 测试除法操作符
+println("测试整数除法:")
+
+a = 10
+b = a / 2
+print("  10 / 2 = ")
+print(b)
+println(" (预期: 5)")
+
+c = 10
+d = c % 2
+print("  10 % 2 = ")
+print(d)
+println(" (预期: 0)")
+
+e = 7
+f = e / 2
+print("  7 / 2 = ")
+print(f)
+println(" (预期: 3 或 3.5)")
+
+g = 7
+h = g % 2
+print("  7 % 2 = ")
+print(h)
+println(" (预期: 1)")
+
+# 测试循环中修改变量
+println("")
+println("测试循环中的除法:")
+i = 10
+count = 0
+while i > 0 {
+    count = count + 1
+    print("  第")
+    print(count)
+    print("轮: i=")
+    print(i)
+    println("")
+    
+    if i == 1 {
+        break
+    }
+    
+    i = i / 2
+}
+
+print("  总轮数: ")
+print(count)
+println(" (预期: 4)")

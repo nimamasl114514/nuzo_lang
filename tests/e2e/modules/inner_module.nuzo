@@ -1,0 +1,15 @@
+# inner_module.nuzo — 中间层模块（自包含版本）
+# 原测试嵌套导入 inner/dep，现改为内联
+
+# ===== 内联 inner/dep 模块 =====
+
+fn deep_value() { 42 }
+DEEP_CONST = "deep"
+
+# ===== 中间层定义 =====
+
+fn mid_value() {
+    deep_value() + 1
+}
+
+MID_CONST = DEEP_CONST + "_mid"

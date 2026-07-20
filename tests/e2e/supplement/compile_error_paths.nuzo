@@ -1,0 +1,111 @@
+# === 编译错误路径防御性编程测试 ===
+# 测试: 安全包装各类边界情况，确保运行时优雅降级而非崩溃
+# 注意: 文件名含 error 用于回归分类标记，但本文件本身可正常执行
+
+# --- 除零安全防护 ---
+fn safe_divide(a, b) {
+    如果 b == 0 {
+        返回 0
+    }
+    返回 a / b
+}
+sd1 = safe_divide(100, 4)     # 预期: 25
+sd2 = safe_divide(50, 0)      # 预期: 0 (安全降级)
+sd3 = safe_divide(-7, 3)      # 预期: -2 (整数除法)
+
+# --- 数组越界安全防护 ---
+fn safe_get(arr, index) {
+    如果 index >= 0 and index < len(arr) {
+        返回 arr[index]
+    }
+    返回 空
+}
+test_data = [10, 20, 30, 40, 50]
+sg1 = safe_get(test_data, 2)   # 预期: 30
+sg2 = safe_get(test_data, 0)   # 预期: 10
+sg3 = safe_get(test_data, 99)  # 预期: 空 (越界保护)
+sg4 = safe_get(test_data, -1)  # 预期: 空 (负索引保护)
+
+# --- 类型安全算术运算 ---
+fn typed_add(a, b) {
+    如果 type_of(a) != "number" or type_of(b) != "number" {
+        返回 0
+    }
+    返回 a + b
+}
+ta1 = typed_add(17, 25)        # 预期: 42
+ta2 = typed_add("bad", 10)     # 预期: 0 (类型不匹配)
+ta3 = typed_add(3.14, 2.86)    # 预期: 6.0
+
+# --- 空值(nil)传播防护 ---
+fn safe_chain(val) {
+    如果 val == 空 {
+        返回 "default"
+    }
+    返回 val
+}
+sc1 = safe_chain("hello")      # 预期: "hello"
+sc2 = safe_chain(空)           # 预期: "default"
+sc3 = safe_chain(42)           # 预期: 42
+
+# --- 字符串边界操作防护 ---
+fn safe_substr(s, start) {
+    如果 type_of(s) != "string" or s == "" {
+        返回 ""
+    }
+    如果 start >= len(s) or start < 0 {
+        返回 s
+    }
+    # 返回从 start 开始的子串（模拟）
+    result = ""
+    i = start
+    当 i < len(s) {
+        result = result + s[i]
+        i = i + 1
+    }
+    返回 result
+}
+ss1 = safe_substr("abcdef", 2)   # 预期: "cdef"
+ss2 = safe_substr("hi", 0)       # 预期: "hi"
+ss3 = safe_substr("x", 99)       # 预期: "x" (超长start返回原串)
+ss4 = safe_substr(空, 0)         # 预期: "" (nil输入)
+
+# --- 函数参数数量容错 (通过默认值模式) ---
+fn safe_power(base, exp) {
+    如果 exp == 空 {
+        exp = 2  # 默认平方
+    }
+    result = 1
+    i = 0
+    当 i < exp {
+        result = result * base
+        i = i + 1
+    }
+    返回 result
+}
+sp1 = safe_power(3, 4)          # 预期: 81
+sp2 = safe_power(5, 空)         # 预期: 25 (默认exp=2)
+sp3 = safe_power(2, 10)         # 预期: 1024
+
+# --- 断言式验证 (assert 作为错误检测手段) ---
+validation_ok = 真
+如果 sd2 != 0 { validation_ok = 假 }
+如果 sg3 != 空 { validation_ok = 假 }
+如果 ta2 != 0 { validation_ok = 假 }
+如果 sc2 != "default" { validation_ok = 假 }
+# validation_ok 预期: 真 (所有安全路径正确)
+
+# --- 复合防御: 嵌套安全调用 ---
+fn robust_compute(arr, idx, divisor) {
+    val = safe_get(arr, idx)
+    如果 val == 空 {
+        返回 0
+    }
+    safe_divide(val, divisor)
+}
+rc1 = robust_compute([100, 200, 300], 1, 4)   # 预期: 50
+rc2 = robust_compute([10, 20], 5, 2)          # 预期: 0 (越界)
+rc3 = robust_compute([42], 0, 0)              # 预期: 0 (除零)
+
+# --- 汇总 ---
+result = sd1 + sd3 + sg1 + ta1 + sp1 + sp3 + rc1

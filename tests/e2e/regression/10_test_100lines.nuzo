@@ -1,0 +1,93 @@
+# 中等测试 - 100行
+
+# 数学函数 (20行)
+fn add(a, b) { a + b }
+fn sub(a, b) { a - b }
+fn mul(a, b) { a * b }
+fn div(a, b) { a / b }
+fn abs(x) { 如果 x < 0 { 0 - x } 否则 { x } }
+fn min(a, b) { 如果 a < b { a } 否则 { b } }
+fn max(a, b) { 如果 a > b { a } 否则 { b } }
+
+# 数组操作 (30行)
+fn sum(arr) {
+    s = 0
+    i = 0
+    当 i < len(arr) {
+        s = s + arr[i]
+        i = i + 1
+    }
+    s
+}
+
+fn avg(arr) {
+    如果 len(arr) == 0 { 0 } 否则 { sum(arr) / len(arr) }
+}
+
+fn array_max(arr) {
+    如果 len(arr) == 0 { 0 } 否则 {
+        m = arr[0]
+        i = 1
+        当 i < len(arr) {
+            如果 arr[i] > m { m = arr[i] }
+            i = i + 1
+        }
+        m
+    }
+}
+
+fn copy(arr) {
+    dst = []
+    i = 0
+    当 i < len(arr) {
+        push(dst, arr[i])
+        i = i + 1
+    }
+    dst
+}
+
+# 排序 (25行)
+fn bubble_sort(arr) {
+    result = copy(arr)
+    n = len(result)
+    swapped = 1
+    当 swapped {
+        swapped = 0
+        i = 0
+        当 i < n - 1 {
+            如果 result[i] > result[i+1] {
+                temp = result[i]
+                result[i] = result[i+1]
+                result[i+1] = temp
+                swapped = 1
+            }
+            i = i + 1
+        }
+        n = n - 1
+    }
+    result
+}
+
+# 搜索 (15行) — 使用 linear_search 代替 binary_search（Nuzo 除法返回浮点数不能做索引）
+fn linear_search(arr, target) {
+    i = 0
+    当 i < len(arr) {
+        如果 arr[i] == target { 返回 i }
+        i = i + 1
+    }
+    0 - 1
+}
+
+# 测试 (10行)
+t1 = add(100, 200)
+t2 = mul(7, 8)
+t3 = abs(0 - 42)
+arr = [64, 34, 25, 12, 22, 11, 90]
+t4 = sum(arr)
+sorted = bubble_sort(arr)
+t5 = sorted[0]
+t6 = linear_search([10, 20, 30], 20)
+t7 = linear_search([1, 3, 5, 7, 9], 5)
+
+final = t1 + t2 + t3 + t4 + t5 + t6 + t7
+final

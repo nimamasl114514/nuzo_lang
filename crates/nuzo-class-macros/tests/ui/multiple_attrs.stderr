@@ -1,0 +1,15 @@
+error: multiple class attributes on the same method: `#[set]` conflicts with `#[get]`
+ --> tests/ui/multiple_attrs.rs:5:1
+  |
+5 | #[class_impl]
+  | ^^^^^^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `class_impl` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: previous class attribute here
+ --> tests/ui/multiple_attrs.rs:5:1
+  |
+5 | #[class_impl]
+  | ^^^^^^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `class_impl` (in Nightly builds, run with -Z macro-backtrace for more info)

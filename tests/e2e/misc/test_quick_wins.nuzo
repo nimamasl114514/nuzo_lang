@@ -1,0 +1,26 @@
+# === 快速改进验证 ===
+
+# Test 1: print 字符串拼接代替多参数
+print("Age:" + " " + "25" + " " + "years")
+print("Score:" + " " + "98.5")
+
+# Test 2: len 字符串
+s = "Hello"
+l1 = len(s)
+print(l1)
+
+l2 = len("nihao")
+print(l2)
+
+# Test 3: len 数组
+a = [1, 2, 3]
+l3 = len(a)
+print(l3)
+
+# Test 4: 负数字面量 -> 用表达式代替
+n = 0 - 42
+print(n)
+
+# 汇总（只使用数值类型，len() 结果先存入变量避免内联调用 bug）
+result = l1 + l2 + l3 + n
+print(result)

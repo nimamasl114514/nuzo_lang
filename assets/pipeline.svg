@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 280" width="1400" height="280">
+  <defs>
+    <linearGradient id="stageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="stageGradFinal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+    <marker id="arrowFlow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="700" y="36" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-size="22" font-weight="700" fill="#0f172a" text-anchor="middle">
+    Nuzo Lang — Compilation Pipeline
+  </text>
+
+  <!-- Stage 1: Source -->
+  <g>
+    <rect x="20" y="100" width="140" height="80" rx="10" fill="url(#stageGrad)" stroke="#3b82f6" stroke-width="2"/>
+    <text x="90" y="135" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">Source</text>
+    <text x="90" y="160" font-family="ui-monospace, monospace" font-size="12" fill="#94a3b8" text-anchor="middle">.nuzo file</text>
+  </g>
+  <line x1="160" y1="140" x2="195" y2="140" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowFlow)"/>
+
+  <!-- Stage 2: Lexer -->
+  <g>
+    <rect x="200" y="100" width="140" height="80" rx="10" fill="url(#stageGrad)" stroke="#3b82f6" stroke-width="2"/>
+    <text x="270" y="135" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">Lexer</text>
+    <text x="270" y="160" font-family="ui-monospace, monospace" font-size="12" fill="#94a3b8" text-anchor="middle">Vec&lt;Token&gt;</text>
+  </g>
+  <line x1="340" y1="140" x2="375" y2="140" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowFlow)"/>
+
+  <!-- Stage 3: Parser -->
+  <g>
+    <rect x="380" y="100" width="140" height="80" rx="10" fill="url(#stageGrad)" stroke="#3b82f6" stroke-width="2"/>
+    <text x="450" y="135" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">Parser</text>
+    <text x="450" y="160" font-family="ui-monospace, monospace" font-size="12" fill="#94a3b8" text-anchor="middle">ast::Program</text>
+  </g>
+  <line x1="520" y1="140" x2="555" y2="140" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowFlow)"/>
+
+  <!-- Stage 4: AST -->
+  <g>
+    <rect x="560" y="100" width="140" height="80" rx="10" fill="url(#stageGrad)" stroke="#3b82f6" stroke-width="2"/>
+    <text x="630" y="135" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">AST</text>
+    <text x="630" y="160" font-family="ui-monospace, monospace" font-size="12" fill="#94a3b8" text-anchor="middle">nuzo_frontend</text>
+  </g>
+  <line x1="700" y1="140" x2="735" y2="140" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowFlow)"/>
+
+  <!-- Stage 5: Compiler -->
+  <g>
+    <rect x="740" y="100" width="140" height="80" rx="10" fill="url(#stageGrad)" stroke="#3b82f6" stroke-width="2"/>
+    <text x="810" y="135" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">Compiler</text>
+    <text x="810" y="160" font-family="ui-monospace, monospace" font-size="12" fill="#94a3b8" text-anchor="middle">AST → Bytecode</text>
+  </g>
+  <line x1="880" y1="140" x2="915" y2="140" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowFlow)"/>
+
+  <!-- Stage 6: Bytecode -->
+  <g>
+    <rect x="920" y="100" width="140" height="80" rx="10" fill="url(#stageGrad)" stroke="#3b82f6" stroke-width="2"/>
+    <text x="990" y="135" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">Bytecode</text>
+    <text x="990" y="160" font-family="ui-monospace, monospace" font-size="12" fill="#94a3b8" text-anchor="middle">Chunk + Scope</text>
+  </g>
+  <line x1="1060" y1="140" x2="1095" y2="140" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowFlow)"/>
+
+  <!-- Stage 7: VM -->
+  <g>
+    <rect x="1100" y="100" width="140" height="80" rx="10" fill="url(#stageGrad)" stroke="#3b82f6" stroke-width="2"/>
+    <text x="1170" y="135" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">VM</text>
+    <text x="1170" y="160" font-family="ui-monospace, monospace" font-size="12" fill="#94a3b8" text-anchor="middle">Register + JIT</text>
+  </g>
+  <line x1="1240" y1="140" x2="1275" y2="140" stroke="#f97316" stroke-width="3" marker-end="url(#arrowFlow)"/>
+
+  <!-- Stage 8: Value (output) -->
+  <g>
+    <rect x="1280" y="100" width="100" height="80" rx="10" fill="url(#stageGradFinal)" stroke="#fb923c" stroke-width="2"/>
+    <text x="1330" y="135" font-family="ui-monospace, monospace" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">Value</text>
+    <text x="1330" y="160" font-family="ui-monospace, monospace" font-size="11" fill="#fed7aa" text-anchor="middle">NaN-tagged</text>
+  </g>
+
+  <!-- Layer labels below stages -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">
+    <text x="270" y="210">L3: nuzo_frontend</text>
+    <text x="810" y="210">L5: nuzo_compiler</text>
+    <text x="1170" y="210">L5: nuzo_vm</text>
+    <text x="1330" y="210">L2: nuzo_values</text>
+  </g>
+
+  <!-- Bottom legend -->
+  <text x="700" y="250" font-family="ui-sans-serif, system-ui, sans-serif"
+        font-size="13" fill="#64748b" text-anchor="middle">
+    Source → Lexer → Parser → AST → Compiler → Bytecode → VM → Value
+  </text>
+</svg>

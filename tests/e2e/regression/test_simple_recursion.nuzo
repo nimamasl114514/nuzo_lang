@@ -1,0 +1,13 @@
+# 测试基本递归
+
+fn simple_recursive(n) {
+    如果 n == 0 {
+        返回 0
+    } 否则 {
+        返回 1 + simple_recursive(n - 1)
+    }
+}
+
+println("测试简单递归:")
+result = simple_recursive(5)
+println("simple_recursive(5) = " + result + " (预期: 5)")

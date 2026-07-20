@@ -1,0 +1,56 @@
+# === Bug1 精确复现: 混合隐式/显式返回 ===
+# 用户报告的场景: 一个分支隐式返回，另一个分支显式返回
+
+# --- 场景1: gcd 函数 (用户原例) ---
+fn gcd(a, b) {
+    如果 b == 0 {
+        a  # ← 隐式返回（可能有 bug）
+    } 否则 {
+        返回 gcd(b, a % b)  # ← 显式返回
+    }
+}
+
+result_gcd = gcd(48, 18)
+print("gcd(48,18): ")
+print(result_gcd)
+println(" 预期: 6")
+
+# --- 场景2: 更简单的混合返回 ---
+fn mixed_return(flag, x) {
+    如果 flag {
+        x * 2  # ← 隐式返回
+    } 否则 {
+        返回 x + 100  # ← 显式返回
+    }
+}
+
+result_mixed1 = mixed_return(真, 5)      # 走 if 分支 → 隐式返回 → 预期: 10
+result_mixed2 = mixed_return(假, 5)       # 走 else 分支 → 显式返回 → 预期: 105
+
+print("mixed(真,5): ")
+print(result_mixed1)
+println(" 预期: 10 (隐式返回)")
+
+print("mixed(假,5): ")
+print(result_mixed2)
+println(" 预期: 105 (显式返回)")
+
+# --- 场景3: 反转 - if 显式，else 隐式 ---
+fn mixed_return_reversed(flag, x) {
+    如果 flag {
+        返回 x * 10  # ← 显式返回
+    } 否则 {
+        x + 1  # ← 隐式返回
+    }
+}
+
+result_rev1 = mixed_return_reversed(真, 5)   # 预期: 50 (显式)
+result_rev2 = mixed_return_reversed(假, 5)    # 预期: 6 (隐式)
+
+print("reversed(真,5): ")
+print(result_rev1)
+println(" 预期: 50 (显式返回)")
+
+print("reversed(假,5): ")
+print(result_rev2)
+println(" 预期: 6 (隐式返回)")

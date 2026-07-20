@@ -1,0 +1,7 @@
+error: #[set] method first argument must be `&mut self`
+ --> tests/ui/setter_bad_self.rs:6:5
+  |
+6 |     #[set]
+  |     ^^^^^^
+  |
+  = note: this error originates in the attribute macro `set` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -1,0 +1,36 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
+  schedule:
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install cargo-audit
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+      - name: Run cargo audit
+        # quick-xml 0.39.4 通过 wayland-scanner 0.31.10 间接引入（nuzo_gui → eframe → winit）。
+        # wayland-scanner 最新版仍要求 quick-xml ^0.39，无法升级到修复版 >=0.41.0。
+        # quick-xml 仅作为 wayland-scanner 的 build dependency（proc-macro）解析 Wayland 协议 XML，
+        # 不进入运行时二进制，且输入为受信任的协议定义文件，不存在实际安全风险。
+        # 待 wayland-scanner 发布支持 quick-xml >=0.41 的新版本后移除 --ignore。
+        # 同时保留根目录 audit.toml 配置（向后兼容旧版 cargo-audit）。
+        run: cargo audit --ignore RUSTSEC-2026-0194 --ignore RUSTSEC-2026-0195

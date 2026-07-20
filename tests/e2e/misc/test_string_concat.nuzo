@@ -1,0 +1,57 @@
+# === 字符串自动拼接测试 (Auto String Concatenation) ===
+# 验证: "string" + any_type → 自动类型转换并拼接
+
+# --- Test 1: string + number (最常见场景) ---
+r1 = "Age: " + 25
+# r1 预期: "Age: 25"
+
+r2 = 100 + "px"
+# r2 预期: "100px"
+
+r3 = "Score: " + 98.5
+# r3 预期: "Score: 98.5"
+
+# --- Test 2: string + string (原有行为保持) ---
+r4 = "Hello" + " " + "World"
+# r4 预期: "Hello World"
+
+# --- Test 3: string + boolean ---
+r5 = "Enabled: " + 真
+# r5 预期: "Enabled: true"
+
+r6 = "Active: " + false
+# r6 预期: "Active: false"
+
+# --- Test 7: string + nil ---
+r7 = "Value: " + 空
+# r7 预期: "Value: nil"
+
+# --- Test 8: 实际应用场景 ---
+name = "Alice"
+age = 30
+greeting = "Hello, " + name + "! You are " + age + " years old."
+# greeting 预期: "Hello, Alice! You are 30 years old."
+
+# --- Test 9: 数字加法不受影响 (纯数字路径) ---
+n1 = 10 + 20
+# n1 预期: 30 (数字, 非字符串)
+
+n2 = 3.14 + 2.86
+# n2 预期: 6.0 (数字, 非字符串)
+
+# --- Test 10: 链式拼接 ---
+chain = "a" + 1 + "b" + 2 + "c" + 3
+# chain 预期: "a1b2c3"
+
+# --- 汇总 ---
+print(r1)
+print(r2)
+print(r3)
+print(r4)
+print(r5)
+print(r6)
+print(r7)
+print(greeting)
+print(n1)
+print(n2)
+print(chain)

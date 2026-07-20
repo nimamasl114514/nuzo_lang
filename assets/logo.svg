@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="nGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background: rounded square with subtle gradient -->
+  <rect x="8" y="8" width="240" height="240" rx="48" ry="48" fill="url(#nGrad)"/>
+
+  <!-- Letter N: geometric, modern -->
+  <g fill="#ffffff">
+    <!-- Left vertical stroke -->
+    <rect x="64" y="64" width="28" height="128" rx="4"/>
+    <!-- Right vertical stroke -->
+    <rect x="164" y="64" width="28" height="128" rx="4"/>
+    <!-- Diagonal connecting bar (polygon) -->
+    <polygon points="92,64 120,64 192,180 164,180"/>
+  </g>
+
+  <!-- NaN-tag accent: small orange dot pattern representing NaN-tagged values -->
+  <g fill="url(#accentGrad)">
+    <circle cx="48" cy="208" r="6"/>
+    <circle cx="64" cy="208" r="6"/>
+    <circle cx="80" cy="208" r="6"/>
+    <circle cx="208" cy="48" r="6"/>
+    <circle cx="192" cy="48" r="6"/>
+    <circle cx="176" cy="48" r="6"/>
+  </g>
+
+  <!-- Subtle "Nuzo" wordmark below the N -->
+  <text x="128" y="232" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="20" font-weight="600" fill="#ffffff" text-anchor="middle" opacity="0.9">
+    Nuzo
+  </text>
+</svg>

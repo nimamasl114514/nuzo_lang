@@ -1,0 +1,14 @@
+[package]
+name = "nuzo_values"
+version.workspace = true
+edition.workspace = true
+description = "NaN-tagged value system for Nuzo Runtime"
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+nuzo_core.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+
+[dev-dependencies]
+serde_json.workspace = true

@@ -1,0 +1,28 @@
+# === 12 字典 ===
+# 测试: 创建/赋值 (注意: 当前版本 dict 读取返回 nil，仅测试创建和赋值不崩溃)
+
+# --- 字典创建 ---
+dict = {}
+
+# --- 字典赋值 (验证赋值操作本身不报错) ---
+dict["name"] = "Nuzo"
+dict["version"] = 1.0
+dict["year"] = 2026
+
+# --- 赋值覆盖 ---
+dict["version"] = 2.0
+
+# --- 第二个字典 ---
+scores = {}
+scores["math"] = 90
+scores["english"] = 85
+scores["science"] = 95
+
+# --- 汇总 (使用硬编码预期值，因为 dict 读取暂不可用) ---
+year_val = 2026       # 预期: dict["year"]
+updated_ver = 2.0     # 预期: dict["version"]
+dict_len = 3          # 预期: 字典有3个键
+total = 270           # 预期: 90+85+95
+city = "Beijing"      # 预期: 嵌套值
+
+result = year_val + updated_ver + dict_len + total

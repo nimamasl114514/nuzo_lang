@@ -1,0 +1,35 @@
+[package]
+name = "nuzo_run"
+version.workspace = true
+edition.workspace = true
+description = "Nuzo Lang - Runtime Engine and CLI"
+
+[lib]
+name = "nuzo_run"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nuzo_run"
+path = "src/main.rs"
+
+[features]
+default = ["std-fs"]
+std-fs = []           # 启用标准文件系统访问（默认开启，wasm 关闭）
+wasm = []             # WebAssembly 目标（nuzo_ir/nuzo_vm 暂无 wasm feature，后续任务扩展）
+
+[dependencies]
+nuzo_values.workspace = true
+nuzo_compiler.workspace = true
+nuzo_vm.workspace = true
+nuzo_helpers.workspace = true
+nuzo_error.workspace = true
+nuzo_bytecode.workspace = true
+nuzo_core.workspace = true
+nuzo_signal.workspace = true
+nuzo_config.workspace = true
+nuzo_frontend.workspace = true
+nuzo_ir.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+clap.workspace = true
+web-time.workspace = true

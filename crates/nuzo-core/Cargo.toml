@@ -1,0 +1,14 @@
+[package]
+name = "nuzo_core"
+version.workspace = true
+edition.workspace = true
+description = "Core constants, encoding, macros, and source location for Nuzo"
+
+[dependencies]
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+nuzo_proc.workspace = true
+serde.workspace = true
+xxhash-rust.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

@@ -1,0 +1,497 @@
+/* ============================================================
+ * Nuzo Playground - Styles
+ *
+ * 设计语言：Refined Developer Minimalism
+ * - 暗色主题为默认（与代码编辑器搭配）
+ * - 品牌色取自 logo.svg：蓝色 (#1e3a8a → #3b82f6) + 琥珀 (#f97316 → #fbbf24)
+ * - 字体：JetBrains Mono 用于显示/代码，system-ui 用于 UI 文本
+ * - 布局：CSS Grid，桌面端左编辑器右输出，移动端堆叠
+ * ============================================================ */
+
+/* ---------- 设计令牌（Design Tokens） ---------- */
+:root {
+  /* 背景层次（自下而上，由深到浅） */
+  --bg-base: #0a0e16;
+  --bg-canvas: #0d1117;
+  --bg-surface: #161b22;
+  --bg-surface-hover: #1c2230;
+  --bg-elevated: #1f2733;
+
+  /* 边框 */
+  --border-subtle: #21262d;
+  --border-default: #30363d;
+  --border-strong: #48515e;
+
+  /* 文本 */
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-tertiary: #6e7681;
+  --text-inverse: #ffffff;
+
+  /* 品牌色（取自 logo.svg） */
+  --brand-blue-deep: #1e3a8a;
+  --brand-blue: #3b82f6;
+  --brand-amber: #f97316;
+  --brand-amber-light: #fbbf24;
+
+  /* 语义色 */
+  --accent: var(--brand-amber);
+  --accent-hover: var(--brand-amber-light);
+  --success: #2ea043;
+  --error: #f85149;
+  --info: var(--brand-blue);
+
+  /* 字体栈 */
+  --font-display: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'SFMono-Regular', ui-monospace, monospace;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', ui-monospace, monospace;
+
+  /* 间距 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 9999px;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 24px rgba(249, 115, 22, 0.25);
+
+  /* 动效 */
+  --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- 重置 ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-base);
+  /* 大气层：径向渐变营造深度感 */
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.06), transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(249, 115, 22, 0.05), transparent 40%),
+    linear-gradient(180deg, var(--bg-canvas) 0%, var(--bg-base) 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ---------- 应用骨架 ---------- */
+#app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  width: 100%;
+  padding: var(--space-lg);
+  gap: var(--space-lg);
+}
+
+/* ---------- Header ---------- */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-xs);
+}
+
+header h1 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  /* 品牌渐变文字 */
+  background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-amber) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+header .version {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  padding: 2px var(--space-sm);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  background: var(--bg-surface);
+}
+
+/* ---------- Main（编辑器 + 输出） ---------- */
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  min-height: 0; /* 关键：让 grid 子项可滚动 */
+}
+
+.editor-section,
+.output-section {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.editor-section {
+  /* 编辑器轻微的蓝色边框暗示 */
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.1);
+}
+
+#editor {
+  flex: 1;
+  width: 100%;
+  /* CodeMirror 6 挂载点（T9）；CM 自管理 padding/scroll */
+  background:
+    linear-gradient(180deg, rgba(59, 130, 246, 0.02) 0%, transparent 100%),
+    var(--bg-canvas);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  overflow: hidden; /* CM 内部 .cm-scroller 负责滚动 */
+  color: var(--text-primary);
+}
+
+/* ---------- 输出区 ---------- */
+.output-tabs {
+  display: flex;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-lg) 0;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tab-btn {
+  padding: var(--space-sm) var(--space-md);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  position: relative;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-hover);
+}
+
+.tab-btn.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--brand-amber);
+}
+
+.output-content {
+  flex: 1;
+  margin: 0;
+  padding: var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-canvas);
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.output-content:empty::before {
+  content: '运行代码后，输出将显示在此处...';
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* ---------- Footer（按钮栏） ---------- */
+footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xs);
+}
+
+footer button {
+  padding: var(--space-sm) var(--space-lg);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+footer button:hover:not(:disabled) {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+footer button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+#run-btn {
+  background: linear-gradient(135deg, var(--brand-amber) 0%, var(--brand-amber-light) 100%);
+  border-color: transparent;
+  color: var(--bg-base);
+  font-weight: 600;
+}
+
+#run-btn:hover:not(:disabled) {
+  box-shadow: var(--shadow-glow);
+  filter: brightness(1.05);
+}
+
+#run-btn:disabled {
+  background: var(--bg-elevated);
+  color: var(--text-tertiary);
+  border-color: var(--border-subtle);
+}
+
+#clear-btn {
+  min-width: 80px;
+}
+
+/* ---------- 滚动条 ---------- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-canvas);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--bg-canvas);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* ---------- 焦点可见性（可访问性） ---------- */
+button:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 2px;
+}
+
+/* ---------- 选区 ---------- */
+::selection {
+  background: rgba(249, 115, 22, 0.3);
+  color: var(--text-primary);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 768px) {
+  #app {
+    padding: var(--space-md);
+    gap: var(--space-md);
+  }
+
+  main {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  header h1 {
+    font-size: 16px;
+  }
+
+  footer {
+    justify-content: stretch;
+  }
+
+  footer button {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  #app {
+    padding: var(--space-sm);
+    gap: var(--space-sm);
+  }
+
+  .output-content,
+  #editor {
+    font-size: 12px;
+    padding: var(--space-md);
+  }
+}
+
+/* ---------- 入场动画 ---------- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#app > * {
+  animation: fadeInUp var(--transition-slow) ease-out backwards;
+}
+
+#app > header {
+  animation-delay: 0ms;
+}
+
+#app > main {
+  animation-delay: 80ms;
+}
+
+#app > footer {
+  animation-delay: 160ms;
+}
+
+/* ---------- 减弱动效偏好（可访问性） ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+ * CodeMirror 6 主题适配（T9）
+ *
+ * 与 .cm-editor 相关的选择器优先用 CSS 变量，保持与全局暗色主题一致。
+ * 语法高亮颜色取自 One Dark 调色板（与默认 defaultHighlightStyle 协调）。
+ * ============================================================ */
+
+.cm-editor {
+  height: 100%;
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.cm-editor.cm-focused {
+  outline: none;
+}
+
+/* 滚动容器 */
+.cm-editor .cm-scroller {
+  font-family: var(--font-mono);
+  line-height: 1.6;
+}
+
+/* 行号槽（gutters） */
+.cm-editor .cm-gutters {
+  background: rgba(0, 0, 0, 0.2);
+  border-right: 1px solid var(--border-subtle);
+  color: var(--text-tertiary);
+}
+
+/* 活动行 */
+.cm-editor .cm-activeLine {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cm-editor .cm-activeLineGutter {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+}
+
+/* 光标颜色（品牌琥珀色） */
+.cm-editor .cm-content {
+  caret-color: var(--brand-amber);
+}
+
+.cm-editor .cm-cursor,
+.cm-editor .cm-dropCursor {
+  border-left-color: var(--brand-amber);
+  border-left-width: 2px;
+}
+
+/* 选区 */
+.cm-editor .cm-selectionBackground,
+.cm-editor .cm-content ::selection,
+.cm-editor ::selection {
+  background: rgba(249, 115, 22, 0.2);
+}
+
+.cm-editor.cm-focused .cm-selectionBackground,
+.cm-editor.cm-focused .cm-content ::selection {
+  background: rgba(249, 115, 22, 0.3);
+}
+
+/* ---------- 语法高亮颜色（One Dark 风格） ----------
+ * 这些类由 defaultHighlightStyle + StreamLanguage 的 token 字符串映射产生。
+ * 当 defaultHighlightStyle 自带颜色足够时，这里只做覆盖微调。
+ * ----------------------------------------------- */
+
+.cm-keyword { color: #c678dd; }
+.cm-string  { color: #98c379; }
+.cm-number  { color: #d19a66; }
+.cm-comment { color: #5c6370; font-style: italic; }
+.cm-builtin { color: #61afef; }
+.cm-variable { color: #e5c07b; }
+.cm-typeName { color: #e5c07b; font-weight: 500; }
+.cm-operator { color: #56b6c2; }
+.cm-punctuation { color: #abb2bf; }
+.cm-def { color: #61afef; }
+.cm-property { color: #e06c75; }
+
+/* 匹配括号高亮 */
+.cm-editor .cm-matchingBracket,
+.cm-editor .cm-nonmatchingBracket {
+  color: inherit;
+  background: rgba(59, 130, 246, 0.25);
+  outline: 1px solid rgba(59, 130, 246, 0.5);
+}

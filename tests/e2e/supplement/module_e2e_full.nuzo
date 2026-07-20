@@ -1,0 +1,37 @@
+# === 函数式编程 E2E 测试（最小安全版）===
+# 测试: 高阶函数/递归/跨函数调用
+
+fn factorial(n) {
+    如果 n <= 1 { 返回 1 }
+    返回 n * factorial(n - 1)
+}
+fn abs_val(x) { 如果 x < 0 { 返回 -x } 返回 x }
+fn pow_int(base, exp) {
+    result = 1
+    i = 0
+    当 i < exp { result = result * base; i = i + 1 }
+    result
+}
+fn is_even(n) { n % 2 == 0 }
+
+fn mymap(arr, fn_ref) {
+    r = []
+    i = 0
+    当 i < len(arr) { push(r, fn_ref(arr[i])); i = i + 1 }
+    r
+}
+
+math_sum = 15 + 27
+math_prod = 6 * 7
+adv_abs = abs_val(-99)
+adv_pow = pow_int(2, 10)
+
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+squared = mymap(nums, fn(x) { x * x })
+sq_third = squared[2]
+sq_last = squared[9]
+
+c_val = 0
+如果 is_even(factorial(5)) { c_val = 1 }
+
+result = math_sum + math_prod + adv_abs + adv_pow + sq_third + sq_last + c_val

@@ -1,0 +1,44 @@
+# === 空值合并运算符测试 ===
+# 测试: ?? 空值合并运算符
+
+# --- nil 时取默认值 ---
+a = nil
+r1 = a ?? 42
+# r1 预期: 42
+
+# --- 非 nil 时取原值 ---
+b = 10
+r2 = b ?? 99
+# r2 预期: 10
+
+# --- 链式空值合并 ---
+c = nil
+d = nil
+r3 = c ?? d ?? 100
+# r3 预期: 100
+
+# --- 空值合并与字符串 ---
+name = nil
+r4 = name ?? "Anonymous"
+# r4 预期: "Anonymous"
+
+real_name = "Alice"
+r5 = real_name ?? "Anonymous"
+# r5 预期: "Alice"
+
+# --- 空值合并与布尔值 ---
+flag = nil
+r6 = flag ?? true
+# r6 预期: true
+
+flag2 = false
+r7 = flag2 ?? true
+# r7 预期: false (false 不是 nil)
+
+# --- 空值合并与运算符组合 ---
+fn get_config() { nil }
+r8 = get_config() ?? 8080
+# r8 预期: 8080
+
+# --- 汇总 ---
+result = r1 + r2 + r3 + r8

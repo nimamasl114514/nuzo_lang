@@ -1,0 +1,18 @@
+# math.nuzo — 数学工具模块
+# 被 main_import.nuzo 通过 import "math" 导入
+
+fn add(a, b) {
+    a + b
+}
+
+fn mul(a, b) {
+    a * b
+}
+
+fn factorial(n) {
+    if (n <= 1) { return 1 }
+    return n * factorial(n - 1)
+}
+
+PI = 3.14159
+E = 2.71828

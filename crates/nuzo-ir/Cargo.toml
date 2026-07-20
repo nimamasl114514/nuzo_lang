@@ -1,0 +1,12 @@
+[package]
+name = "nuzo_ir"
+version.workspace = true
+edition.workspace = true
+description = "Intermediate Representation (IR) for Nuzo Lang compiler"
+authors = ["Nuzo Team"]
+
+[dependencies]
+nuzo_core.workspace = true
+nuzo_frontend.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }

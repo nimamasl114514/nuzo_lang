@@ -1,0 +1,7 @@
+error: #[get] method must take `&self` as the first argument
+ --> tests/ui/getter_no_self.rs:6:5
+  |
+6 |     #[get]
+  |     ^^^^^^
+  |
+  = note: this error originates in the attribute macro `get` (in Nightly builds, run with -Z macro-backtrace for more info)

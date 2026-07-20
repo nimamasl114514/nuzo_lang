@@ -1,0 +1,26 @@
+[package]
+name = "nuzo_class_macros"
+version.workspace = true
+edition.workspace = true
+description = "Proc-macros for nuzo_class"
+authors.workspace = true
+autotests = false
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2.workspace = true
+quote.workspace = true
+syn.workspace = true
+
+[dev-dependencies]
+trybuild = "1.0"
+
+[features]
+ui-tests = []
+
+[[test]]
+name = "compile_errors"
+path = "tests/compile_errors.rs"
+required-features = ["ui-tests"]

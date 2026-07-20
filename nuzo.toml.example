@@ -1,0 +1,119 @@
+# Nuzo 配置文件示例
+#
+# 将此文件复制为 nuzo.toml 并根据需要修改。
+# 未列出的配置项使用默认值。
+#
+# 配置优先级：代码默认值 ← nuzo.toml ← 环境变量 (NUZO_*)
+# 环境变量示例：NUZO_GC_THRESHOLD=20000000
+
+# ─── VM 核心配置 ──────────────────────────────────────
+[vm]
+# 寄存器文件大小（栈深度）
+# 默认: 8388608 (8MB) — 与 .cargo/config.toml 的 /STACK:8388608 保持一致
+# max_stack_size = 8388608
+
+# 最大函数调用嵌套层数
+# 默认: 1000000
+# max_call_frames = 1000000
+
+# VM 启动时预分配的寄存器数量
+# 默认: 256
+# initial_registers = 256
+
+# 预分配的调用帧数组容量
+# 默认: 64
+# initial_frame_capacity = 64
+
+# 诊断模式寄存器窗口大小
+# 默认: 8
+# diagnostic_register_window = 8
+
+# ─── GC 垃圾回收配置 ─────────────────────────────────
+[gc]
+# GC 触发的最小内存阈值（字节）
+# 默认: 1024 (1KB)
+# min_threshold = 1024
+
+# GC 默认触发阈值（字节）
+# 默认: 10485760 (10MB)
+# 低内存环境建议: 1048576 (1MB)
+# 高吞吐场景建议: 104857600 (100MB)
+# threshold = 10485760
+
+# GC 存活率阈值（低于此值则翻倍阈值）
+# 默认: 0.5
+# survival_ratio_threshold = 0.5
+
+# GC 阈值增长倍数
+# 默认: 2
+# growth_factor = 2
+
+# 标记速率（每次标记的对象数）
+# 默认: 8
+# mark_rate = 8
+
+# 清扫速率（每次清扫的对象数）
+# 默认: 16
+# sweep_rate = 16
+
+# Chunk 位移（编译期常量，运行时不可更改）
+# 默认: 10
+# chunk_shift = 10
+
+# 新生代阈值（字节）
+# 默认: 1048576 (1MB)
+# nursery_threshold = 1048576
+
+# 老年代倍数
+# 默认: 8
+# tenured_multiplier = 8
+
+# 晋升存活率
+# 默认: 0.4
+# promote_survival_ratio = 0.4
+
+# 冷区晋升年龄（存活过此次数 Major GC 的 Chunk 标记为 Cold）
+# 默认: 3
+# cold_age_threshold = 3
+
+# 深度 GC 频率（每 N 次 Major GC 触发一次 Deep GC）
+# 默认: 10
+# deep_gc_interval = 10
+
+# ─── 编译器配置 ──────────────────────────────────────
+[compiler]
+# 编译器最大局部变量/寄存器数
+# 默认: 65535
+# max_locals = 65535
+
+# 函数内最大局部变量数（寄存器分配上限）
+# 默认: 4096
+# max_function_locals = 4096
+
+# ─── Arena 内存分配器配置 ────────────────────────────
+[arena]
+# 单帧 Arena 最大容量（字节）
+# 默认: 65536 (64KB)
+# max_frame_arena_size = 65536
+
+# Region 总容量上限（字节）
+# 默认: 16777216 (16MB)
+# max_region_size = 16777216
+
+# 是否启用 Arena（可运行时关闭用于调试）
+# 默认: true
+# enabled = true
+
+# ─── 帧换页配置 ──────────────────────────────────────
+[frame_paging]
+# 帧栈容量上限
+# 默认: 200
+# capacity = 200
+
+# 低水位线（depth + low_watermark >= capacity 时触发换出）
+# 默认: 50
+# low_watermark = 50
+
+# 每次换出的帧数
+# 默认: 100
+# spill_batch = 100

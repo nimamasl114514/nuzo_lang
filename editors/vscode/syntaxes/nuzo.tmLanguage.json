@@ -1,0 +1,213 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Nuzo",
+  "scopeName": "source.nuzo",
+  "fileTypes": ["nuzo", "nz"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#operators" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.documentation.nuzo",
+          "match": "///.*$"
+        },
+        {
+          "name": "comment.block.nuzo",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.comment.begin.nuzo" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.comment.end.nuzo" }
+          }
+        },
+        {
+          "name": "comment.line.double-slash.nuzo",
+          "match": "//.*$"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.nuzo",
+          "begin": "\"",
+          "end": "\"",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.nuzo" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.nuzo" }
+          },
+          "patterns": [
+            {
+              "name": "constant.character.escape.nuzo",
+              "match": "\\\\(n|t|r|\\\\|\"|0|')"
+            }
+          ]
+        },
+        {
+          "name": "string.interpolated.nuzo",
+          "begin": "`",
+          "end": "`",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.nuzo" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.nuzo" }
+          },
+          "patterns": [
+            {
+              "name": "meta.interpolation.nuzo",
+              "begin": "\\$\\{",
+              "end": "\\}",
+              "beginCaptures": {
+                "0": { "name": "punctuation.definition.template-expression.begin.nuzo" }
+              },
+              "endCaptures": {
+                "0": { "name": "punctuation.definition.template-expression.end.nuzo" }
+              },
+              "patterns": [
+                {
+                  "name": "variable.other.readwrite.nuzo",
+                  "match": "[A-Za-z_][A-Za-z0-9_]*"
+                }
+              ]
+            },
+            {
+              "name": "constant.character.escape.nuzo",
+              "match": "\\\\(n|t|r|\\\\|`|0)"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.nuzo",
+          "match": "'([^'\\\\]|\\\\.)'",
+          "captures": {
+            "0": { "name": "punctuation.definition.string.nuzo" }
+          }
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.nuzo",
+          "match": "\\b0[xX][0-9a-fA-F]+\\b"
+        },
+        {
+          "name": "constant.numeric.octal.nuzo",
+          "match": "\\b0[oO][0-7]+\\b"
+        },
+        {
+          "name": "constant.numeric.binary.nuzo",
+          "match": "\\b0[bB][01]+\\b"
+        },
+        {
+          "name": "constant.numeric.float.nuzo",
+          "match": "\\b[0-9]+\\.[0-9]+([eE][+-]?[0-9]+)?\\b"
+        },
+        {
+          "name": "constant.numeric.float.nuzo",
+          "match": "\\b[0-9]+[eE][+-]?[0-9]+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.nuzo",
+          "match": "\\b[0-9]+\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.nuzo",
+          "match": "\\b(if|else|while|for|in|loop|break|continue|match|return|try|catch|out|keep|import|lazy|as)\\b"
+        },
+        {
+          "name": "keyword.declaration.nuzo",
+          "match": "\\b(fn)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.nuzo",
+          "match": "\\b(and|or|not)\\b"
+        },
+        {
+          "name": "constant.language.boolean.nuzo",
+          "match": "\\b(true|false)\\b"
+        },
+        {
+          "name": "constant.language.null.nuzo",
+          "match": "\\b(nil)\\b"
+        },
+        {
+          "name": "keyword.control.nuzo",
+          "match": "(函数|返回|导入|作为|懒|如果|否则|当|遍历|在|循环|跳出|继续|匹配|尝试|捕获|抛出|始终|并且|或者|非|真|假|空)"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.comparison.nuzo",
+          "match": "(==|!=|<=|>=|<|>)"
+        },
+        {
+          "name": "keyword.operator.assignment.nuzo",
+          "match": "(\\+=|-=|\\*=|/=|%=|=)"
+        },
+        {
+          "name": "keyword.operator.logical.nuzo",
+          "match": "(&&|\\|\\||!)"
+        },
+        {
+          "name": "keyword.operator.arrow.nuzo",
+          "match": "(->|=>)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.nuzo",
+          "match": "([+\\-*/%])"
+        },
+        {
+          "name": "punctuation.accessor.nuzo",
+          "match": "\\."
+        },
+        {
+          "name": "punctuation.separator.nuzo",
+          "match": "[,;:]"
+        },
+        {
+          "name": "punctuation.section.parens.nuzo",
+          "match": "[()]"
+        },
+        {
+          "name": "punctuation.section.brackets.nuzo",
+          "match": "[\\[\\]]"
+        },
+        {
+          "name": "punctuation.section.braces.nuzo",
+          "match": "[{}]"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "entity.name.type.nuzo",
+          "match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+        },
+        {
+          "name": "variable.other.readwrite.nuzo",
+          "match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}

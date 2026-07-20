@@ -1,0 +1,12 @@
+# === GC 分配速率测试 ===
+# 纯测量分配和GC回收的吞吐量
+
+start_allocs = 0
+i = 0
+当 i < 5000 {
+    obj = [i, i*i, i*2]
+    obj = 0  # 立即丢弃
+    start_allocs = start_allocs + 1
+    i = i + 1
+}
+start_allocs

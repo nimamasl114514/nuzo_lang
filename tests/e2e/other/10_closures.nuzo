@@ -1,0 +1,67 @@
+# === 10 闭包 ===
+# 测试: 闭包/捕获/高阶函数/匿名函数
+
+# --- 闭包捕获外部变量 ---
+outer_var = 10
+fn capture_test() {
+    outer_var
+}
+# capture_test() 预期: 10
+
+# --- 闭包修改捕获变量 ---
+counter = 0
+fn increment() {
+    counter = counter + 1
+    counter
+}
+r1 = increment()   # 预期: 1
+r2 = increment()   # 预期: 2
+
+# --- 高阶函数 ---
+fn apply(f, x) {
+    f(x)
+}
+fn double(x) {
+    x * 2
+}
+# apply(double, 5) 预期: 10
+
+# --- 函数作为返回值 ---
+fn make_adder(n) {
+    fn adder(x) {
+        x + n
+    }
+    adder
+}
+add5 = make_adder(5)
+# add5(10) 预期: 15
+
+# --- 嵌套函数定义 ---
+fn outer_fn(x) {
+    fn inner_fn(y) {
+        x + y
+    }
+    inner_fn(10)
+}
+# outer_fn(5) 预期: 15
+
+# --- 函数定义顺序 (前向引用) ---
+fn forward_call(x) {
+    helper(x) + 1
+}
+fn helper(y) {
+    y * 2
+}
+# forward_call(5) 预期: 11
+
+# --- 匿名函数 ---
+fn apply_twice(f, x) {
+    f(f(x))
+}
+fn inc(x) {
+    x + 1
+}
+# apply_twice(inc, 5) 预期: 7
+
+# --- 汇总 ---
+result = capture_test() + r1 + r2 + apply(double, 5) + add5(10) + outer_fn(5) + forward_call(5) + apply_twice(inc, 5)

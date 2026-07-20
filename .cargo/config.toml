@@ -1,0 +1,19 @@
+[source.crates-io]
+# replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor"
+
+# Optional compiler cache:
+# `just check-fast` / `test-fast` / `test-ui` / `test-generated` / `timings`
+# auto-detect `sccache` and set `RUSTC_WRAPPER=sccache` when available.
+
+# Increase stack size for Windows (default 1MB causes stack overflow in VM)
+# Use LLD for faster linking (multi-threaded, 2-5x speedup on multi-crate workspace)
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
+rustflags = ["-C", "link-arg=/STACK:8388608"]
+
+[target.x86_64-pc-windows-gnu]
+linker = "rust-lld"
+rustflags = ["-C", "link-arg=-Wl,--stack,8388608"]

@@ -1,0 +1,11 @@
+# Chinese API test
+count = 0
+
+fn render() {
+    标题("中文API测试")
+    分隔线()
+    标签("当前计数: " + str(count))
+    if 按钮("加一") { count = count + 1 }
+    进度条(0.3)
+    if 按钮("关闭") { 退出() }
+}

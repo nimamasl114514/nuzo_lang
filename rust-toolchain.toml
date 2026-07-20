@@ -1,0 +1,13 @@
+[toolchain]
+# Pin to a specific stable release for reproducibility across local dev, CI,
+# and contributors. Update intentionally after verifying
+# `cargo test --workspace --all-targets` passes on the new version.
+#
+# Note: Cargo.toml `rust-version = "1.88"` declares the MSRV (minimum supported
+# Rust version) for downstream users. This `channel` is the toolchain CI/dev uses
+# to build and test; it must be >= MSRV but is intentionally pinned higher so
+# that `std::assert_matches` (stabilized in 1.83 but with module-path quirks
+# resolved only in newer releases) and other recently-stable features work.
+channel = "1.97.0"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

@@ -1,0 +1,4 @@
+# Minimal test
+fn render() {
+    heading("Hello")
+}

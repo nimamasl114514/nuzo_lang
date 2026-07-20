@@ -1,0 +1,76 @@
+name: Deploy Playground to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crates/nuzo-playground-wasm/**'
+      - 'playground-web/**'
+      - '.github/workflows/playground-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只允许一个 deployment 运行
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install wasm-pack
+        uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-pack
+
+      - name: Build wasm crate
+        run: wasm-pack build crates/nuzo-playground-wasm --target web --release
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: playground-web/package*.json
+
+      - name: Install web deps
+        working-directory: playground-web
+        run: npm install
+
+      - name: Link wasm pkg
+        # 将 wasm-pack 生成的 pkg 链接到 playground-web
+        working-directory: playground-web
+        run: |
+          mkdir -p wasm
+          cp -r ../crates/nuzo-playground-wasm/pkg/* wasm/
+
+      - name: Build web
+        working-directory: playground-web
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: playground-web/dist
+
+      - name: Deploy to Pages
+        uses: actions/deploy-pages@v4

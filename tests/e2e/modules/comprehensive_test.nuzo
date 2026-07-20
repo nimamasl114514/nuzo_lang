@@ -1,0 +1,272 @@
+# ============================================================
+#  comprehensive_test.nuzo — 模块系统综合大测试（自包含版本）
+#  原测试导入 6 个模块，现全部内联到单一文件
+# ============================================================
+
+# ==================== 内联 math 模块 ====================
+
+fn add(a, b) { a + b }
+
+fn mul(a, b) { a * b }
+
+fn factorial(n) {
+    如果 (n <= 1) {
+        1
+    } 否则 {
+        mul(n, factorial(n - 1))
+    }
+}
+
+PI = 3.14159
+E = 2.71828
+
+# ==================== 内联 std/math_adv 模块 ====================
+
+fn abs(x) {
+    如果 (x < 0) {
+        0 - x
+    } 否则 {
+        x
+    }
+}
+
+fn pow(base, exp) {
+    result = 1
+    i = 0
+    当 (i < exp) {
+        result = mul(result, base)
+        i = i + 1
+    }
+    result
+}
+
+fn is_even(n) {
+    如果 (n % 2 == 0) { 1 } 否则 { 0 }
+}
+
+fn is_odd(n) {
+    如果 (n % 2 != 0) { 1 } 否则 { 0 }
+}
+
+fn sum(arr) {
+    total = 0
+    i = 0
+    当 (i < len(arr)) {
+        total = total + arr[i]
+        i = i + 1
+    }
+    total
+}
+
+fn average(arr) {
+    s = sum(arr)
+    l = len(arr)
+    如果 (l == 0) { 0 } 否则 { s / l }
+}
+
+fn max_arr(arr) {
+    如果 (len(arr) == 0) { 0 } 否则 {
+        m = arr[0]
+        i = 1
+        当 (i < len(arr)) {
+            如果 (arr[i] > m) { m = arr[i] }
+            i = i + 1
+        }
+        m
+    }
+}
+
+fn min_arr(arr) {
+    如果 (len(arr) == 0) { 0 } 否则 {
+        m = arr[0]
+        i = 1
+        当 (i < len(arr)) {
+            如果 (arr[i] < m) { m = arr[i] }
+            i = i + 1
+        }
+        m
+    }
+}
+
+# ==================== 内联 std/comparable 模块 ====================
+
+fn min(a, b) {
+    如果 (a < b) { a } 否则 { b }
+}
+
+fn max(a, b) {
+    如果 (a > b) { a } 否则 { b }
+}
+
+fn clamp(val, lo, hi) {
+    如果 (val < lo) {
+        lo
+    } 否则 {
+        如果 (val > hi) { hi } 否则 { val }
+    }
+}
+
+fn swap(a, b) { [b, a] }
+
+# ==================== 内联 string_utils 模块 ====================
+
+fn greet(name) { "Hello, " + name + "!" }
+
+fn repeat(s, n) {
+    result = ""
+    i = 0
+    当 (i < n) {
+        result = result + s
+        i = i + 1
+    }
+    result
+}
+
+# ============================================================
+#                     测试代码开始
+# ============================================================
+
+print("=== Nuzo Self-Contained Comprehensive Test ===")
+
+# ==================== 第一部分：数学基础模块 (math) ====================
+print("--- [1] Math Basics ---")
+print(add(10, 20))             # 30
+print(add(100, 200))           # 300
+print(mul(3, 7))              # 21
+print(mul(6, 7))              # 42
+print(PI)                      # 3.14159
+print(E)                       # 2.71828
+
+complex = add(mul(3, 4), add(5, 6))
+print(complex)                 # 23
+
+print(factorial(5))            # 120
+print(factorial(10))           # 3628800
+
+# ==================== 第二部分：高级数学 (math_adv) ====================
+print("--- [2] Advanced Math ---")
+print(abs(0 - 42))                # 42
+print(abs(99))                 # 99
+print(pow(2, 8))               # 256
+print(pow(3, 4))               # 81
+print(pow(10, 3))              # 1000
+print(is_even(10))             # 真
+print(is_even(7))              # 假
+print(is_odd(7))               # 真
+print(is_odd(8))               # 假
+
+data = [10, 20, 30, 40, 50]
+print(sum(data))               # 150
+print(average(data))            # 30
+print(max_arr(data))           # 50
+print(min_arr(data))           # 10
+
+data2 = [3, 1, 4, 1, 5, 9, 2, 6]
+print(sum(data2))              # 31
+print(max_arr(data2))          # 9
+print(min_arr(data2))          # 1
+
+empty = []
+print(sum(empty))              # 0
+print(average(empty))          # 0
+print(max_arr(empty))          # 0
+print(min_arr(empty))          # 0
+
+# ==================== 第三部分：跨模块组合 ====================
+print("--- [3] Cross-Module Composition ---")
+avg_val = average(data)
+result = mul(avg_val, 3)
+print(result)                  # 90
+
+combined = add(abs(0 - 15), pow(2, 4))
+print(combined)                # 31
+
+fact5 = factorial(5)
+print(fact5)                  # 120
+print(is_even(fact5))         # 真
+
+deep = mul(add(pow(2, 3), abs(0 - 10)), 2)
+print(deep)                   # 36
+
+# ==================== 第四部分：比较工具 (comparable) ====================
+print("--- [4] Comparable Utils ---")
+print(min(3, 7))              # 3
+print(min(0 - 5, 0 - 2))            # -5
+print(max(3, 7))              # 7
+print(max(0 - 10, 0 - 1))           # -1
+print(clamp(0 - 5, 0, 100))      # 0
+print(clamp(150, 0, 100))     # 100
+print(clamp(50, 0, 100))      # 50
+print(clamp(0, 0, 0))         # 0
+
+swapped = swap(10, 20)
+print(swapped[0])             # 20
+print(swapped[1])             # 10
+
+swapped2 = swap("a", "b")
+print(swapped2[0])            # "b"
+print(swapped2[1])            # "a"
+
+print(min(abs(0 - 50), abs(0 - 30)))   # 30
+print(max(pow(2,3), pow(3,2)))   # 9
+
+# ==================== 第五部分：字符串工具 (string_utils) ====================
+print("--- [5] String Utils ---")
+print(greet("Nuzo"))           # "Hello, Nuzo!"
+print(greet("World"))          # "Hello, World!"
+print(repeat("Hi", 3))         # "HiHiHi"
+print(repeat("ab", 5))         # "ababababab"
+print(repeat("x", 1))          # "x"
+print(repeat("", 10))          # ""
+
+print(repeat("Beep", add(1, 2)))  # "BeepBeepBeep"
+print(greet(mul(2, 3)))        # "Hello, 6!"
+
+# ==================== 第六部分：综合压力测试 ====================
+print("--- [6] Stress Test: Deep Nesting ---")
+
+stress = min(
+    max(
+        add(
+            sum([1, 2, 3, 4, 5]),
+            abs(0 - 100)
+        ),
+        200
+    ),
+    150
+)
+print(stress)                 # 150
+
+fn fibonacci(n) {
+    如果 (n <= 1) {
+        n
+    } 否则 {
+        add(fibonacci(n - 1), fibonacci(n - 2))
+    }
+}
+print(fibonacci(15))          # 610
+print(fibonacci(20))          # 6765
+
+big_fact = factorial(12)
+clamped = clamp(big_fact, 0, 10000)
+print(big_fact)               # 479001600
+print(clamped)                # 10000
+
+huge_pow = pow(2, 16)
+print(huge_pow)               # 65536
+doubled = mul(huge_pow, 2)
+print(doubled)                # 131072
+
+# ==================== 第七部分：变量与覆盖 ====================
+print("--- [7] Variables & Shadowing ---")
+x = 999
+print(x)                      # 999
+
+y = add(1, 2)
+print(y)                      # 3
+
+z = mul(y, 10)
+print(z)                      # 30
+
+# ==================== 完成 ====================
+print("=== All 7 Test Sections Passed ===")

@@ -1,0 +1,19 @@
+[package]
+name = "nuzo_compiler"
+version.workspace = true
+edition.workspace = true
+description = "Compiler (AST to Bytecode) for Nuzo"
+
+[dependencies]
+nuzo_frontend.workspace = true
+nuzo_bytecode.workspace = true
+nuzo_ir.workspace = true
+nuzo_helpers.workspace = true
+nuzo_signal.workspace = true
+nuzo_config.workspace = true
+nuzo_core.workspace = true
+nuzo_values.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+nuzo_class.workspace = true
+web-time.workspace = true

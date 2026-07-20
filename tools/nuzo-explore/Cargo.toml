@@ -1,0 +1,22 @@
+[package]
+name = "nuzo_explore"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "nuzo_explore"
+path = "src/main.rs"
+
+[[bin]]
+name = "minimal"
+path = "src/minimal.rs"
+
+[[bin]]
+name = "debug_mod"
+path = "src/debug_mod.rs"
+
+[dependencies]
+nuzo_compiler = { path = "../../crates/nuzo-compiler" }
+nuzo_vm = { path = "../../crates/nuzo-vm" }
+nuzo_values = { path = "../../crates/nuzo-values" }
+nuzo_ir = { path = "../../crates/nuzo-ir" }

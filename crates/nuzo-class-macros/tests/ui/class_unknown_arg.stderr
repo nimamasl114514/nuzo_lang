@@ -1,0 +1,7 @@
+error: unknown `class` argument; expected one of: debug, default, clone
+ --> tests/ui/class_unknown_arg.rs:3:1
+  |
+3 | #[class(serialize)]
+  | ^^^^^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `class` (in Nightly builds, run with -Z macro-backtrace for more info)

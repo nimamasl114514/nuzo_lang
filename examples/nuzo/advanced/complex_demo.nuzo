@@ -1,0 +1,458 @@
+# ============================================================
+# Nuzo 复杂示例程序 - 数学工具库 + 冒险游戏引擎
+# 展示: 函数/递归/循环/闭包/数组/字典/高阶函数/中英双语
+# ============================================================
+
+# ==================== 第一部分: 数学工具库 ====================
+
+# 斐波那契数列 (递归)
+fn fib(n) {
+    如果 n <= 1 {
+        n
+    } 否则 {
+        fib(n - 1) + fib(n - 2)
+    }
+}
+
+# 阶乘 (迭代优化版)
+fn factorial(n) {
+    result = 1
+    i = 2
+    当 i <= n {
+        result = result * i
+        i = i + 1
+    }
+    返回 result
+}
+
+# 最大公约数 (欧几里得算法)
+fn gcd(a, b) {
+    loop {
+        如果 b == 0 {
+            跳出 a
+        }
+        temp = b
+        b = a % b
+        a = temp
+    }
+}
+
+# 最小公倍数
+fn lcm(a, b) {
+    (a / gcd(a, b)) * b
+}
+
+# 素数检测
+fn is_prime(n) {
+    如果 n < 2 {
+        返回 假
+    }
+    如果 n == 2 {
+        返回 真
+    }
+    如果 n % 2 == 0 {
+        返回 假
+    }
+    i = 3
+    当 i * i <= n {
+        如果 n % i == 0 {
+            返回 假
+        }
+        i = i + 2
+    }
+    返回 真
+}
+
+# 筛法生成素数列表
+fn sieve_primes(limit) {
+    is_prime_arr = []
+    i = 0
+    当 i <= limit {
+        is_prime_arr[i] = 真
+        i = i + 1
+    }
+    is_prime_arr[0] = 假
+    is_prime_arr[1] = 假
+
+    p = 2
+    当 p * p <= limit {
+        如果 is_prime_arr[p] == 真 {
+            multiple = p * p
+            当 multiple <= limit {
+                is_prime_arr[multiple] = 假
+                multiple = multiple + p
+            }
+        }
+        p = p + 1
+    }
+
+    primes = []
+    遍历 num 在 2..limit+1 {
+        如果 is_prime_arr[num] == 真 {
+            primes[len(primes)] = num
+        }
+    }
+    返回 primes
+}
+
+# 快速排序 (高阶函数风格)
+fn quicksort(arr) {
+    如果 len(arr) <= 1 {
+        返回 arr
+    }
+
+    pivot = arr[0]
+    left = []
+    right = []
+
+    遍历 i 在 1..<len(arr) {
+        如果 arr[i] < pivot {
+            left[len(left)] = arr[i]
+        } 否则 {
+            right[len(right)] = arr[i]
+        }
+    }
+
+    sorted_left = quicksort(left)
+    sorted_right = quicksort(right)
+
+    # 合并结果
+    result = []
+    遍历 x 在 sorted_left {
+        result[len(result)] = x
+    }
+    result[len(result)] = pivot
+    遍历 x 在 sorted_right {
+        result[len(result)] = x
+    }
+    返回 result
+}
+
+# Map/Reduce/Filter 高阶函数
+fn map(arr, fn_) {
+    result = []
+    遍历 i 在 0..<len(arr) {
+        result[len(result)] = fn_(arr[i])
+    }
+    返回 result
+}
+
+fn filter(arr, pred) {
+    result = []
+    遍历 i 在 0..<len(arr) {
+        如果 pred(arr[i]) == 真 {
+            result[len(result)] = arr[i]
+        }
+    }
+    返回 result
+}
+
+fn reduce(arr, init, fn_) {
+    acc = init
+    遍历 i 在 0..<len(arr) {
+        acc = fn_(acc, arr[i])
+    }
+    返回 acc
+}
+
+# 柯里化演示
+fn add(a) {
+    fn(b) { a + b }
+}
+
+add5 = add(5)
+
+# 闭包捕获变量
+fn make_counter() {
+    count = 0
+    fn() {
+        count = count + 1
+        返回 count
+    }
+}
+
+# ==================== 第二部分: 数据结构操作 ====================
+
+# 字典操作演示
+fn create_person(name, age, skills) {
+    返回 {
+        name: name,
+        age: age,
+        skills: skills,
+        greet: fn(self) {
+            "Hello, I am " + self.name + "!"
+        }
+    }
+}
+
+# 数组统计
+fn array_stats(arr) {
+    如果 len(arr) == 0 {
+        返回 { min: 0, max: 0, sum: 0, avg: 0, len: 0 }
+    }
+
+    min_val = arr[0]
+    max_val = arr[0]
+    sum_val = 0
+
+    遍历 x 在 arr {
+        如果 x < min_val { min_val = x }
+        如果 x > max_val { max_val = x }
+        sum_val = sum_val + x
+    }
+
+    返回 {
+        min: min_val,
+        max: max_val,
+        sum: sum_val,
+        avg: sum_val / len(arr),
+        len: len(arr)
+    }
+}
+
+# 矩阵转置
+fn transpose(matrix) {
+    rows = len(matrix)
+    cols = len(matrix[0])
+
+    result = []
+    j = 0
+    当 j < cols {
+        row = []
+        i = 0
+        当 i < rows {
+            row[len(row)] = matrix[i][j]
+            i = i + 1
+        }
+        result[len(result)] = row
+        j = j + 1
+    }
+    返回 result
+}
+
+# ==================== 第三部分: 冒险游戏引擎 ====================
+
+# 游戏状态
+game_state = {
+    player: {
+        name: "Hero",
+        hp: 100,
+        max_hp: 100,
+        mp: 50,
+        max_mp: 50,
+        level: 1,
+        exp: 0,
+        gold: 100,
+        inventory: [],
+        equipped: nil
+    },
+    current_room: "town",
+    game_over: 假,
+    turn_count: 0
+}
+
+# 怪物定义
+monsters = [
+    {name: "Slime", hp: 30, attack: 8, defense: 2, exp_reward: 15, gold_reward: 10},
+    {name: "Goblin", hp: 50, attack: 12, defense: 4, exp_reward: 25, gold_reward: 20},
+    {name: "Orc", hp: 80, attack: 18, defense: 6, exp_reward: 40, gold_reward: 35},
+    {name: "Dragon", hp: 200, attack: 35, defense: 12, exp_reward: 150, gold_reward: 100}
+]
+
+# 物品定义
+items = {
+    potion: {name: "Health Potion", effect: 30, type: "heal", price: 25},
+    mana_potion: {name: "Mana Potion", effect: 20, type: "mana", price: 20},
+    sword: {name: "Iron Sword", bonus: 10, type: "weapon", price: 80},
+    shield: {name: "Wooden Shield", bonus: 5, type: "armor", price: 60}
+}
+
+# 战斗系统
+fn battle(monster_idx) {
+    monster = monsters[monster_idx]
+    monster_hp = monster.hp
+    player_hp = game_state.player.hp
+    player_atk = 10 + game_state.player.level * 2
+    player_def = 5 + game_state.player.level
+
+    println("=== BATTLE START ===")
+    println("You encounter a " + monster.name + "!")
+
+    round = 0
+    while monster_hp > 0 and player_hp > 0 {
+        round = round + 1
+        println("--- Round " + round + " ---")
+
+        # Player attacks
+        damage = player_atk - monster.defense
+        如果 damage < 0 { damage = 1 }
+        monster_hp = monster_hp - damage
+        println("You deal " + damage + " damage to " + monster.name)
+
+        如果 monster_hp <= 0 {
+            跳出
+        }
+
+        # Monster attacks
+        mon_damage = monster.attack - player_def
+        如果 mon_damage < 0 { mon_damage = 1 }
+        player_hp = player_hp - mon_damage
+        println(monster.name + " deals " + mon_damage + " damage to you!")
+        println("Your HP: " + player_hp + "/" + game_state.player.max_hp)
+    }
+
+    # Battle result
+    如果 player_hp <= 0 {
+        println("You were defeated by " + monster.name + "...")
+        game_state.game_over = 真
+        返回 假
+    } 否则 {
+        println("Victory! You defeated " + monster.name + "!")
+        println("Gained " + monster.exp_reward + " EXP and " + monster.gold_reward + " gold!")
+
+        game_state.player.exp = game_state.player.exp + monster.exp_reward
+        game_state.player.gold = game_state.player.gold + monster.gold_reward
+        game_state.player.hp = player_hp
+
+        # Level up check
+        exp_needed = game_state.player.level * 100
+        如果 game_state.player.exp >= exp_needed {
+            game_state.player.level = game_state.player.level + 1
+            game_state.player.max_hp = game_state.player.max_hp + 10
+            game_state.player.mp = game_state.player.max_mp + 5
+            println("*** LEVEL UP! Now level " + game_state.player.level + " ***")
+        }
+
+        返回 真
+    }
+}
+
+# 商店系统
+fn shop() {
+    println("=== SHOP ===")
+    println("Welcome! What would you like?")
+    println("Gold: " + game_state.player.gold)
+    println("")
+    println("1. Health Potion (25g)")
+    println("2. Mana Potion (20g)")
+    println("3. Iron Sword (80g)")
+    println("4. Wooden Shield (60g)")
+    println("0. Leave")
+}
+
+# 探险系统
+fn explore() {
+    # Random encounter (simplified)
+    danger_level = game_state.player.current_room == "dungeon" ? 3 : 1
+
+    encounter = loop {
+        roll = 0  # Would be random in real implementation
+        如果 roll < 70 {
+            跳出 "nothing"
+        } 否则 如果 roll < 90 {
+            跳出 "monster"
+        } 否则 {
+            跳出 "treasure"
+        }
+    }
+
+    如果 encounter == "monster" {
+        # Pick random monster based on area
+        max_monster = 如果 game_state.player.current_room == "dungeon" { 3 } 否则 { 1 }
+        monster_id = 0  # Simplified: always fight first monster
+        battle(monster_id)
+    } 否则 如果 encounter == "treasure" {
+        found_gold = (game_state.player.level + 1) * 15
+        println("Found a treasure chest with " + found_gold + " gold!")
+        game_state.player.gold = game_state.player.gold + found_gold
+    } 否则 {
+        println("Nothing interesting here...")
+    }
+}
+
+# 主循环 (简化版)
+fn main_game_loop() {
+    println("========================================")
+    println("   ADVENTURE GAME ENGINE - Nuzo Demo")
+    println("========================================")
+    println("")
+
+    # Show math library demo
+    println("[Math Library Test]")
+    println("fib(10) = " + fib(10))
+    println("factorial(10) = " + factorial(10))
+    println("gcd(48, 18) = " + gcd(48, 18))
+    println("lcm(12, 18) = " + lcm(12, 18))
+    println("is_prime(97) = " + is_prime(97))
+
+    primes_under_50 = sieve_primes(50)
+    print("Primes under 50: ")
+    遍历 p 在 primes_under_50 {
+        print(p + " ")
+    }
+    println("")
+
+    # Array operations demo
+    println("")
+    println("[Array Operations]")
+    numbers = [64, 34, 25, 12, 22, 11, 90]
+    sorted = quicksort(numbers)
+    print("Sorted: ")
+    遍历 n 在 sorted {
+        print(n + " ")
+    }
+    println("")
+
+    stats = array_stats([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    println("Stats: min=" + stats.min + ", max=" + stats.max +
+           ", avg=" + stats.avg + ", sum=" + stats.sum)
+
+    # Higher-order functions demo
+    println("")
+    println("[Higher-Order Functions]")
+    squared = map([1, 2, 3, 4, 5], fn(x) { x * x })
+    print("Map square: ")
+    遍历 s 在 squared { print(s + " ") }
+    println("")
+
+    evens = filter([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fn(x) { x % 2 == 0 })
+    print("Filter even: ")
+    遍历 e 在 evens { print(e + " ") }
+    println("")
+
+    total = reduce([1, 2, 3, 4, 5], 0, fn(acc, x) { acc + x })
+    println("Reduce sum: " + total)
+
+    # Currying demo
+    println("")
+    println("[Currying & Closures]")
+    println("add(5)(3) = " + add5(3))
+
+    counter = make_counter()
+    print("Counter: ")
+    i = 0
+    当 i < 5 {
+        print(counter() + " ")
+        i = i + 1
+    }
+    println("")
+
+    # Game demo
+    println("")
+    println("[Game Engine Demo]")
+    hero = create_player("Nuzo", 1, ["swordsmanship", "magic"])
+    println("Created hero: " + hero.name)
+
+    battle_result = battle(0)  # Fight slime
+    如果 battle_result {
+        println("Hero HP after battle: " + game_state.player.hp)
+    }
+
+    println("")
+    println("========================================")
+    println("         Demo Complete!")
+    println("========================================")
+}
+
+# 启动游戏
+main_game_loop()

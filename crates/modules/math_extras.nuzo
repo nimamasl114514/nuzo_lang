@@ -1,0 +1,16 @@
+# math_extras.nuzo — 数学扩展工具
+
+# 平方
+fn square(x) {
+    x * x
+}
+
+# 立方
+fn cube(x) {
+    x * x * x
+}
+
+# 判断是否为偶数
+fn is_even(n) {
+    (n % 2) == 0
+}

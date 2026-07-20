@@ -1,0 +1,203 @@
+[package]
+name = "nuzo"
+version.workspace = true
+edition.workspace = true
+description = "Nuzo Lang - A lightweight scripting language (root facade)"
+publish = false
+autobenches = false
+
+[dependencies]
+nuzo_run.workspace = true
+nuzo_proc.workspace = true
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+nuzo_core.workspace = true
+nuzo_values.workspace = true
+nuzo_bytecode.workspace = true
+nuzo_frontend.workspace = true
+nuzo_compiler.workspace = true
+nuzo_ir.workspace = true
+nuzo_vm.workspace = true
+nuzo_signal.workspace = true
+nuzo_helpers.workspace = true
+nuzo_error.workspace = true
+nuzo_proc_core.workspace = true
+nuzo_run.workspace = true
+serde_json.workspace = true
+proptest.workspace = true
+
+[[test]]
+name = "module_tests"
+path = "tests/integration/module_tests.rs"
+
+[[test]]
+name = "bug_boundary_tests"
+path = "tests/integration/bug_boundary_tests.rs"
+
+[[test]]
+name = "pow_instruction_tests"
+path = "tests/integration/pow_instruction_tests.rs"
+
+[[test]]
+name = "signal_integration"
+path = "tests/integration/signal_integration.rs"
+
+[[test]]
+name = "ir_integration_tests"
+path = "tests/integration/ir_integration_tests.rs"
+
+[[test]]
+name = "advanced_abstractions_tests"
+path = "tests/integration/advanced_abstractions_tests.rs"
+
+[[test]]
+name = "import_tests"
+path = "tests/integration/import_tests.rs"
+
+[[test]]
+name = "string_build_tests"
+path = "tests/integration/string_build_tests.rs"
+
+[[test]]
+name = "lexer_proptest"
+path = "tests/proptest/lexer_proptest.rs"
+
+[[test]]
+name = "value_proptest"
+path = "tests/proptest/value_proptest.rs"
+
+[[test]]
+name = "parser_proptest"
+path = "tests/proptest/parser_proptest.rs"
+
+[[test]]
+name = "e2e_proptest"
+path = "tests/proptest/e2e_proptest.rs"
+
+[[bin]]
+name = "bench_vm_branch_predict"
+path = "benches/bench_vm_branch_predict.rs"
+
+[[bin]]
+name = "nuzo_vs_py_fair"
+path = "benches/nuzo_vs_py_fair.rs"
+
+[[bench]]
+name = "bench_gc"
+path = "benches/bench_gc.rs"
+harness = false
+
+[[bench]]
+name = "bench_signal"
+path = "benches/bench_signal.rs"
+harness = false
+
+[[bench]]
+name = "bench_perf_regression"
+path = "benches/bench_perf_regression.rs"
+harness = false
+
+[workspace]
+members = [
+    "crates/nuzo-core",
+    "crates/nuzo-error",
+    "crates/nuzo-opcode",
+    "crates/nuzo-proc",
+    "crates/nuzo-proc-core",
+    "crates/nuzo-signal",
+    "crates/nuzo-values",
+    "crates/nuzo-frontend",
+    "crates/nuzo-bytecode",
+    "crates/nuzo-compiler",
+    "crates/nuzo-ir",
+    "crates/nuzo-vm",
+    "crates/nuzo-config",
+    "crates/nuzo-class",
+    "crates/nuzo-class-macros",
+    "crates/nuzo-run",
+    "crates/nuzo-helpers",
+    "crates/nuzo-gui", "crates/nuzo-codegen",
+    "crates/nuzo-playground-wasm",
+    "tools/nuzo-explore",
+    "tools/perf-codegen",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.6.0"
+edition = "2024"
+rust-version = "1.88"
+authors = ["Nuzo Team"]
+license = "MIT"
+repository = "https://github.com/nuzo-lang/nuzo"
+readme = "README.md"
+
+[workspace.dependencies]
+# core
+nuzo_core = { path = "crates/nuzo-core" }
+nuzo_proc_core = { path = "crates/nuzo-proc-core", default-features = false }
+nuzo_proc = { path = "crates/nuzo-proc" }
+nuzo_error = { path = "crates/nuzo-error" }
+nuzo_signal = { path = "crates/nuzo-signal" }
+nuzo_opcode = { path = "crates/nuzo-opcode" }
+nuzo_values = { path = "crates/nuzo-values" }
+# frontend
+nuzo_frontend = { path = "crates/nuzo-frontend" }
+# backend
+nuzo_ir = { path = "crates/nuzo-ir" }
+nuzo_bytecode = { path = "crates/nuzo-bytecode" }
+nuzo_compiler = { path = "crates/nuzo-compiler" }
+nuzo_helpers = { path = "crates/nuzo-helpers" }
+nuzo_gui = { path = "crates/nuzo-gui" }
+# runtime
+nuzo_vm = { path = "crates/nuzo-vm" }
+nuzo_config = { path = "crates/nuzo-config" }
+nuzo_class = { path = "crates/nuzo-class" }
+nuzo_class_macros = { path = "crates/nuzo-class-macros" }
+nuzo_run = { path = "crates/nuzo-run" }
+nuzo_codegen = { path = "crates/nuzo-codegen" }
+serde = { version = "=1.0.197", features = ["derive"] }
+serde_json = { version = "=1.0.115" }
+once_cell = { version = "1.19" }
+xxhash-rust = { version = "0.8", features = ["xxh3"] }
+log = "0.4"
+crossbeam-queue = "0.3"
+clap = { version = "4", features = ["derive"] }
+proc-macro2 = "1"
+syn = { version = "2", features = ["full", "extra-traits", "parsing", "printing"] }
+quote = "1"
+proptest = "=1.6.0"
+# 跨平台 Instant：在 wasm32-unknown-unknown 上 std::time::Instant 未实现会 panic，
+# web-time 在 wasm32 上使用 performance.now() 实现，native 上转发到 std::time::Instant。
+web-time = "0.2"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 8
+strip = true
+
+[profile.release.build-override]
+opt-level = 0
+codegen-units = 16
+
+[profile.dev]
+opt-level = 1
+debug = true
+incremental = true
+split-debuginfo = "unpacked"
+codegen-units = 16
+lto = false
+
+[profile.test]
+opt-level = 0
+debug = true
+incremental = true
+
+[profile.fast]
+inherits = "dev"
+opt-level = 3
+lto = "thin"

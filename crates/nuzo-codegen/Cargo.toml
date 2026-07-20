@@ -1,0 +1,16 @@
+[package]
+name = "nuzo_codegen"
+version.workspace = true
+edition.workspace = true
+description = "Nuzo compile-time code generation (builtins, opcodes, dispatch)"
+publish = false
+
+[dependencies]
+syn = { workspace = true }
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+rustpython-parser = { version = "0.4", optional = true }
+nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
+
+[features]
+py-test = ["dep:rustpython-parser"]

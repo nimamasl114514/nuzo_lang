@@ -1,0 +1,18 @@
+# 尾递归基准测试
+# 验证 Phase 3 TCO 优化 (旧寄存器立即回收) 下尾递归性能与栈深度
+# 规模: 1,000,000 深度尾递归累加, 预期 TCO 生效时栈空间 O(1)
+# 若 TCO 失效会栈溢出, 此基准同时作为 TCO 回归测试
+
+fn acc(n, sum) {
+    if n == 0 {
+        return sum
+    } else {
+        return acc(n - 1, sum + n)
+    }
+}
+
+result = acc(1000000, 0)
+
+print("tail_recursion_result = ")
+println(result)
+result

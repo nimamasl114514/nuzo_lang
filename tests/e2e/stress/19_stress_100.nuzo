@@ -1,0 +1,56 @@
+# === 19 压力测试 ===
+# 测试: 大量运算+递归+循环
+
+# --- 累加 1..100 ---
+fn sum_to(n) {
+    if n <= 0 { return 0 }
+    if n <= 1 { return 1 }
+    n + sum_to(n - 1)
+}
+sum100 = sum_to(100)  # 预期: 5050
+
+# --- 迭代累加 ---
+iter_sum = 0
+i = 1
+当 i <= 200 {
+    iter_sum = iter_sum + i
+    i = i + 1
+}
+# iter_sum 预期: 20100
+
+# --- 嵌套循环 (矩阵求和) ---
+matrix_sum = 0
+row = 0
+当 row < 10 {
+    col = 0
+    当 col < 10 {
+        matrix_sum = matrix_sum + row * 10 + col
+        col = col + 1
+    }
+    row = row + 1
+}
+# matrix_sum 预期: sum(0..99) = 4950
+
+# --- 字符串重复 ---
+fn repeat(s, n) {
+    result = ""
+    i = 0
+    当 i < n {
+        result = result + s
+        i = i + 1
+    }
+    result
+}
+abc5 = repeat("x", 50)
+abc5_len = len(abc5)  # 预期: 50
+
+# --- 函数调用链 ---
+fn add1(x) { x + 1 }
+fn chain(n) {
+    if n <= 0 { return 0 }
+    add1(chain(n - 1))
+}
+chain_result = chain(50)  # 预期: 50
+
+# --- 汇总 ---
+result = sum100 + iter_sum + matrix_sum + abc5_len + chain_result

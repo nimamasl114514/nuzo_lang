@@ -1,0 +1,16 @@
+# 精确测试3 - 最小化
+
+fn copy(arr) {
+    dst = []
+    i = 0
+    当 i < len(arr) {
+        push(dst, arr[i])
+        i = i + 1
+    }
+    dst
+}
+
+# 只测试copy
+y = copy([5, 3, 8, 1])
+result = len(y)
+result
