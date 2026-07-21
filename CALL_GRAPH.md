@@ -893,11 +893,11 @@ Structs: NuzoGuiApp { vm: Rc }
 Structs: JumpFixup { pos: usize, target_block: u32, instr_size: usize }, OperandField { kind: OperandKind, offset: usize }, CodeGenerator { chunk: Chunk, reg_manager: Option, block_starts: HashMap, jump_fixups: Vec, def_ips: _, use_ips: _, is_main_function: bool, closure_indices: HashMap, local_map: HashMap, init_flag_slots: HashMap, next_init_flag_slot: u16, lazy_symbol_map: HashMap, emitted_lazy_modules: HashSet, eager_imports: Vec, sub_module_chunks: Vec }
 
 ```
-334 CodeGenerator::new →[Chunk::new]  pub fn new() -> Self
-376 CodeGenerator::generate  pub fn generate(&mut self, module: &IrModule) -> Result
-479 CodeGenerator::take_sub_module_chunks  pub fn take_sub_module_chunks(&mut self) -> Vec
-615 CodeGenerator::into_chunk  pub fn into_chunk(self) -> Chunk
-625 CodeGenerator::chunk  pub fn chunk(&self) -> &Chunk
+352 CodeGenerator::new →[Chunk::new]  pub fn new() -> Self
+394 CodeGenerator::generate  pub fn generate(&mut self, module: &IrModule) -> Result
+506 CodeGenerator::take_sub_module_chunks  pub fn take_sub_module_chunks(&mut self) -> Vec
+642 CodeGenerator::into_chunk  pub fn into_chunk(self) -> Chunk
+652 CodeGenerator::chunk  pub fn chunk(&self) -> &Chunk
 ```
 
 ---
@@ -1379,8 +1379,8 @@ Structs: VmDiagnosis { disassembly: String, error_ip: Option, register_snapshot:
 835 NuzoError::to_string_with_lang →[NuzoError::format_with_lang]  pub fn to_string_with_lang(&self, lang: LangMode) -> String
 897 LangMode::from_env ←[DiagnosticRenderer::new]  pub fn from_env() -> Self
 906 LangMode::select ←[ErrorClassifier::fix_suggestion_with_lang,ErrorClassifier::generate_structured_suggestions_with_candidates]  pub fn select(self, zh: &str, en: &str) -> String
-390 CompileError::line  pub fn line(&self) -> usize
-416 CompileError::column  pub fn column(&self) -> Option
+409 CompileError::line  pub fn line(&self) -> usize
+436 CompileError::column  pub fn column(&self) -> Option
 38 IrErrorSeverity::as_str  pub fn as_str(&self) -> &str
 78 IrErrorCategory::as_str  pub fn as_str(&self) -> &str
 220 IrBuildError::to_single_line  pub fn to_single_line(&self) -> String
