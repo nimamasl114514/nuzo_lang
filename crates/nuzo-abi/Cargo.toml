@@ -1,0 +1,11 @@
+[package]
+name = "nuzo_abi"
+version = "0.1.0"
+edition = "2021"
+description = "Shared ABI traits and abstractions for Nuzo Lang workspace crates"
+
+[dependencies]
+nuzo_core = { path = "../nuzo-core" }
+
+[features]
+default = []

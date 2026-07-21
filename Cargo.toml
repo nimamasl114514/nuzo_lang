@@ -119,7 +119,9 @@ members = [
     "crates/nuzo-class-macros",
     "crates/nuzo-run",
     "crates/nuzo-helpers",
-    "crates/nuzo-gui", "crates/nuzo-codegen",
+    "crates/nuzo-gui",
+    "crates/nuzo-abi",
+    "crates/nuzo-codegen",
     "crates/nuzo-playground-wasm",
     "tools/nuzo-explore",
     "tools/perf-codegen",
@@ -138,6 +140,7 @@ readme = "README.md"
 [workspace.dependencies]
 # core
 nuzo_core = { path = "crates/nuzo-core" }
+nuzo_abi = { path = "crates/nuzo-abi" }
 nuzo_proc_core = { path = "crates/nuzo-proc-core", default-features = false }
 nuzo_proc = { path = "crates/nuzo-proc" }
 nuzo_error = { path = "crates/nuzo-error" }
