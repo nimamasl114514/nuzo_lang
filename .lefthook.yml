@@ -130,7 +130,16 @@ pre-push:
       run: cargo clippy --workspace --lib -- -D warnings
 
 # 提交信息格式检查（Conventional Commits 规范）
+# piped: true 保证 conventional-commit 先跑，格式通过后再跑 no-heredoc
+#        避免两个命令输出交错，且让格式错误优先暴露
 commit-msg:
+  piped: true
   commands:
     conventional-commit:
       run: bash scripts/check_commit_msg.sh {1}
+
+    # 拦截 heredoc 标记（PowerShell 不支持 heredoc，出现即误用）
+    # 对齐 Backlog #3：把"规则约束"升级为"工具强制"
+    # -NoProfile: 跳过用户 profile，启动更快且输出更干净
+    no-heredoc:
+      run: powershell -ExecutionPolicy Bypass -NoProfile -File scripts/check_heredoc.ps1 {1}
