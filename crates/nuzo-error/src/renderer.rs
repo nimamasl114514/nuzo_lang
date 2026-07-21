@@ -6,6 +6,7 @@
 
 use std::fmt::Write as FmtWrite;
 
+use nuzo_abi::source_ext::SourceLocationExt;
 use nuzo_core::error::ErrorCode;
 use nuzo_core::{InternalError, LangMode, NuzoError, SourceLocation};
 
@@ -281,11 +282,7 @@ impl DiagnosticRenderer {
     // ========================================================================
 
     fn render_source_location(&self, output: &mut String, loc: &SourceLocation) {
-        let location_text = if loc.column > 0 {
-            format!("--> {}:{}:{}", loc.file, loc.line, loc.column)
-        } else {
-            format!("--> {}:{}", loc.file, loc.line)
-        };
+        let location_text = format!("--> {}", loc.to_compact_string());
         let _ = writeln!(output, "{}", self.formatter.cyan_style().apply_to(location_text));
 
         // 若注入了完整源码且错误行落在范围内，渲染多行上下文 snippet。
@@ -403,8 +400,9 @@ impl DiagnosticRenderer {
             }
             if let Some(ref span) = suggestion.span {
                 let styled = self.formatter.cyan_style().apply_to(format!(
-                    "     {}: {}:{}:{}",
-                    location_label, span.file, span.line, span.column
+                    "     {}: {}",
+                    location_label,
+                    span.to_compact_string()
                 ));
                 let _ = writeln!(output, "{}", styled);
             }

@@ -8,6 +8,7 @@
 //! - `set_prop_slow` — set_prop 冷路径
 
 use crate::vm::VM;
+use nuzo_abi::NuzoErrorExt;
 use nuzo_values::*;
 
 use super::cache_types::{PIC_WAYS, PropICEntry};
@@ -104,8 +105,8 @@ impl VM {
             ))
         })?;
         let prop_name = prop_name_val.as_string_opt().ok_or_else(|| {
-            self.error_with_source_location(NuzoError::type_mismatch(
-                "string".to_string(),
+            self.error_with_source_location(NuzoErrorExt::type_mismatch(
+                "string",
                 format!("constant (type={})", prop_name_val.type_name()),
             ))
         })?;
@@ -211,8 +212,8 @@ impl VM {
             ))
         })?;
         let prop_name = prop_name_val.as_string_opt().ok_or_else(|| {
-            self.error_with_source_location(NuzoError::type_mismatch(
-                "string".to_string(),
+            self.error_with_source_location(NuzoErrorExt::type_mismatch(
+                "string",
                 format!("constant (type={})", prop_name_val.type_name()),
             ))
         })?;

@@ -47,6 +47,7 @@
 //!
 //! description()、operand_summary()、iter_all() 已由宏自动生成，无需手动维护。
 
+use nuzo_abi::index::SafeIndex;
 use nuzo_core::SourceLocation;
 use nuzo_core::Value;
 use nuzo_core::{CAPTURE_OUTER_FLAG, CAPTURE_OUTER_INDEX_MASK, XxHashMap};
@@ -643,8 +644,14 @@ macro_rules! generate_decode_method {
                     pos += 2;
                     let source = if raw & CAPTURE_OUTER_FLAG != 0 {
                         let outer_idx = raw & CAPTURE_OUTER_INDEX_MASK;
-                        if outer_idx > 255 { return None; }
-                        CapturedSource::Outer(outer_idx as u8)
+                        // SafeIndex 显式窄化：outer_idx 已被 CAPTURE_OUTER_INDEX_MASK
+                        // 截断至低 8 位，但用 try_from_u32 使意图更清晰且防御未来变更
+                        let narrow = SafeIndex::<u8>::try_from_u32(outer_idx as u32);
+                        let outer_u8 = match narrow {
+                            Ok(idx) => idx.get(),
+                            Err(_) => return None,
+                        };
+                        CapturedSource::Outer(outer_u8)
                     } else {
                         if raw >= CAPTURE_OUTER_FLAG { return None; }
                         CapturedSource::ByValue(Reg(raw))

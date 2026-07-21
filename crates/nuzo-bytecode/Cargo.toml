@@ -18,4 +18,5 @@ nuzo_proc.workspace = true
 nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
 nuzo_values.workspace = true
 nuzo_core.workspace = true
+nuzo_abi.workspace = true
 serde = { workspace = true, optional = true }

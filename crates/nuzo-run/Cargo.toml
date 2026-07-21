@@ -25,6 +25,7 @@ nuzo_helpers.workspace = true
 nuzo_error.workspace = true
 nuzo_bytecode.workspace = true
 nuzo_core.workspace = true
+nuzo_abi.workspace = true
 nuzo_signal.workspace = true
 nuzo_config.workspace = true
 nuzo_frontend.workspace = true

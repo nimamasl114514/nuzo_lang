@@ -11,9 +11,12 @@
 //!
 //! # What's included
 //!
-//! - **Core value types**: `Value`, `ValueTag`, `ValueExt`
+//! - **Shared ABI types** (via `nuzo_abi::prelude`): `Value`, `NuzoError`, `NuzoErrorKind`,
+//!   `SourceLocation`, `Tracer`, `NuzoTrace`, `SafeIndex`, `SafeU8`, `SafeU16`, `SafeU32`,
+//!   `IndexOverflowError`, `NuzoErrorExt`, `SourceLocationExt`
+//! - **Core value types**: `ValueExt`, `ValueTag`
 //! - **Heap objects**: `HeapObject`, `NuzoDict`, `SmallDict`, `LargeDict`
-//! - **Errors**: `NuzoError`, `NuzoErrorKind`, `InternalError`, `SourceLocation`, `VmDiagnosis`
+//! - **Errors** (crate-specific): `InternalError`, `VmDiagnosis`
 //! - **Functions**: `FunctionPrototype`, `DebugInfo`, `PrototypeDebugInfo`
 //! - **Runtime context**: `RuntimeContext`
 //! - **Closure captures**: `CaptureMode`, `CaptureInfo`, `CapturedVar`
@@ -22,9 +25,13 @@
 //! - **Misc**: `RangeValue`, `RangeEnd`, `DeadCodeRecord`, `DeadCodeReason`, `FoldRecord`, `InlineRecord`
 
 // ---------------------------------------------------------------------------
-// Core value types
+// Shared ABI types (from nuzo-abi)
 // ---------------------------------------------------------------------------
-pub use crate::value::Value;
+pub use nuzo_abi::prelude::*;
+
+// ---------------------------------------------------------------------------
+// Core value types (crate-specific, not in nuzo-abi)
+// ---------------------------------------------------------------------------
 pub use crate::value::ValueExt;
 pub use crate::value::ValueTag;
 
@@ -37,12 +44,9 @@ pub use crate::nuzo_dict::NuzoDict;
 pub use crate::nuzo_dict::SmallDict;
 
 // ---------------------------------------------------------------------------
-// Errors
+// Errors (crate-specific, not in nuzo-abi)
 // ---------------------------------------------------------------------------
 pub use crate::errors::InternalError;
-pub use crate::errors::NuzoError;
-pub use crate::errors::NuzoErrorKind;
-pub use crate::errors::SourceLocation;
 pub use crate::errors::VmDiagnosis;
 
 // ---------------------------------------------------------------------------
@@ -69,7 +73,7 @@ pub use crate::heap::CaptureMode;
 pub use crate::heap::CapturedVar;
 
 // ---------------------------------------------------------------------------
-// Constants
+// Constants (not in nuzo-abi)
 // ---------------------------------------------------------------------------
 pub use crate::value::FALSE;
 pub use crate::value::NIL;

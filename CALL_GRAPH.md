@@ -1,6 +1,6 @@
-# Nuzo Lang 调用图文档 (CALL_GRAPH)
+# nuzo_lang 调用图文档 (CALL_GRAPH)
 
-> 自动生成于 2026-08-05 | 源码版本: 0.6.0
+> 自动生成于 2026-08-05 | 源码版本: 0.1.0
 
 ---
 
@@ -10,11 +10,11 @@
 
 | 指标 | 数值 |
 |------|------|
-| 总函数数 | 1509 |
+| 总函数数 | 1527 |
 | 总调用边 | 1070 |
 | 未解析调用 | 2163 |
 | 跨 Crate 依赖边 | 297 (27.8%) |
-| Crate 数量 | 22 |
+| Crate 数量 | 23 |
 
 ### 1.2 Crate 规模分布
 
@@ -35,6 +35,7 @@
 | nuzo_gui | 33 | 30 | 0.91 |
 | nuzo_frontend | 25 | 3 | 0.12 |
 | nuzo | 20 | 10 | 0.50 |
+| nuzo_abi | 18 | 0 | 0.00 |
 | nuzo_playground_wasm | 14 | 4 | 0.29 |
 | nuzo_proc | 10 | 0 | 0.00 |
 | nuzo_codegen | 8 | 3 | 0.38 |
@@ -133,6 +134,11 @@ graph TB
         lib["lib"]
         testkit_baseline["baseline"]
         testkit_perf_regression["perf_regression"]
+    end
+
+    subgraph nuzo_abi["nuzo_abi"]
+        error_ext["error_ext"]
+        index["index"]
     end
 
     subgraph nuzo_bytecode["nuzo_bytecode"]
@@ -887,11 +893,11 @@ Structs: NuzoGuiApp { vm: Rc }
 Structs: JumpFixup { pos: usize, target_block: u32, instr_size: usize }, OperandField { kind: OperandKind, offset: usize }, CodeGenerator { chunk: Chunk, reg_manager: Option, block_starts: HashMap, jump_fixups: Vec, def_ips: _, use_ips: _, is_main_function: bool, closure_indices: HashMap, local_map: HashMap, init_flag_slots: HashMap, next_init_flag_slot: u16, lazy_symbol_map: HashMap, emitted_lazy_modules: HashSet, eager_imports: Vec, sub_module_chunks: Vec }
 
 ```
-333 CodeGenerator::new →[Chunk::new]  pub fn new() -> Self
-375 CodeGenerator::generate  pub fn generate(&mut self, module: &IrModule) -> Result
-478 CodeGenerator::take_sub_module_chunks  pub fn take_sub_module_chunks(&mut self) -> Vec
-614 CodeGenerator::into_chunk  pub fn into_chunk(self) -> Chunk
-624 CodeGenerator::chunk  pub fn chunk(&self) -> &Chunk
+334 CodeGenerator::new →[Chunk::new]  pub fn new() -> Self
+376 CodeGenerator::generate  pub fn generate(&mut self, module: &IrModule) -> Result
+479 CodeGenerator::take_sub_module_chunks  pub fn take_sub_module_chunks(&mut self) -> Vec
+615 CodeGenerator::into_chunk  pub fn into_chunk(self) -> Chunk
+625 CodeGenerator::chunk  pub fn chunk(&self) -> &Chunk
 ```
 
 ---
@@ -1387,6 +1393,28 @@ Structs: VmDiagnosis { disassembly: String, error_ip: Option, register_snapshot:
 
 ---
 
+### error_ext `src/error_ext.rs`
+
+> NuzoError 工厂方法扩展，统一错误构造模式。
+
+`nuzo_abi` | 9 fn | E:0 out / 0 in | xmod:0 (x-crate:0)
+
+Structs: NuzoErrorExt { }
+
+```
+39 NuzoErrorExt::type_mismatch  pub fn type_mismatch(expected: _, actual: _) -> NuzoError
+44 NuzoErrorExt::index_out_of_bounds  pub fn index_out_of_bounds(index: _, length: _) -> NuzoError
+49 NuzoErrorExt::undefined_variable  pub fn undefined_variable(name: _) -> NuzoError
+54 NuzoErrorExt::unsupported_operation  pub fn unsupported_operation(op: _, on_type: _) -> NuzoError
+59 NuzoErrorExt::arity_mismatch  pub fn arity_mismatch(expected: usize, got: usize) -> NuzoError
+64 NuzoErrorExt::expected_number  pub fn expected_number(got: _) -> NuzoError
+69 NuzoErrorExt::assert_failed  pub fn assert_failed(message: _) -> NuzoError
+74 NuzoErrorExt::division_by_zero  pub fn division_by_zero() -> NuzoError
+79 NuzoErrorExt::arithmetic_overflow  pub fn arithmetic_overflow() -> NuzoError
+```
+
+---
+
 ### error_kind `src/error_kind.rs`
 
 > # ErrorKind 核心展开逻辑
@@ -1778,6 +1806,28 @@ Structs: SliceChain { buf: Vec, large_total: usize, fragments: Vec }, CaptureInf
 
 ---
 
+### index `src/index.rs`
+
+> 安全索引封装，防止 u8/u16/u32 索引溢出截断。
+
+`nuzo_abi` | 9 fn | E:0 out / 0 in | xmod:0 (x-crate:0)
+
+Structs: SafeIndex { field_0: T }, IndexOverflowError { target: str, value: u32 }
+
+```
+59 SafeIndex::try_from_u32  pub fn try_from_u32(val: u32) -> Result
+68 SafeIndex::try_from_usize  pub fn try_from_usize(val: usize) -> Result
+73 SafeIndex::get  pub fn get(self) -> u8
+59 SafeIndex::try_from_u32  pub fn try_from_u32(val: u32) -> Result
+68 SafeIndex::try_from_usize  pub fn try_from_usize(val: usize) -> Result
+73 SafeIndex::get  pub fn get(self) -> u16
+59 SafeIndex::try_from_u32  pub fn try_from_u32(val: u32) -> Result
+68 SafeIndex::try_from_usize  pub fn try_from_usize(val: usize) -> Result
+73 SafeIndex::get  pub fn get(self) -> u32
+```
+
+---
+
 ### inspector `src/inspector.rs`
 
 > # ValueInspector -- Value 调试检查工具
@@ -2069,31 +2119,31 @@ Structs: Shape { id: usize, names: Vec, name_hashes: Vec, large_index: Option, t
 Structs: Reg { field_0: u16 }, ConstIdx { field_0: u16 }, Offset { field_0: i16 }, CaptureIdx { field_0: u16 }, U8 { field_0: u8 }, U16 { field_0: u16 }, Chunk { code: Arc, constants: Arc, constant_index: Arc, lines: Arc, debug_info: Arc, locals_count: u16, spill_slot_count: u16 }
 
 ```
-978 Instruction::size  pub fn size(&self) -> usize
-1115 Chunk::new ←[CodeGenerator::new]  pub fn new() -> Self
-1136 Chunk::code  pub fn code(&self) -> &[u8]
-1143 Chunk::constants ←[_op_loadk_arith,cmd_compile,save_chunk]  pub fn constants(&self) -> &[Value]
-1150 Chunk::lines ←[DiagnosticRenderer::with_source_context,render_compile_error,save_chunk]  pub fn lines(&self) -> &[u32]
-1162 Chunk::code_mut  pub fn code_mut(&mut self) -> &mut Vec
-1168 Chunk::constants_mut  pub fn constants_mut(&mut self) -> &mut Vec
-1174 Chunk::lines_mut  pub fn lines_mut(&mut self) -> &mut Vec
-1185 Chunk::from_arcs ←[load_chunk]  pub fn from_arcs(code: Arc, constants: Arc, lines: Arc, debug_info:...
-1212 Chunk::into_parts  pub fn into_parts(self) -> (Arc, Arc, Arc, Arc, u16, u16)
-1226 Chunk::write_opcode  pub fn write_opcode(&mut self, op: Opcode)
-1231 Chunk::write_byte  pub fn write_byte(&mut self, b: u8)
-1239 Chunk::write_u16 ←[Chunk::write_i16]  pub fn write_u16(&mut self, val: u16)
-1246 Chunk::write_i16 →[Chunk::write_u16]  pub fn write_i16(&mut self, val: i16)
-1254 Chunk::emit  pub fn emit(&mut self, instr: Instruction)
-1278 Chunk::try_add_constant →[Chunk::len] ←[Chunk::add_constant]  pub fn try_add_constant(&mut self, value: Value) -> Result
-1310 Chunk::add_constant →[Chunk::try_add_constant]  pub fn add_constant(&mut self, value: Value) -> usize
-1325 Chunk::get_constant  pub fn get_constant(&self, idx: usize) -> Option
-1330 Chunk::add_debug_info  pub fn add_debug_info(&mut self, ip: usize, line: usize, column: us...
-1339 Chunk::get_source_location ←[Chunk::disassemble,VM::push_frame,VM::push_frame_with_base]  pub fn get_source_location(&self, ip: usize) -> Option
-1429 Chunk::len ←[Chunk::decode_spill,Chunk::try_add_constant]  pub fn len(&self) -> usize
-1435 Chunk::is_empty  pub fn is_empty(&self) -> bool
-1440 Chunk::decode_opcode ←[HotTraceTable::try_register_at_ip,diagnose_opcode_byte]  pub fn decode_opcode(byte: u8) -> Option
-1462 Chunk::decode_spill →[Chunk::len] ←[Chunk::disassemble]  pub fn decode_spill(opcode_byte: u8, bytes: &[u8]) -> Option
-1500 Chunk::disassemble →[Chunk::decode_spill,Chunk::get_source_location]  pub fn disassemble(&self) -> String
+985 Instruction::size  pub fn size(&self) -> usize
+1122 Chunk::new ←[CodeGenerator::new]  pub fn new() -> Self
+1143 Chunk::code  pub fn code(&self) -> &[u8]
+1150 Chunk::constants ←[_op_loadk_arith,cmd_compile,save_chunk]  pub fn constants(&self) -> &[Value]
+1157 Chunk::lines ←[DiagnosticRenderer::with_source_context,render_compile_error,save_chunk]  pub fn lines(&self) -> &[u32]
+1169 Chunk::code_mut  pub fn code_mut(&mut self) -> &mut Vec
+1175 Chunk::constants_mut  pub fn constants_mut(&mut self) -> &mut Vec
+1181 Chunk::lines_mut  pub fn lines_mut(&mut self) -> &mut Vec
+1192 Chunk::from_arcs ←[load_chunk]  pub fn from_arcs(code: Arc, constants: Arc, lines: Arc, debug_info:...
+1219 Chunk::into_parts  pub fn into_parts(self) -> (Arc, Arc, Arc, Arc, u16, u16)
+1233 Chunk::write_opcode  pub fn write_opcode(&mut self, op: Opcode)
+1238 Chunk::write_byte  pub fn write_byte(&mut self, b: u8)
+1246 Chunk::write_u16 ←[Chunk::write_i16]  pub fn write_u16(&mut self, val: u16)
+1253 Chunk::write_i16 →[Chunk::write_u16]  pub fn write_i16(&mut self, val: i16)
+1261 Chunk::emit  pub fn emit(&mut self, instr: Instruction)
+1285 Chunk::try_add_constant →[Chunk::len] ←[Chunk::add_constant]  pub fn try_add_constant(&mut self, value: Value) -> Result
+1317 Chunk::add_constant →[Chunk::try_add_constant]  pub fn add_constant(&mut self, value: Value) -> usize
+1332 Chunk::get_constant  pub fn get_constant(&self, idx: usize) -> Option
+1337 Chunk::add_debug_info  pub fn add_debug_info(&mut self, ip: usize, line: usize, column: us...
+1346 Chunk::get_source_location ←[Chunk::disassemble,VM::push_frame,VM::push_frame_with_base]  pub fn get_source_location(&self, ip: usize) -> Option
+1436 Chunk::len ←[Chunk::decode_spill,Chunk::try_add_constant]  pub fn len(&self) -> usize
+1442 Chunk::is_empty  pub fn is_empty(&self) -> bool
+1447 Chunk::decode_opcode ←[HotTraceTable::try_register_at_ip,diagnose_opcode_byte]  pub fn decode_opcode(byte: u8) -> Option
+1469 Chunk::decode_spill →[Chunk::len] ←[Chunk::disassemble]  pub fn decode_spill(opcode_byte: u8, bytes: &[u8]) -> Option
+1507 Chunk::disassemble →[Chunk::decode_spill,Chunk::get_source_location]  pub fn disassemble(&self) -> String
 ```
 
 ---
@@ -2248,18 +2298,18 @@ Structs: BindArgs { vis: Option, specs: Vec }
 Structs: DiagnosticRenderer { formatter: DiagnosticFormatter, lang: LangMode, source_lines: Option, context_radius: usize, candidates: Vec }
 
 ```
-50 DiagnosticRenderer::new →[DiagnosticFormatter::new,LangMode::from_env] ←[diagnostic_renderer]  pub fn new() -> Self
-61 DiagnosticRenderer::no_color →[DiagnosticFormatter::with_color]  pub fn no_color(self) -> Self
-69 DiagnosticRenderer::with_color →[DiagnosticFormatter::with_color]  pub fn with_color(self, colorize: bool) -> Self
-74 DiagnosticRenderer::with_width →[DiagnosticFormatter::with_width]  pub fn with_width(self, width: usize) -> Self
-81 DiagnosticRenderer::with_lang ←[diagnostic_renderer]  pub fn with_lang(self, lang: LangMode) -> Self
-102 DiagnosticRenderer::with_source_context →[Chunk::lines] ←[render_compile_error]  pub fn with_source_context(self, source: &str) -> Self
-110 DiagnosticRenderer::with_context_radius  pub fn with_context_radius(self, radius: usize) -> Self
-124 DiagnosticRenderer::with_candidates  pub fn with_candidates(self, candidates: Vec) -> Self
-129 DiagnosticRenderer::lang  pub fn lang(&self) -> LangMode
-162 DiagnosticRenderer::render_diagnostic →[AnsiStyle::apply_to,DiagnosticFormatter::severity_style] ←[DiagnosticRenderer::render_compile_error,DiagnosticRenderer::render_nuzo_error]  pub fn render_diagnostic(&self, diagnostic: &DiagnosticError) -> St...
-222 DiagnosticRenderer::render_nuzo_error →[DiagnosticRenderer::render_diagnostic,ErrorClassifier::classify,ErrorClassifier::generate_fix_suggestion_with_lang,ErrorClassifier::generate_structured_suggestions_with_candidates,ExecutionContext::source_location]  pub fn render_nuzo_error(&self, error: &NuzoError, stack: &[StackFr...
-254 DiagnosticRenderer::render_compile_error →[DiagnosticRenderer::render_diagnostic,ExecutionContext::source_location,NuzoError::internal,NuzoError::with_code]  pub fn render_compile_error(&self, message: &str, loc: SourceLocati...
+51 DiagnosticRenderer::new →[DiagnosticFormatter::new,LangMode::from_env] ←[diagnostic_renderer]  pub fn new() -> Self
+62 DiagnosticRenderer::no_color →[DiagnosticFormatter::with_color]  pub fn no_color(self) -> Self
+70 DiagnosticRenderer::with_color →[DiagnosticFormatter::with_color]  pub fn with_color(self, colorize: bool) -> Self
+75 DiagnosticRenderer::with_width →[DiagnosticFormatter::with_width]  pub fn with_width(self, width: usize) -> Self
+82 DiagnosticRenderer::with_lang ←[diagnostic_renderer]  pub fn with_lang(self, lang: LangMode) -> Self
+103 DiagnosticRenderer::with_source_context →[Chunk::lines] ←[render_compile_error]  pub fn with_source_context(self, source: &str) -> Self
+111 DiagnosticRenderer::with_context_radius  pub fn with_context_radius(self, radius: usize) -> Self
+125 DiagnosticRenderer::with_candidates  pub fn with_candidates(self, candidates: Vec) -> Self
+130 DiagnosticRenderer::lang  pub fn lang(&self) -> LangMode
+163 DiagnosticRenderer::render_diagnostic →[AnsiStyle::apply_to,DiagnosticFormatter::severity_style] ←[DiagnosticRenderer::render_compile_error,DiagnosticRenderer::render_nuzo_error]  pub fn render_diagnostic(&self, diagnostic: &DiagnosticError) -> St...
+223 DiagnosticRenderer::render_nuzo_error →[DiagnosticRenderer::render_diagnostic,ErrorClassifier::classify,ErrorClassifier::generate_fix_suggestion_with_lang,ErrorClassifier::generate_structured_suggestions_with_candidates,ExecutionContext::source_location]  pub fn render_nuzo_error(&self, error: &NuzoError, stack: &[StackFr...
+255 DiagnosticRenderer::render_compile_error →[DiagnosticRenderer::render_diagnostic,ExecutionContext::source_location,NuzoError::internal,NuzoError::with_code]  pub fn render_compile_error(&self, message: &str, loc: SourceLocati...
 ```
 
 ---

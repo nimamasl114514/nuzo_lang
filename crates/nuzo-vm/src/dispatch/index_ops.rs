@@ -6,6 +6,7 @@
 //! - `op_set_index_mut` — 索引原地写入（in-place mutation）
 
 use crate::vm::VM;
+use nuzo_abi::NuzoErrorExt;
 use nuzo_bytecode::Opcode;
 use nuzo_values::*;
 
@@ -45,9 +46,9 @@ impl VM {
         let val = self.register(val_reg)?;
 
         if !obj.is_heap_object() {
-            return Err(self.error_with_source_location(NuzoError::type_mismatch(
-                "indexable (array, dict)".to_string(),
-                obj.type_name().to_string(),
+            return Err(self.error_with_source_location(NuzoErrorExt::type_mismatch(
+                "indexable (array, dict)",
+                obj.type_name(),
             )));
         }
         let modified_obj =
@@ -66,9 +67,9 @@ impl VM {
         let val = self.register(val_reg)?;
 
         if !obj.is_heap_object() {
-            return Err(self.error_with_source_location(NuzoError::type_mismatch(
-                "indexable (array, dict)".to_string(),
-                obj.type_name().to_string(),
+            return Err(self.error_with_source_location(NuzoErrorExt::type_mismatch(
+                "indexable (array, dict)",
+                obj.type_name(),
             )));
         }
 

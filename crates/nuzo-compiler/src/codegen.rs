@@ -16,6 +16,7 @@
 
 use std::collections::{HashMap, HashSet};
 
+use nuzo_abi::index::SafeIndex;
 use nuzo_bytecode::{
     CaptureIdx, CapturedSource, Chunk, ConstIdx, Instruction, Offset, Opcode, OperandKind, Reg, U8,
     U16,
@@ -501,7 +502,7 @@ impl CodeGenerator {
             .try_add_constant(Value::from_string(path))
             .map_err(|_| CodegenError::ConstantPoolOverflow)?;
         self.chunk.emit(Instruction::InitModule {
-            module_idx: ConstIdx(module_idx as u16),
+            module_idx: ConstIdx(Self::narrow_u16(module_idx)?),
             init_flag_slot: U16(slot),
         });
         Ok(())
@@ -642,20 +643,22 @@ impl CodeGenerator {
             .captures
             .iter()
             .enumerate()
-            .map(|(idx, desc)| nuzo_values::heap::CaptureInfo {
-                name: desc.name.to_string(),
-                mode: if desc.is_mutable {
-                    nuzo_values::heap::CaptureMode::ByBox
-                } else {
-                    nuzo_values::heap::CaptureMode::ByValue
-                },
-                capture_index: idx as u8,
+            .map(|(idx, desc)| {
+                Ok(nuzo_values::heap::CaptureInfo {
+                    name: desc.name.to_string(),
+                    mode: if desc.is_mutable {
+                        nuzo_values::heap::CaptureMode::ByBox
+                    } else {
+                        nuzo_values::heap::CaptureMode::ByValue
+                    },
+                    capture_index: Self::narrow_u8(idx)?,
+                })
             })
-            .collect();
+            .collect::<Result<_, CodegenError>>()?;
 
         let prototype = FunctionPrototype::new(
             func.name.to_string(),
-            func.params.len() as u8,
+            Self::narrow_u8(func.params.len())?,
             locals_count,
             code,
             constants,
@@ -679,7 +682,7 @@ impl CodeGenerator {
             .try_add_constant(closure_value)
             .map_err(|_| CodegenError::ConstantPoolOverflow)?;
 
-        self.closure_indices.insert(func.id.0, const_idx as u16);
+        self.closure_indices.insert(func.id.0, Self::narrow_u16(const_idx)?);
 
         Ok(())
     }
@@ -738,7 +741,7 @@ impl CodeGenerator {
                 .chunk
                 .try_add_constant(closure_const)
                 .map_err(|_| CodegenError::ConstantPoolOverflow)?;
-            new_closure_indices.insert(ir_func_id, new_idx as u16);
+            new_closure_indices.insert(ir_func_id, Self::narrow_u16(new_idx)?);
         }
         sub_gen.closure_indices = new_closure_indices;
 
@@ -1064,7 +1067,7 @@ impl CodeGenerator {
                 };
 
                 // 将参数 Move 到 actual_callee_reg 之后的连续位置
-                let argc = args.len() as u8;
+                let argc = Self::narrow_u8(args.len())?;
                 let mut arg_regs = Vec::with_capacity(args.len());
                 for arg_vr in args.iter() {
                     arg_regs.push(self.rm()?.consume_use(*arg_vr)?);
@@ -1141,7 +1144,7 @@ impl CodeGenerator {
                         CapturedSource::ByValue(Reg(src_reg))
                     }
                     CaptureSource::OuterCapture(outer_idx) => {
-                        CapturedSource::Outer(*outer_idx as u8)
+                        CapturedSource::Outer(Self::narrow_u8_from_u32(*outer_idx as u32)?)
                     }
                     CaptureSource::Global(name) => {
                         // 全局变量捕获：先 GetGlobal 加载到临时寄存器，再按值捕获
@@ -1381,7 +1384,7 @@ impl CodeGenerator {
                 // 创建空数组
                 self.chunk.emit(Instruction::ArrayNew {
                     dest: Reg(dest_reg),
-                    count: U16(elements.len() as u16),
+                    count: U16(Self::narrow_u16(elements.len())?),
                 });
 
                 // 逐个设置元素: LoadK idx + SetIndexMut
@@ -1420,7 +1423,7 @@ impl CodeGenerator {
                     .map_err(|_| CodegenError::ConstantPoolOverflow)?;
                 self.chunk.emit(Instruction::LoadK {
                     dest: Reg(dest_reg),
-                    const_idx: ConstIdx(const_idx as u16),
+                    const_idx: ConstIdx(Self::narrow_u16(const_idx)?),
                 });
             }
 
@@ -1629,7 +1632,7 @@ impl CodeGenerator {
     fn emit_string_build(&mut self, op: &IrOp) -> Result<(), CodegenError> {
         match op {
             IrOp::StringBuild { dest, operands } => {
-                let count = operands.len() as u16;
+                let count = Self::narrow_u16(operands.len())?;
 
                 // Phase 1: 消费所有操作数的源寄存器（顺带释放已死 temp 回 temp_free）
                 let mut src_regs = Vec::with_capacity(operands.len());
@@ -1766,6 +1769,40 @@ impl CodeGenerator {
 
     // ── 辅助方法：常量池管理 ──
 
+    // ── 辅助方法：安全索引窄化 ──
+
+    /// 将 usize 安全窄化为 u16（常量池索引、寄存器索引等）。
+    ///
+    /// 使用 `SafeIndex::<u16>` 内部检查，溢出时映射为
+    /// `CodegenError::ConstantPoolOverflow`。
+    fn narrow_u16(val: usize) -> Result<u16, CodegenError> {
+        SafeIndex::<u16>::try_from_usize(val)
+            .map(|idx| idx.get())
+            .map_err(|_| CodegenError::ConstantPoolOverflow)
+    }
+
+    /// 将 usize 安全窄化为 u8（参数计数 argc、捕获索引等）。
+    ///
+    /// 使用 `SafeIndex::<u8>` 内部检查，溢出时映射为
+    /// `CodegenError::Generic`（附带诊断信息）。
+    fn narrow_u8(val: usize) -> Result<u8, CodegenError> {
+        SafeIndex::<u8>::try_from_usize(val).map(|idx| idx.get()).map_err(|e| {
+            CodegenError::Generic {
+                message: format!("index overflow: {} exceeds u8 range", e.value),
+            }
+        })
+    }
+
+    /// 将 u32 安全窄化为 u8（捕获索引等）。
+    ///
+    /// 使用 `SafeIndex::<u8>` 内部检查，溢出时映射为
+    /// `CodegenError::Generic`（附带诊断信息）。
+    fn narrow_u8_from_u32(val: u32) -> Result<u8, CodegenError> {
+        SafeIndex::<u8>::try_from_u32(val).map(|idx| idx.get()).map_err(|e| CodegenError::Generic {
+            message: format!("index overflow: {} exceeds u8 range", e.value),
+        })
+    }
+
     /// 将 IrConstant 转换为 nuzo_core::Value 并添加到常量池
     ///
     /// 返回常量池索引（u16），失败时返回 ConstantPoolOverflow。
@@ -1780,7 +1817,7 @@ impl CodeGenerator {
         // 消除死代码(原 add_constant 会在溢出时 panic,后续检查永不触发)。
         let idx =
             self.chunk.try_add_constant(value).map_err(|_| CodegenError::ConstantPoolOverflow)?;
-        Ok(idx as u16)
+        Self::narrow_u16(idx)
     }
 
     // ── 辅助方法：跳转偏移计算 ──

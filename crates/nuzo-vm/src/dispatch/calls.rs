@@ -15,6 +15,7 @@
 
 use crate::vm::VM;
 use crate::vm_lic::{CallSiteState, CallTargetType};
+use nuzo_abi::NuzoErrorExt;
 use nuzo_bytecode::Chunk;
 use nuzo_values::*;
 use std::sync::Arc;
@@ -38,9 +39,9 @@ impl VM {
         } else if func_val.is_closure() {
             self.execute_normal_call_closure(func_val, func_reg, argc)
         } else {
-            Err(self.error_with_source_location(NuzoError::type_mismatch(
-                "function".to_string(),
-                func_val.type_name().to_string(),
+            Err(self.error_with_source_location(NuzoErrorExt::type_mismatch(
+                "function",
+                func_val.type_name(),
             )))
         }
     }
@@ -70,7 +71,7 @@ impl VM {
         })?;
 
         let result = self.call_builtin_unrolled(&func, func_reg, argc).map_err(|e| {
-            self.error_with_source_location(NuzoError::type_mismatch(
+            self.error_with_source_location(NuzoErrorExt::type_mismatch(
                 format!("valid arguments for builtin '{}'", name),
                 format!("{}", e),
             ))
@@ -118,9 +119,7 @@ impl VM {
         };
 
         if argc != arity {
-            return Err(
-                self.error_with_source_location(NuzoError::invalid_argument_count(arity, argc))
-            );
+            return Err(self.error_with_source_location(NuzoErrorExt::arity_mismatch(arity, argc)));
         }
 
         let closure_for_frame = closure_heap_obj.clone();

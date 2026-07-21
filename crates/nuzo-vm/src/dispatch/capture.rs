@@ -10,6 +10,7 @@
 //! - `capture_inner_var` — 从当前帧寄存器读取内层捕获变量（按 CaptureMode 决定 ByValue/ByBox）
 
 use crate::vm::VM;
+use nuzo_abi::NuzoErrorExt;
 use nuzo_core::{CAPTURE_OUTER_FLAG, CAPTURE_OUTER_INDEX_MASK};
 use nuzo_values::heap::{CaptureMode, CapturedVar};
 use nuzo_values::value::{allocate_box, get_box, set_box};
@@ -205,15 +206,17 @@ impl VM {
         match &*closure_ref {
             HeapObject::Closure { captured, .. } => {
                 if capture_index as usize >= captured.len() {
-                    return Err(self.error_with_source_location(NuzoError::index_out_of_bounds(
-                        capture_index.to_string(),
-                        captured.len().to_string(),
-                    )));
+                    return Err(self.error_with_source_location(
+                        NuzoErrorExt::index_out_of_bounds(
+                            capture_index.to_string(),
+                            captured.len().to_string(),
+                        ),
+                    ));
                 }
                 let value = match &captured[capture_index as usize] {
                     CapturedVar::Value(v) => *v,
                     CapturedVar::Box(box_idx) => get_box(*box_idx).ok_or_else(|| {
-                        self.error_with_source_location(NuzoError::index_out_of_bounds(
+                        self.error_with_source_location(NuzoErrorExt::index_out_of_bounds(
                             box_idx.to_string(),
                             "gc_heap".to_string(),
                         ))
@@ -249,15 +252,17 @@ impl VM {
         match &*closure_ref {
             HeapObject::Closure { captured, .. } => {
                 if capture_index as usize >= captured.len() {
-                    return Err(self.error_with_source_location(NuzoError::index_out_of_bounds(
-                        capture_index.to_string(),
-                        captured.len().to_string(),
-                    )));
+                    return Err(self.error_with_source_location(
+                        NuzoErrorExt::index_out_of_bounds(
+                            capture_index.to_string(),
+                            captured.len().to_string(),
+                        ),
+                    ));
                 }
                 match &captured[capture_index as usize] {
                     CapturedVar::Value(_) => {
-                        return Err(self.error_with_source_location(NuzoError::assert_failed(
-                            "Cannot assign to immutable captured variable (ByValue).".to_string(),
+                        return Err(self.error_with_source_location(NuzoErrorExt::assert_failed(
+                            "Cannot assign to immutable captured variable (ByValue).",
                         )));
                     }
                     CapturedVar::Box(box_idx) => {

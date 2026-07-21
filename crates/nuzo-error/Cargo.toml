@@ -8,6 +8,7 @@ description = "Error collection and diagnostics for Nuzo"
 nuzo_values.workspace = true
 nuzo_bytecode.workspace = true
 nuzo_core.workspace = true
+nuzo_abi.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 nuzo_signal.workspace = true

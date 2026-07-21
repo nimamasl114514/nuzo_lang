@@ -14,6 +14,7 @@
 //! 将 gidx + ver 内嵌进指令操作数，后续读取零表查找。
 
 use crate::vm::VM;
+use nuzo_abi::NuzoErrorExt;
 use nuzo_bytecode::Opcode;
 use nuzo_values::*;
 
@@ -86,7 +87,7 @@ impl VM {
                     }
                     None => {
                         return Err(self.error_with_source_location(
-                            NuzoError::index_out_of_bounds(
+                            NuzoErrorExt::index_out_of_bounds(
                                 idx.to_string(),
                                 self.global_count().to_string(),
                             ),
@@ -95,7 +96,7 @@ impl VM {
                 }
             }
             None => {
-                return Err(self.error_with_source_location(NuzoError::undefined_variable(name)));
+                return Err(self.error_with_source_location(NuzoErrorExt::undefined_variable(name)));
             }
         }
         Ok(())
@@ -189,7 +190,7 @@ impl VM {
 
         // 冷路径：版本过期 → 重新读值 + 更新指令中的版本号
         let value = self.get_global(gidx).ok_or_else(|| {
-            self.error_with_source_location(NuzoError::index_out_of_bounds(
+            self.error_with_source_location(NuzoErrorExt::index_out_of_bounds(
                 gidx.to_string(),
                 self.global_count().to_string(),
             ))

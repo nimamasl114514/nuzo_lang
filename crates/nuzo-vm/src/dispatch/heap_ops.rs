@@ -7,6 +7,7 @@
 //! - `op_slicechain_new` / `op_slicechain_append` / `op_slicechain_finish` — SCSB 字符串构建器
 
 use crate::vm::VM;
+use nuzo_abi::NuzoErrorExt;
 use nuzo_values::*;
 
 impl VM {
@@ -62,8 +63,8 @@ impl VM {
         if !nuzo_core::tag::is_number(start_val.into_raw_bits())
             || !nuzo_core::tag::is_number(end_val.into_raw_bits())
         {
-            return Err(self.error_with_source_location(NuzoError::type_mismatch(
-                "numbers for range".to_string(),
+            return Err(self.error_with_source_location(NuzoErrorExt::type_mismatch(
+                "numbers for range",
                 format!("{}, {}", start_val.type_name(), end_val.type_name()),
             )));
         }
@@ -97,9 +98,9 @@ impl VM {
                 matches!(*h, HeapObject::Array(_) | HeapObject::Dict(_) | HeapObject::Range { .. })
             });
         if !is_collection {
-            return Err(self.error_with_source_location(NuzoError::type_mismatch(
-                "collection (array, dict, string, or range)".to_string(),
-                obj.type_name().to_string(),
+            return Err(self.error_with_source_location(NuzoErrorExt::type_mismatch(
+                "collection (array, dict, string, or range)",
+                obj.type_name(),
             )));
         }
         let len = obj.nuzo_type().obj_len();

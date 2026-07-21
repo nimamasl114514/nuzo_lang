@@ -2403,9 +2403,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "nuzo_abi"
+version = "0.1.0"
+dependencies = [
+ "nuzo_core",
+]
+
+[[package]]
 name = "nuzo_bytecode"
 version = "0.6.0"
 dependencies = [
+ "nuzo_abi",
  "nuzo_core",
  "nuzo_opcode",
  "nuzo_proc",
@@ -2452,6 +2460,7 @@ dependencies = [
 name = "nuzo_compiler"
 version = "0.6.0"
 dependencies = [
+ "nuzo_abi",
  "nuzo_bytecode",
  "nuzo_class",
  "nuzo_config",
@@ -2492,6 +2501,7 @@ version = "0.6.0"
 dependencies = [
  "crossbeam-queue",
  "log",
+ "nuzo_abi",
  "nuzo_bytecode",
  "nuzo_core",
  "nuzo_proc",
@@ -2605,6 +2615,7 @@ name = "nuzo_run"
 version = "0.6.0"
 dependencies = [
  "clap",
+ "nuzo_abi",
  "nuzo_bytecode",
  "nuzo_compiler",
  "nuzo_config",
@@ -2636,6 +2647,7 @@ dependencies = [
 name = "nuzo_values"
 version = "0.6.0"
 dependencies = [
+ "nuzo_abi",
  "nuzo_core",
  "nuzo_proc",
  "nuzo_proc_core",
@@ -2647,6 +2659,7 @@ dependencies = [
 name = "nuzo_vm"
 version = "0.6.0"
 dependencies = [
+ "nuzo_abi",
  "nuzo_bytecode",
  "nuzo_compiler",
  "nuzo_config",

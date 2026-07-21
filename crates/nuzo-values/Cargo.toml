@@ -7,6 +7,7 @@ description = "NaN-tagged value system for Nuzo Runtime"
 [dependencies]
 serde = { workspace = true, features = ["derive"] }
 nuzo_core.workspace = true
+nuzo_abi.workspace = true
 nuzo_proc.workspace = true
 nuzo_proc_core = { workspace = true, features = ["proc_macro"] }
 

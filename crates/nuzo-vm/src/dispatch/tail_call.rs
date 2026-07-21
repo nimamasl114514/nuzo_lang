@@ -15,6 +15,7 @@
 //! 7. 重置 IP 为 0
 
 use crate::vm::VM;
+use nuzo_abi::NuzoErrorExt;
 use nuzo_bytecode::Opcode;
 use nuzo_values::*;
 use std::sync::Arc;
@@ -33,9 +34,9 @@ impl VM {
         }
 
         let closure = func_val.as_closure_heap_object_opt().ok_or_else(|| {
-            self.error_with_source_location(NuzoError::type_mismatch(
-                "function".to_string(),
-                func_val.type_name().to_string(),
+            self.error_with_source_location(NuzoErrorExt::type_mismatch(
+                "function",
+                func_val.type_name(),
             ))
         })?;
 
@@ -83,7 +84,7 @@ impl VM {
             })))?;
 
         let result = self.call_builtin_unrolled(&func, func_reg, argc).map_err(|e| {
-            self.error_with_source_location(NuzoError::type_mismatch(
+            self.error_with_source_location(NuzoErrorExt::type_mismatch(
                 format!("valid arguments for builtin '{}'", name),
                 format!("{}", e),
             ))
@@ -159,7 +160,7 @@ impl VM {
                 )))),
             };
             if argc != p.arity as usize {
-                return Err(self.error_with_source_location(NuzoError::invalid_argument_count(
+                return Err(self.error_with_source_location(NuzoErrorExt::arity_mismatch(
                     p.arity as usize,
                     argc,
                 )));
@@ -168,7 +169,7 @@ impl VM {
         };
 
         if is_self_recursive && argc != prototype.arity as usize {
-            return Err(self.error_with_source_location(NuzoError::invalid_argument_count(
+            return Err(self.error_with_source_location(NuzoErrorExt::arity_mismatch(
                 prototype.arity as usize,
                 argc,
             )));
