@@ -761,6 +761,14 @@ impl VM {
             if self.chunk_ptr.is_null() {
                 break;
             }
+            // SAFETY:
+            // 1. chunk_ptr 仅在 self.chunk = Some(arc) 后赋值为 `Arc::as_ptr(&arc)`，
+            //    二者同步更新（参见 load_chunk / activate_chunk_frame 等）。
+            // 2. chunk_ptr 在 chunk 切换时通过 invalidate_cigc_cache 重置或更新，
+            //    不会出现悬垂指针。
+            // 3. chunk_ptr 仅在 run_inner 期间使用，期间 self.chunk 不会被 drop
+            //    （单线程 VM，无并发竞争）。
+            // 4. 上面已通过 `self.chunk_ptr.is_null()` 排除空指针。
             let chunk = unsafe { &*self.chunk_ptr };
             if self.ip >= chunk.code().len() {
                 break;
@@ -837,6 +845,9 @@ impl VM {
             }
         }
 
+        // VM 启动时寄存器可能为空（如 empty chunk / 直接 Halt 的程序），
+        // 此情况返回 NIL 是合法语义，不是异常状态。
+        // 见测试：test_empty_chunk_runs_successfully / test_simple_halt_program。
         Ok(self.cx.registers.first().unwrap_or(NIL))
     }
 
