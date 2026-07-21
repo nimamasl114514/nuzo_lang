@@ -470,17 +470,33 @@ impl std::error::Error for CompileError {}
 
 /// 从 `CompileError` 自动转换为 `NuzoError`。
 ///
-/// 编译错误属于编译器层面的问题（语法错误、语义错误、资源限制等），
-/// 映射为 `InternalError::CompilerBug` 以便通过 `?` 运算符统一传播。
+/// 区分两类错误：
+/// - **用户源代码错误**（参数超限、变量未定义、控制流错误、资源超限等）
+///   映射为 `InternalError::UserCompileError`，Display 输出 `compile error: ...`，
+///   不会误导用户以为编译器自身有 bug。
+/// - **编译器内部不变量破坏**（ControlStackUnderflow、InvalidPatchTarget 等）
+///   保留映射为 `InternalError::CompilerBug`，Display 输出 `compiler bug: ...`，
+///   提示用户上报。
+///
 /// 保留源码位置与编译错误码，避免降级为无位置的 C0000。
 impl From<CompileError> for nuzo_values::NuzoError {
     fn from(e: CompileError) -> Self {
         let loc = SourceLocation::new(e.line()).with_column(e.column().unwrap_or(0));
-        nuzo_values::NuzoError::internal(
-            nuzo_values::InternalError::CompilerBug { message: e.to_string() },
-            None,
-        )
-        .with_source_location(loc)
-        .with_code(ErrorCode::CompileError)
+        let internal = match &e {
+            // 编译器内部不变量破坏：保留 CompilerBug 提示用户上报
+            CompileError::ControlStackUnderflow { .. }
+            | CompileError::InvalidPatchTarget { .. }
+            | CompileError::InvalidJumpTarget { .. }
+            | CompileError::InvalidOpcode { .. }
+            | CompileError::UncapturableVariable { .. }
+            | CompileError::Error { .. } => {
+                nuzo_values::InternalError::CompilerBug { message: e.to_string() }
+            }
+            // 用户源代码错误：友好提示，不归为 compiler bug
+            _ => nuzo_values::InternalError::UserCompileError { message: e.to_string() },
+        };
+        nuzo_values::NuzoError::internal(internal, None)
+            .with_source_location(loc)
+            .with_code(ErrorCode::CompileError)
     }
 }

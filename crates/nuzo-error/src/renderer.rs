@@ -8,7 +8,7 @@ use std::fmt::Write as FmtWrite;
 
 use nuzo_abi::source_ext::SourceLocationExt;
 use nuzo_core::error::ErrorCode;
-use nuzo_core::{InternalError, LangMode, NuzoError, SourceLocation};
+use nuzo_core::{LangMode, NuzoError, SourceLocation};
 
 use crate::classifier::ErrorClassifier;
 use crate::diagnostic::DiagnosticError;
@@ -251,18 +251,19 @@ impl DiagnosticRenderer {
         self.render_diagnostic(&diagnostic)
     }
 
-    /// 渲染一个编译错误消息，使用提供的源码位置。
-    pub fn render_compile_error(&self, message: &str, loc: SourceLocation) -> String {
-        let nuzo_error =
-            NuzoError::internal(InternalError::CompilerBug { message: message.to_string() }, None)
-                .with_code(ErrorCode::CompileError);
-
+    /// 渲染一个编译错误，使用调用方提供的源码位置覆盖 `err` 内置位置（用于补齐 `source_line`）。
+    ///
+    /// 直接使用传入的 `err`，不再重新包装为 `InternalError::CompilerBug`，
+    /// 从而保留 `UserCompileError` 与 `CompilerBug` 的语义区分：
+    /// - 用户源代码错误（参数超限等）显示为 `compile error: ...`
+    /// - 编译器内部 bug 显示为 `compiler bug: ...`
+    pub fn render_compile_error(&self, err: &NuzoError, loc: SourceLocation) -> String {
         let mut context = ExecutionContext::new(0, None, 0);
         context.source_location(loc);
 
         let diagnostic = DiagnosticError {
             id: 0,
-            error: nuzo_error.clone(),
+            error: err.clone(),
             severity: ErrorSeverity::Error,
             category: ErrorCategory::Internal,
             context,
@@ -270,7 +271,7 @@ impl DiagnosticRenderer {
             instruction_count: 0,
             fix_suggestions: Vec::new(),
             structured_suggestions: Vec::new(),
-            nuzo_error: Some(nuzo_error),
+            nuzo_error: Some(err.clone()),
             diagnosis: None,
         };
 
@@ -455,6 +456,7 @@ fn error_code_str(code: ErrorCode) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use nuzo_core::InternalError;
 
     fn renderer() -> DiagnosticRenderer {
         DiagnosticRenderer::new().no_color().with_width(80)
@@ -572,7 +574,13 @@ mod tests {
 
     #[test]
     fn render_compile_error_uses_unified_format() {
-        let message = "[line 3] undefined variable 'x'".to_string();
+        let err = NuzoError::internal(
+            InternalError::UserCompileError {
+                message: "[line 3] undefined variable 'x'".to_string(),
+            },
+            None,
+        )
+        .with_code(ErrorCode::CompileError);
         let loc = SourceLocation {
             file: "prog.nu".to_string(),
             line: 3,
@@ -581,12 +589,14 @@ mod tests {
             function_name: None,
         };
 
-        let out = renderer().render_compile_error(&message, loc);
+        let out = renderer().render_compile_error(&err, loc);
 
         assert!(out.contains("[C0000]"), "编译错误应使用 [C0000] 码\n{}", out);
         assert!(out.contains("undefined variable"), "应包含编译错误消息\n{}", out);
         assert!(out.contains("prog.nu:3:7"), "应包含源码位置\n{}", out);
         assert!(out.contains("print(x)"), "应包含源代码行\n{}", out);
+        // UserCompileError 不应被渲染为 "compiler bug"
+        assert!(!out.contains("compiler bug"), "用户错误不应显示为 compiler bug\n{}", out);
     }
 
     // ------------------------------------------------------------------

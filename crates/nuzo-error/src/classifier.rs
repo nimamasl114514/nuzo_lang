@@ -228,6 +228,16 @@ impl ErrorClassifier {
                     message
                 )
             }
+            InternalError::UserCompileError { message } => {
+                format!(
+                    "Compile error: {}. This is a user source code error \
+                    (parameter limit exceeded, undefined variable, control flow \
+                    violation, resource limit, etc.).\n\n\
+                    Suggestion: fix the source code per the error message — \
+                    this is not a compiler bug.",
+                    message
+                )
+            }
             InternalError::PatchOverflow => {
                 "Bytecode patch overflow: the patch data would exceed code bounds. \
                  This indicates an ISS (Instruction Self-Specialization) internal error \
@@ -404,12 +414,20 @@ impl ErrorClassifier {
             NuzoErrorKind::UndefinedVariable { name } => {
                 format!("Define variable '{}' before use or check for typos", name)
             }
-            NuzoErrorKind::Internal(ie, _) => {
-                format!(
-                    "Internal error: {}. This is likely a VM/compiler bug. Please report it.",
-                    ie
-                )
-            }
+            NuzoErrorKind::Internal(ie, _) => match ie {
+                InternalError::UserCompileError { message } => {
+                    format!(
+                        "Compile error: {}. Fix the source code per the error message.",
+                        message
+                    )
+                }
+                _ => {
+                    format!(
+                        "Internal error: {}. This is likely a VM/compiler bug. Please report it.",
+                        ie
+                    )
+                }
+            },
             NuzoErrorKind::UnsupportedOperation { operation, type_name } => {
                 format!(
                     "{} does not support '{}'. Check the type documentation for supported operations.",
@@ -525,6 +543,11 @@ impl ErrorClassifier {
             InternalError::CompilerBug { message } => vec![
                 format!("Compiler bug: {}", message),
                 "This should never happen - report as a bug".to_string(),
+            ],
+            InternalError::UserCompileError { message } => vec![
+                format!("Compile error: {}", message),
+                "This is a user source code error, not a compiler bug".to_string(),
+                "Fix the source code per the error message".to_string(),
             ],
             _ => vec![
                 format!("Internal error: {}", err),
@@ -643,10 +666,18 @@ impl ErrorClassifier {
 
     /// Generate structured suggestions for internal errors.
     fn generate_internal_structured_suggestions(err: &InternalError) -> Vec<StructuredSuggestion> {
-        vec![StructuredSuggestion::new(format!(
-            "internal error: {}. This is likely a VM/compiler bug. Please report it with reproduction steps.",
-            err
-        ))]
+        match err {
+            InternalError::UserCompileError { message } => {
+                vec![StructuredSuggestion::new(format!(
+                    "compile error: {}. This is a user source code error — fix the source code per the message.",
+                    message
+                ))]
+            }
+            _ => vec![StructuredSuggestion::new(format!(
+                "internal error: {}. This is likely a VM/compiler bug. Please report it with reproduction steps.",
+                err
+            ))],
+        }
     }
 
     // ========================================================================
@@ -711,13 +742,22 @@ impl ErrorClassifier {
                 &format!("使用前请定义变量 '{}' 或检查拼写", name),
                 &format!("Define variable '{}' before use or check for typos", name),
             ),
-            NuzoErrorKind::Internal(ie, _) => lang.select(
-                &format!("内部错误：{}，可能是 VM/编译器 bug，请附带复现步骤上报", ie),
-                &format!(
-                    "Internal error: {}. This is likely a VM/compiler bug. Please report it.",
-                    ie
+            NuzoErrorKind::Internal(ie, _) => match ie {
+                InternalError::UserCompileError { message } => lang.select(
+                    &format!("编译错误：{}，请按错误信息修复源代码", message),
+                    &format!(
+                        "Compile error: {}. Fix the source code per the error message.",
+                        message
+                    ),
                 ),
-            ),
+                _ => lang.select(
+                    &format!("内部错误：{}，可能是 VM/编译器 bug，请附带复现步骤上报", ie),
+                    &format!(
+                        "Internal error: {}. This is likely a VM/compiler bug. Please report it.",
+                        ie
+                    ),
+                ),
+            },
             NuzoErrorKind::UnsupportedOperation { operation, type_name } => lang.select(
                 &format!("{} 不支持 '{}' 操作，请查阅类型文档确认支持的操作", type_name, operation),
                 &format!(
@@ -876,6 +916,22 @@ impl ErrorClassifier {
                 LangMode::Both => vec![lang.select(
                     &format!("字节码中发现无效操作码 {}（0x{:02X}）", opcode, opcode),
                     &format!("Invalid opcode {} (0x{:02X}) found in bytecode", opcode, opcode),
+                )],
+            },
+            InternalError::UserCompileError { message } => match lang {
+                LangMode::Zh => vec![
+                    format!("编译错误：{}", message),
+                    "这是用户源代码错误，不是编译器 bug".to_string(),
+                    "请按错误信息修复源代码".to_string(),
+                ],
+                LangMode::En => vec![
+                    format!("Compile error: {}", message),
+                    "This is a user source code error, not a compiler bug".to_string(),
+                    "Fix the source code per the error message".to_string(),
+                ],
+                LangMode::Both => vec![lang.select(
+                    &format!("编译错误：{}", message),
+                    &format!("Compile error: {}", message),
                 )],
             },
             _ => match lang {
@@ -1037,10 +1093,21 @@ impl ErrorClassifier {
         err: &InternalError,
         lang: LangMode,
     ) -> Vec<StructuredSuggestion> {
-        vec![StructuredSuggestion::new(lang.select(
-            &format!("内部错误：{}，可能是 VM/编译器 bug，请附带复现步骤上报", err),
-            &format!("internal error: {}. This is likely a VM/compiler bug. Please report it with reproduction steps.", err),
-        ))]
+        match err {
+            InternalError::UserCompileError { message } => vec![StructuredSuggestion::new(
+                lang.select(
+                    &format!("编译错误：{}，这是用户源代码错误，请按错误信息修复源代码", message),
+                    &format!(
+                        "compile error: {}. This is a user source code error — fix the source code per the message.",
+                        message
+                    ),
+                ),
+            )],
+            _ => vec![StructuredSuggestion::new(lang.select(
+                &format!("内部错误：{}，可能是 VM/编译器 bug，请附带复现步骤上报", err),
+                &format!("internal error: {}. This is likely a VM/compiler bug. Please report it with reproduction steps.", err),
+            ))],
+        }
     }
 
     /// 带候选变量列表的语言感知结构化建议生成。

@@ -4,10 +4,10 @@ use std::path::PathBuf;
 use std::process;
 
 use clap::{Parser, Subcommand};
-use nuzo_core::{InternalError, LangMode, SourceLocation};
+use nuzo_core::{LangMode, SourceLocation};
 use nuzo_error::{DiagnosticRenderer, StackFrameInfo};
 use nuzo_run::print_test_summary;
-use nuzo_run::{BenchMode, Engine, NuzoError, NuzoErrorKind, OutputSink};
+use nuzo_run::{BenchMode, Engine, NuzoError, OutputSink};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -149,10 +149,6 @@ fn render_nuzo_error(err: &NuzoError, stack: &[StackFrameInfo], lang: Option<Lan
 fn render_compile_error(err: &NuzoError, file: &str, source: &str, lang: Option<LangMode>) {
     let (line, column) =
         err.source_location.as_ref().map(|loc| (loc.line, loc.column)).unwrap_or((0, 0));
-    let message = match &err.kind {
-        NuzoErrorKind::Internal(InternalError::CompilerBug { message }, _) => message.clone(),
-        _ => err.to_string(),
-    };
     let source_line = if line > 0 {
         source.lines().nth(line.saturating_sub(1)).map(|s| s.to_string())
     } else {
@@ -165,7 +161,7 @@ fn render_compile_error(err: &NuzoError, file: &str, source: &str, lang: Option<
     if !source.is_empty() {
         renderer = renderer.with_source_context(source);
     }
-    eprintln!("{}", renderer.render_compile_error(&message, loc));
+    eprintln!("{}", renderer.render_compile_error(err, loc));
 }
 
 fn run(cli: Cli) -> Result<i32, Box<dyn std::error::Error>> {

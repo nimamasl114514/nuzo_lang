@@ -47,6 +47,12 @@ pub enum InternalError {
     LexerError { message: String },
     /// Parser error (syntax error, unexpected token, etc.)
     ParseError { message: String },
+    /// 用户源代码编译错误（非编译器 bug）。
+    ///
+    /// 与 `CompilerBug` 区分：`CompilerBug` 是编译器内部不变量破坏（应报 internal error），
+    /// `UserCompileError` 是用户源代码错误（应友好提示）。
+    /// 例如：参数超限、变量未定义、控制流错误、资源超限等。
+    UserCompileError { message: String },
     /// ISS: bytecode patch would exceed code bounds
     PatchOverflow,
     /// Benchmark harness was asked to compute statistics over an empty sample set
@@ -167,6 +173,9 @@ impl fmt::Display for InternalError {
             }
             InternalError::ParseError { message } => {
                 write!(f, "syntax error: {}", message)
+            }
+            InternalError::UserCompileError { message } => {
+                write!(f, "compile error: {}", message)
             }
             InternalError::PatchOverflow => {
                 write!(
@@ -542,7 +551,15 @@ define_errors! {
     ; @custom NuzoErrorKind::Internal(err, diagnosis) => {
         // 去掉 err 末尾的句号，避免与上层拼接产生双句号
         let err_str = err.to_string().trim_end_matches('.').to_string();
-        let mut msg = format!("internal error: {}. This is a bug in the Nuzo runtime, not in your code.", err_str);
+        // UserCompileError 是用户源代码错误，不是运行时 bug，避免误导用户上报。
+        // InternalError::UserCompileError Display 已输出 "compile error: <msg>"，
+        // 直接采用，不再叠加前缀。
+        let mut msg = match err {
+            crate::error::InternalError::UserCompileError { .. } => err_str,
+            _ => {
+                format!("internal error: {}. This is a bug in the Nuzo runtime, not in your code.", err_str)
+            }
+        };
         if let Some(diag) = diagnosis {
             msg.push_str(&format!("\n{}", diag));
         }
@@ -615,8 +632,16 @@ fn kind_message_zh(kind: &NuzoErrorKind) -> Option<String> {
         NuzoErrorKind::Internal(err, diagnosis) => {
             // 去掉 err 末尾的句号，避免与上层拼接产生双句号
             let err_str = err.to_string().trim_end_matches('.').to_string();
-            let mut msg =
-                format!("内部错误：{}。这是 Nuzo 运行时的 bug，不是你的代码问题。", err_str);
+            // UserCompileError 是用户源代码错误，不是运行时 bug，避免误导用户上报。
+            // 中文版本只提取 message 字段（InternalError Display 是英文），避免叠加前缀。
+            let mut msg = match err {
+                crate::error::InternalError::UserCompileError { message } => {
+                    format!("编译错误：{}", message.trim_end_matches('.'))
+                }
+                _ => {
+                    format!("内部错误：{}。这是 Nuzo 运行时的 bug，不是你的代码问题。", err_str)
+                }
+            };
             if let Some(diag) = diagnosis {
                 msg.push_str(&format!("\n{}", diag));
             }

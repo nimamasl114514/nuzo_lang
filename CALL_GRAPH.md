@@ -11,9 +11,9 @@
 | 指标 | 数值 |
 |------|------|
 | 总函数数 | 1527 |
-| 总调用边 | 1070 |
-| 未解析调用 | 2163 |
-| 跨 Crate 依赖边 | 297 (27.8%) |
+| 总调用边 | 1069 |
+| 未解析调用 | 2161 |
+| 跨 Crate 依赖边 | 296 (27.7%) |
 | Crate 数量 | 23 |
 
 ### 1.2 Crate 规模分布
@@ -24,7 +24,7 @@
 | nuzo_values | 176 | 138 | 0.78 |
 | nuzo_proc_core | 153 | 69 | 0.45 |
 | nuzo_core | 117 | 101 | 0.86 |
-| nuzo_error | 105 | 97 | 0.92 |
+| nuzo_error | 105 | 96 | 0.91 |
 | nuzo_run | 80 | 89 | 1.11 |
 | nuzo_compiler | 60 | 25 | 0.42 |
 | nuzo_bytecode | 51 | 23 | 0.45 |
@@ -51,8 +51,8 @@
 | 函数 | Crate | 被调用 | 调用 | 总连接 |
 |------|-------|--------|------|--------|
 | NuzoError::invalid_argument_count | nuzo_core | 27 | 0 | 27 |
-| NuzoError::internal | nuzo_core | 18 | 0 | 18 |
 | Value::into_raw_bits | nuzo_core | 18 | 0 | 18 |
+| NuzoError::internal | nuzo_core | 17 | 0 | 17 |
 | ValidationResult::ok | nuzo_proc_core | 14 | 0 | 14 |
 | Value::is_smi | nuzo_core | 13 | 0 | 13 |
 | Value::as_number | nuzo_core | 10 | 2 | 12 |
@@ -76,7 +76,7 @@
 | nuzo_helpers | nuzo_core | 33 |
 | nuzo_gui | nuzo_core | 26 |
 | nuzo_values | nuzo_core | 26 |
-| nuzo_error | nuzo_core | 23 |
+| nuzo_error | nuzo_core | 22 |
 | nuzo_run | nuzo_vm | 12 |
 | nuzo | nuzo_run | 10 |
 | nuzo_compiler | nuzo_signal | 10 |
@@ -90,8 +90,8 @@
 | 函数 | Crate | 被调用次数 |
 |------|-------|-----------|
 | NuzoError::invalid_argument_count | nuzo_core | 27 |
-| NuzoError::internal | nuzo_core | 18 |
 | Value::into_raw_bits | nuzo_core | 18 |
+| NuzoError::internal | nuzo_core | 17 |
 | ValidationResult::ok | nuzo_proc_core | 14 |
 | Value::is_smi | nuzo_core | 13 |
 | Value::from_bool | nuzo_core | 12 |
@@ -813,21 +813,21 @@ Structs: StringConstantPool { pool: XxHashMap, next_idx: u32, max_capacity: usiz
 
 > Nuzo Error Classifier - Automatic Error Categorization and Fix Suggestions
 
-`nuzo_error` | 10 fn | E:3 out / 9 in | xmod:16 (x-crate:15)
+`nuzo_error` | 10 fn | E:3 out / 9 in | xmod:17 (x-crate:16)
 
 Structs: ErrorClassifier { }
 
 ```
 79 ErrorClassifier::classify ←[DiagnosticError::from_nuzo_error,DiagnosticError::new,DiagnosticRenderer::render_nuzo_error]  pub fn classify(error: &NuzoError) -> (ErrorSeverity, ErrorCategory)
 137 ErrorClassifier::root_cause  pub fn root_cause(error: &InternalError) -> String
-327 ErrorClassifier::generate_root_cause  pub fn generate_root_cause(error: &NuzoError) -> String
-363 ErrorClassifier::fix_suggestion  pub fn fix_suggestion(error: &NuzoError) -> String
-473 ErrorClassifier::generate_fix_suggestion ←[DiagnosticError::from_nuzo_error,DiagnosticError::new]  pub fn generate_fix_suggestion(error: &NuzoError) -> Vec
-555 ErrorClassifier::generate_structured_suggestions ←[DiagnosticError::from_nuzo_error,DiagnosticError::new]  pub fn generate_structured_suggestions(error: &NuzoError) -> Vec
-662 ErrorClassifier::fix_suggestion_with_lang →[LangMode::select]  pub fn fix_suggestion_with_lang(error: &NuzoError, lang: LangMode) ...
-760 ErrorClassifier::generate_fix_suggestion_with_lang ←[DiagnosticRenderer::render_nuzo_error]  pub fn generate_fix_suggestion_with_lang(error: &NuzoError, lang: L...
-900 ErrorClassifier::generate_structured_suggestions_with_lang  pub fn generate_structured_suggestions_with_lang(error: &NuzoError,...
-1082 ErrorClassifier::generate_structured_suggestions_with_candidates →[LangMode::select,StructuredSuggestion::with_replacement] ←[DiagnosticRenderer::render_nuzo_error]  pub fn generate_structured_suggestions_with_candidates(error: &Nuzo...
+337 ErrorClassifier::generate_root_cause  pub fn generate_root_cause(error: &NuzoError) -> String
+373 ErrorClassifier::fix_suggestion  pub fn fix_suggestion(error: &NuzoError) -> String
+491 ErrorClassifier::generate_fix_suggestion ←[DiagnosticError::from_nuzo_error,DiagnosticError::new]  pub fn generate_fix_suggestion(error: &NuzoError) -> Vec
+578 ErrorClassifier::generate_structured_suggestions ←[DiagnosticError::from_nuzo_error,DiagnosticError::new]  pub fn generate_structured_suggestions(error: &NuzoError) -> Vec
+693 ErrorClassifier::fix_suggestion_with_lang →[LangMode::select]  pub fn fix_suggestion_with_lang(error: &NuzoError, lang: LangMode) ...
+800 ErrorClassifier::generate_fix_suggestion_with_lang ←[DiagnosticRenderer::render_nuzo_error]  pub fn generate_fix_suggestion_with_lang(error: &NuzoError, lang: L...
+956 ErrorClassifier::generate_structured_suggestions_with_lang  pub fn generate_structured_suggestions_with_lang(error: &NuzoError,...
+1149 ErrorClassifier::generate_structured_suggestions_with_candidates →[LangMode::select,StructuredSuggestion::with_replacement] ←[DiagnosticRenderer::render_nuzo_error]  pub fn generate_structured_suggestions_with_candidates(error: &Nuzo...
 ```
 
 ---
@@ -846,18 +846,18 @@ Structs: Cli { help: bool, version: bool, command: Option, eval: Option, trace: 
 136 diagnostic_renderer →[DiagnosticRenderer::new,DiagnosticRenderer::with_lang] ←[render_compile_error,render_nuzo_error]  fn diagnostic_renderer(lang: Option) -> DiagnosticRenderer
 144 render_nuzo_error →[diagnostic_renderer] ←[cmd_eval,cmd_repl,cmd_run_file]  fn render_nuzo_error(err: &NuzoError, stack: &[StackFrameInfo], lan...
 149 render_compile_error →[Chunk::lines,DiagnosticRenderer::with_source_context,diagnostic_renderer] ←[cmd_check,cmd_compile]  fn render_compile_error(err: &NuzoError, file: &str, source: &str, ...
-171 run  fn run(cli: Cli) -> Result
-231 is_nil ←[cmd_eval,cmd_repl,cmd_run_file]  fn is_nil(v: &nuzo_run::Value) -> bool
-235 cmd_eval →[Engine::new_session_with,OutputSink::new_capture,Session::vm_mut,VM::last_call_stack,is_nil,render_nuzo_error]  fn cmd_eval(engine: &Engine, code: &str, lang: Option) -> Result
-260 cmd_run_file →[Engine::run_file,is_nil,render_nuzo_error]  fn cmd_run_file(engine: &Engine, path: &std::path::Path, lang: Opti...
-283 cmd_compile →[Chunk::constants,Engine::compile_file,render_compile_error]  fn cmd_compile(engine: &Engine, path: &std::path::Path, disassemble...
-323 cmd_check →[Engine::compile_file,render_compile_error]  fn cmd_check(engine: &Engine, path: &std::path::Path, lang: Option)...
-341 cmd_bench →[BenchHarness::iterations,BenchHarness::run_script_mode,BenchHarness::warmup,Engine::bench]  fn cmd_bench(engine: &Engine, path: &std::path::Path) -> Result
-352 cmd_test →[run_test_harness]  fn cmd_test(engine: &Engine, paths: &[PathBuf], filter: Option, tim...
-374 cmd_e2e →[run_test_harness]  fn cmd_e2e(engine: &Engine, paths: &[PathBuf], filter: Option, time...
-400 run_test_harness →[Engine::test,TestHarness::run_dir,TestHarness::run_files,TestHarness::timeout,TestHarness::verbose,TestSummary::failed,TestSummary::timeouts] ←[cmd_e2e,cmd_test]  fn run_test_harness(engine: &Engine, dirs: &[PathBuf], filter: Opti...
-435 cmd_repl →[Engine::new_session,Session::vm_mut,VM::last_call_stack,is_nil,render_nuzo_error]  fn cmd_repl(engine: &Engine, lang: Option) -> Result
-477 print_help  fn print_help()
+167 run  fn run(cli: Cli) -> Result
+227 is_nil ←[cmd_eval,cmd_repl,cmd_run_file]  fn is_nil(v: &nuzo_run::Value) -> bool
+231 cmd_eval →[Engine::new_session_with,OutputSink::new_capture,Session::vm_mut,VM::last_call_stack,is_nil,render_nuzo_error]  fn cmd_eval(engine: &Engine, code: &str, lang: Option) -> Result
+256 cmd_run_file →[Engine::run_file,is_nil,render_nuzo_error]  fn cmd_run_file(engine: &Engine, path: &std::path::Path, lang: Opti...
+279 cmd_compile →[Chunk::constants,Engine::compile_file,render_compile_error]  fn cmd_compile(engine: &Engine, path: &std::path::Path, disassemble...
+319 cmd_check →[Engine::compile_file,render_compile_error]  fn cmd_check(engine: &Engine, path: &std::path::Path, lang: Option)...
+337 cmd_bench →[BenchHarness::iterations,BenchHarness::run_script_mode,BenchHarness::warmup,Engine::bench]  fn cmd_bench(engine: &Engine, path: &std::path::Path) -> Result
+348 cmd_test →[run_test_harness]  fn cmd_test(engine: &Engine, paths: &[PathBuf], filter: Option, tim...
+370 cmd_e2e →[run_test_harness]  fn cmd_e2e(engine: &Engine, paths: &[PathBuf], filter: Option, time...
+396 run_test_harness →[Engine::test,TestHarness::run_dir,TestHarness::run_files,TestHarness::timeout,TestHarness::verbose,TestSummary::failed,TestSummary::timeouts] ←[cmd_e2e,cmd_test]  fn run_test_harness(engine: &Engine, dirs: &[PathBuf], filter: Opti...
+431 cmd_repl →[Engine::new_session,Session::vm_mut,VM::last_call_stack,is_nil,render_nuzo_error]  fn cmd_repl(engine: &Engine, lang: Option) -> Result
+473 print_help  fn print_help()
 5 main  fn main()
 11 run  fn run()
 9 make_array_code ←[main]  fn make_array_code(n: usize) -> String
@@ -1356,29 +1356,29 @@ Structs: Engine { inner: Arc }, EngineInner { config: Config, plugins: Vec, trac
 
 > Unified error types for nuzo_run.
 
-`nuzo_core` | 28 fn | E:4 out / 75 in | xmod:0 (x-crate:0)
+`nuzo_core` | 28 fn | E:4 out / 73 in | xmod:0 (x-crate:0)
 
 Structs: VmDiagnosis { disassembly: String, error_ip: Option, register_snapshot: Vec, call_stack_depth: usize, root_cause_analysis: String }, NuzoError { kind: NuzoErrorKind, source_location: Option, code: ErrorCode }
 
 ```
-665 NuzoError::type_mismatch ←[HeapObject::get_index,VM::call_global_function,Value::modulo,Value::pow,generic_add_slow,generic_neg_slow,generic_ord_slow,set_box,sys_exit,sys_getenv]  pub fn type_mismatch(expected: _, actual: _) -> Self
-674 NuzoError::index_out_of_bounds ←[HeapObject::get_index,RuntimeContext::set_box,set_box]  pub fn index_out_of_bounds(index: _, length: _) -> Self
-683 NuzoError::division_by_zero ←[Value::modulo,Value::rem,_op_mov_binaryop]  pub fn division_by_zero() -> Self
-692 NuzoError::arithmetic_overflow ←[HeapObject::get_index]  pub fn arithmetic_overflow() -> Self
-701 NuzoError::assert_failed  pub fn assert_failed(message: _) -> Self
-710 NuzoError::expected_number ←[Value::neg,Value::rem]  pub fn expected_number(got: _) -> Self
-719 NuzoError::invalid_argument_count ←[VM::call_global_function,dict_extend,dict_has_key,dict_has_value,dict_keys,dict_values,gui_button,gui_checkbox,gui_collapse,gui_heading,gui_input,gui_label,gui_menu,gui_menu_item,gui_progress,gui_radio,gui_slider,gui_textarea,gui_theme,gui_tooltip,sys_exists,sys_exit,sys_getenv,sys_list_dir,sys_mkdir,sys_remove,sys_rename]  pub fn invalid_argument_count(expected: usize, got: usize) -> Self
-728 NuzoError::undefined_variable  pub fn undefined_variable(name: _) -> Self
-737 NuzoError::unsupported_operation ←[HeapObject::get_index,HeapObject::set_index,HeapObject::set_index_mut,HeapObject::set_prop_mut]  pub fn unsupported_operation(operation: _, type_name: _) -> Self
-752 NuzoError::internal ←[DiagnosticRenderer::render_compile_error,VM::call_global_function,VM::peek,VM::pop,VM::pop_frame,VM::push,Value::heap_idx_or_err,_op_loadk_arith,diagnose_opcode_byte,err_compiler_bug,err_const_out_of_bounds,err_stack_overflow,internal_err,io_err,load_chunk,resolve_err,save_chunk,sys_rename]  pub fn internal(err: InternalError, diagnosis: Option) -> Self
-761 NuzoError::execution_timeout  pub fn execution_timeout(limit_ms: u64) -> Self
-783 NuzoError::with_source_location  pub fn with_source_location(self, loc: SourceLocation) -> Self
-793 NuzoError::with_code ←[DiagnosticRenderer::render_compile_error,load_chunk]  pub fn with_code(self, code: ErrorCode) -> Self
-799 NuzoError::code  pub fn code(&self) -> ErrorCode
-816 NuzoError::format_with_lang ←[NuzoError::to_string_with_lang]  pub fn format_with_lang(&self, lang: LangMode) -> String
-835 NuzoError::to_string_with_lang →[NuzoError::format_with_lang]  pub fn to_string_with_lang(&self, lang: LangMode) -> String
-897 LangMode::from_env ←[DiagnosticRenderer::new]  pub fn from_env() -> Self
-906 LangMode::select ←[ErrorClassifier::fix_suggestion_with_lang,ErrorClassifier::generate_structured_suggestions_with_candidates]  pub fn select(self, zh: &str, en: &str) -> String
+690 NuzoError::type_mismatch ←[HeapObject::get_index,VM::call_global_function,Value::modulo,Value::pow,generic_add_slow,generic_neg_slow,generic_ord_slow,set_box,sys_exit,sys_getenv]  pub fn type_mismatch(expected: _, actual: _) -> Self
+699 NuzoError::index_out_of_bounds ←[HeapObject::get_index,RuntimeContext::set_box,set_box]  pub fn index_out_of_bounds(index: _, length: _) -> Self
+708 NuzoError::division_by_zero ←[Value::modulo,Value::rem,_op_mov_binaryop]  pub fn division_by_zero() -> Self
+717 NuzoError::arithmetic_overflow ←[HeapObject::get_index]  pub fn arithmetic_overflow() -> Self
+726 NuzoError::assert_failed  pub fn assert_failed(message: _) -> Self
+735 NuzoError::expected_number ←[Value::neg,Value::rem]  pub fn expected_number(got: _) -> Self
+744 NuzoError::invalid_argument_count ←[VM::call_global_function,dict_extend,dict_has_key,dict_has_value,dict_keys,dict_values,gui_button,gui_checkbox,gui_collapse,gui_heading,gui_input,gui_label,gui_menu,gui_menu_item,gui_progress,gui_radio,gui_slider,gui_textarea,gui_theme,gui_tooltip,sys_exists,sys_exit,sys_getenv,sys_list_dir,sys_mkdir,sys_remove,sys_rename]  pub fn invalid_argument_count(expected: usize, got: usize) -> Self
+753 NuzoError::undefined_variable  pub fn undefined_variable(name: _) -> Self
+762 NuzoError::unsupported_operation ←[HeapObject::get_index,HeapObject::set_index,HeapObject::set_index_mut,HeapObject::set_prop_mut]  pub fn unsupported_operation(operation: _, type_name: _) -> Self
+777 NuzoError::internal ←[VM::call_global_function,VM::peek,VM::pop,VM::pop_frame,VM::push,Value::heap_idx_or_err,_op_loadk_arith,diagnose_opcode_byte,err_compiler_bug,err_const_out_of_bounds,err_stack_overflow,internal_err,io_err,load_chunk,resolve_err,save_chunk,sys_rename]  pub fn internal(err: InternalError, diagnosis: Option) -> Self
+786 NuzoError::execution_timeout  pub fn execution_timeout(limit_ms: u64) -> Self
+808 NuzoError::with_source_location  pub fn with_source_location(self, loc: SourceLocation) -> Self
+818 NuzoError::with_code ←[load_chunk]  pub fn with_code(self, code: ErrorCode) -> Self
+824 NuzoError::code  pub fn code(&self) -> ErrorCode
+841 NuzoError::format_with_lang ←[NuzoError::to_string_with_lang]  pub fn format_with_lang(&self, lang: LangMode) -> String
+860 NuzoError::to_string_with_lang →[NuzoError::format_with_lang]  pub fn to_string_with_lang(&self, lang: LangMode) -> String
+922 LangMode::from_env ←[DiagnosticRenderer::new]  pub fn from_env() -> Self
+931 LangMode::select ←[ErrorClassifier::fix_suggestion_with_lang,ErrorClassifier::generate_structured_suggestions_with_candidates]  pub fn select(self, zh: &str, en: &str) -> String
 409 CompileError::line  pub fn line(&self) -> usize
 436 CompileError::column  pub fn column(&self) -> Option
 38 IrErrorSeverity::as_str  pub fn as_str(&self) -> &str
@@ -2293,7 +2293,7 @@ Structs: BindArgs { vis: Option, specs: Vec }
 
 > 统一诊断渲染器
 
-`nuzo_error` | 12 fn | E:17 out / 5 in | xmod:16 (x-crate:4)
+`nuzo_error` | 12 fn | E:15 out / 5 in | xmod:14 (x-crate:2)
 
 Structs: DiagnosticRenderer { formatter: DiagnosticFormatter, lang: LangMode, source_lines: Option, context_radius: usize, candidates: Vec }
 
@@ -2309,7 +2309,7 @@ Structs: DiagnosticRenderer { formatter: DiagnosticFormatter, lang: LangMode, so
 130 DiagnosticRenderer::lang  pub fn lang(&self) -> LangMode
 163 DiagnosticRenderer::render_diagnostic →[AnsiStyle::apply_to,DiagnosticFormatter::severity_style] ←[DiagnosticRenderer::render_compile_error,DiagnosticRenderer::render_nuzo_error]  pub fn render_diagnostic(&self, diagnostic: &DiagnosticError) -> St...
 223 DiagnosticRenderer::render_nuzo_error →[DiagnosticRenderer::render_diagnostic,ErrorClassifier::classify,ErrorClassifier::generate_fix_suggestion_with_lang,ErrorClassifier::generate_structured_suggestions_with_candidates,ExecutionContext::source_location]  pub fn render_nuzo_error(&self, error: &NuzoError, stack: &[StackFr...
-255 DiagnosticRenderer::render_compile_error →[DiagnosticRenderer::render_diagnostic,ExecutionContext::source_location,NuzoError::internal,NuzoError::with_code]  pub fn render_compile_error(&self, message: &str, loc: SourceLocati...
+260 DiagnosticRenderer::render_compile_error →[DiagnosticRenderer::render_diagnostic,ExecutionContext::source_location]  pub fn render_compile_error(&self, err: &NuzoError, loc: SourceLoca...
 ```
 
 ---
