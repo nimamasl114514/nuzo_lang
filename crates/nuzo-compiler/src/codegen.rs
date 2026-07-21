@@ -83,6 +83,10 @@ pub enum CodegenError {
     },
     /// 通用错误（附带消息）
     Generic { message: String },
+    /// 函数参数数量超限（FunctionPrototype.arity 是 u8，最大 255）
+    TooManyParameters { count: usize, max: usize },
+    /// 闭包捕获变量数量超限（CaptureInfo.capture_index 是 u8，最大 255）
+    TooManyCaptures { count: usize, max: usize },
 }
 
 impl std::fmt::Display for CodegenError {
@@ -117,6 +121,12 @@ impl std::fmt::Display for CodegenError {
                 write!(f, "Unexpected IrOp in {}: {}", context, op)
             }
             Self::Generic { message } => write!(f, "{}", message),
+            Self::TooManyParameters { count, max } => {
+                write!(f, "too many parameters: {} (max {})", count, max)
+            }
+            Self::TooManyCaptures { count, max } => {
+                write!(f, "too many captured variables: {} (max {})", count, max)
+            }
         }
     }
 }
@@ -133,6 +143,14 @@ impl From<CodegenError> for CompileError {
         match err {
             CodegenError::TooManyRegisters { count } => {
                 CompileError::TooManyLocals { count: count as usize, line: 0, column: 0 }
+            }
+            // H1 对齐：参数/捕获超限映射到结构化 CompileError 变体，
+            // 避免降级为通用 Error 变体（丢失结构化分类 + 错误码 C0000 不可区分）。
+            CodegenError::TooManyParameters { count, max } => {
+                CompileError::TooManyParameters { count, max, line: 0, column: 0 }
+            }
+            CodegenError::TooManyCaptures { count, max } => {
+                CompileError::TooManyCapturedVariables { count, max, line: 0, column: 0 }
             }
             other => CompileError::Error { message: other.to_string(), line: 0, column: 0 },
         }
@@ -403,11 +421,20 @@ impl CodeGenerator {
 
         for func in &non_main {
             if let Err(e) = self.register_sub_function(func) {
-                eprintln!(
-                    "[Codegen] Warning: failed to register sub-function '{}' (ID={}): {}",
-                    func.name, func.id.0, e
-                );
-                continue;
+                // 结构化硬错误立即返回（参数/捕获超限是源代码错误，容错无意义，
+                // 立即返回能让用户看到精确错误而非 Phase 2 的 "未注册函数 ID" 兜底）。
+                // 其他错误（Generic 等）保持容错 continue，对齐 L413 注释设计意图。
+                match &e {
+                    CodegenError::TooManyParameters { .. }
+                    | CodegenError::TooManyCaptures { .. } => return Err(e),
+                    _ => {
+                        eprintln!(
+                            "[Codegen] Warning: failed to register sub-function '{}' (ID={}): {}",
+                            func.name, func.id.0, e
+                        );
+                        continue;
+                    }
+                }
             }
         }
 
@@ -634,6 +661,22 @@ impl CodeGenerator {
     /// 完整流程：生成子函数字节码 → 构建 FunctionPrototype → 创建 Closure 对象
     /// → 存入常量池 → 记录 ID 映射。
     fn register_sub_function(&mut self, func: &IrFunction) -> Result<(), CodegenError> {
+        // 前置检查：参数/捕获数量超限时尽早返回结构化错误，
+        // 避免走到 narrow_u8 兜底降级为 Generic（对齐 project_rules 第八节：
+        // 编译错误不能降级为 C0000 通用 Error）。
+        if func.params.len() > u8::MAX as usize {
+            return Err(CodegenError::TooManyParameters {
+                count: func.params.len(),
+                max: u8::MAX as usize,
+            });
+        }
+        if func.captures.len() > u8::MAX as usize {
+            return Err(CodegenError::TooManyCaptures {
+                count: func.captures.len(),
+                max: u8::MAX as usize,
+            });
+        }
+
         let sub_chunk = self.generate_sub_function(func)?;
 
         let (code, constants, lines, debug_info, locals_count, spill_slot_count) =
@@ -3858,5 +3901,78 @@ mod tests {
 
         // 应至少访问了 LoadK + LoadK + Add + Return 4 条指令
         assert!(visited_instr_count >= 4, "应至少访问 4 条指令，实际 {}", visited_instr_count);
+    }
+
+    // ========================================================================
+    // 回归测试：BUG-u8-arity-overflow（函数参数/捕获数量超 u8 范围）
+    //
+    // 触发场景：源代码定义 >255 个参数或 >255 个捕获变量的函数（极罕见）。
+    // 旧实现：narrow_u8 溢出返回 CodegenError::Generic，Phase 1 容错 continue，
+    //         Phase 2 报 "IrOp::Closure 引用了未注册的函数 ID"（降级为 C0000）。
+    // 修复：register_sub_function 前置检查 + Phase 1 结构化硬错误立即返回。
+    // ========================================================================
+
+    /// 辅助：构造一个 main + sub_fn 的 IrModule，sub_fn 带指定数量的参数和捕获
+    fn make_module_with_sub_fn(param_count: usize, capture_count: usize) -> IrModule {
+        let mut module = IrModule::new();
+        // main 函数（id=0）：return nil
+        module.add_function("main");
+        let main_func = module.current_function_mut();
+        let main_block = main_func.current_block_mut();
+        main_block.push(IrOp::LoadConstant { dest: ValueRef(0), constant: IrConstant::Nil });
+        main_block.push(IrOp::Return { value: Some(ValueRef(0)) });
+
+        // sub 函数（id=1）：带 N 个参数 + M 个捕获，body 只 return nil
+        module.add_function("sub_fn");
+        let sub_func = module.current_function_mut();
+        sub_func.params = (0..param_count).map(|i| Arc::<str>::from(format!("p{}", i))).collect();
+        sub_func.captures = (0..capture_count)
+            .map(|i| nuzo_ir::types::CaptureDesc {
+                name: Arc::<str>::from(format!("c{}", i)),
+                is_mutable: false,
+            })
+            .collect();
+        let sub_block = sub_func.current_block_mut();
+        sub_block.push(IrOp::LoadConstant { dest: ValueRef(0), constant: IrConstant::Nil });
+        sub_block.push(IrOp::Return { value: Some(ValueRef(0)) });
+        module
+    }
+
+    #[test]
+    fn test_too_many_params_256_returns_structured_error() {
+        let mut codegen = CodeGenerator::new();
+        let module = make_module_with_sub_fn(256, 0);
+        let result = codegen.generate(&module);
+        assert!(result.is_err(), "256 参数应编译失败");
+        match result.unwrap_err() {
+            CodegenError::TooManyParameters { count, max } => {
+                assert_eq!(count, 256, "count 应为实际参数数");
+                assert_eq!(max, 255, "max 应为 u8::MAX");
+            }
+            other => panic!("期望 TooManyParameters，实际 {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_too_many_params_255_ok() {
+        let mut codegen = CodeGenerator::new();
+        let module = make_module_with_sub_fn(255, 0);
+        let result = codegen.generate(&module);
+        assert!(result.is_ok(), "255 参数（u8::MAX）应编译成功，错误: {:?}", result.err());
+    }
+
+    #[test]
+    fn test_too_many_captures_256_returns_structured_error() {
+        let mut codegen = CodeGenerator::new();
+        let module = make_module_with_sub_fn(0, 256);
+        let result = codegen.generate(&module);
+        assert!(result.is_err(), "256 捕获应编译失败");
+        match result.unwrap_err() {
+            CodegenError::TooManyCaptures { count, max } => {
+                assert_eq!(count, 256, "count 应为实际捕获数");
+                assert_eq!(max, 255, "max 应为 u8::MAX");
+            }
+            other => panic!("期望 TooManyCaptures，实际 {:?}", other),
+        }
     }
 }

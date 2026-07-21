@@ -232,6 +232,22 @@ pub enum CompileError {
         column: usize,
     },
 
+    /// 函数参数数量超限
+    ///
+    /// 单个函数的参数数量不能超过 u8::MAX（255），
+    /// 因为 FunctionPrototype.arity 使用 u8 编码。
+    /// 触发场景：源代码中定义了 >255 个参数的函数（极罕见）。
+    TooManyParameters {
+        /// 当前参数数量
+        count: usize,
+        /// 最大允许数量
+        max: usize,
+        /// 出错的源代码行号
+        line: usize,
+        /// 出错的源代码列号
+        column: usize,
+    },
+
     /// 无效的跳转修补目标
     ///
     /// 当尝试修补跳转指令的目标偏移量时，
@@ -358,6 +374,9 @@ impl fmt::Display for CompileError {
             CompileError::TooManyCapturedVariables { count, max, line, .. } => {
                 write!(f, "[line {}] too many captured variables: {} (max {})", line, count, max)
             }
+            CompileError::TooManyParameters { count, max, line, .. } => {
+                write!(f, "[line {}] too many parameters: {} (max {})", line, count, max)
+            }
             CompileError::InvalidPatchTarget { ip, code_len, line, .. } => {
                 write!(
                     f,
@@ -404,6 +423,7 @@ impl CompileError {
             | CompileError::ArrayElementOverflow { line, .. }
             | CompileError::ControlStackUnderflow { line, .. }
             | CompileError::TooManyCapturedVariables { line, .. }
+            | CompileError::TooManyParameters { line, .. }
             | CompileError::InvalidPatchTarget { line, .. }
             | CompileError::UnsupportedBinaryOperator { line, .. }
             | CompileError::UncapturableVariable { line, .. }
@@ -430,6 +450,7 @@ impl CompileError {
             | CompileError::ArrayElementOverflow { column, .. }
             | CompileError::ControlStackUnderflow { column, .. }
             | CompileError::TooManyCapturedVariables { column, .. }
+            | CompileError::TooManyParameters { column, .. }
             | CompileError::InvalidPatchTarget { column, .. }
             | CompileError::UnsupportedBinaryOperator { column, .. }
             | CompileError::UncapturableVariable { column, .. }
